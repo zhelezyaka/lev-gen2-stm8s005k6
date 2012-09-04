@@ -1522,6 +1522,9 @@
   </configuration>
   <group>
     <name>Drivers</name>
+    <excluded>
+      <configuration>Debug</configuration>
+    </excluded>
     <file>
       <name>$PROJ_DIR$\..\src\Drivers\adc_read.c</name>
     </file>
@@ -1558,6 +1561,9 @@
   </group>
   <group>
     <name>EEPROM</name>
+    <excluded>
+      <configuration>Debug</configuration>
+    </excluded>
     <file>
       <name>$PROJ_DIR$\..\src\EEPROM_Setting\sys_info_eeprom.c</name>
     </file>
@@ -1580,22 +1586,52 @@
       </file>
     </group>
     <file>
+      <name>$PROJ_DIR$\..\src\Driver_Common_interface.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\src\Global_config.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\src\GolbalVariableArray.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\lev_g2_main_fun.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\src\lev_global_config.h</name>
+      <excluded>
+        <configuration>Debug</configuration>
+      </excluded>
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\main.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\src\Main_Enumeration_define.h</name>
+      <name>$PROJ_DIR$\..\src\main_backup.c</name>
+      <excluded>
+        <configuration>Debug</configuration>
+      </excluded>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\src\Module_Driver_Define.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\src\Module_Flash_Information.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\src\Module_Var_Bit_Define.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\src\Module_Variable_Define.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\stm8_interrupt_vector.c</name>
+      <excluded>
+        <configuration>Debug</configuration>
+      </excluded>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\src\SubPolling_Protection.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\src\TimerPollingFunctions.c</name>
     </file>
   </group>
   <group>
