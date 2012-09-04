@@ -2,10 +2,10 @@
 
 
 //#include "stm8s.h"
-#include "lev_device_define.h"
-#include "Main_Enumeration_define.h"
+//#include "lev_device_define.h"
+//#include "Main_Enumeration_define.h"
 
-
+#include "GolbalVariableArray.h"
 
 unsigned char Suspend_Func();
 
