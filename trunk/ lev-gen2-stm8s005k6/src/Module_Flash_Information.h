@@ -68,7 +68,7 @@
 #define ADC_DOC_PROTECTION                      1352    // 20A; unit: 10mA; discharging current protection is positive
 #define ADC_COC_PROTECTION                      393     // 4A; unit: 10mA; charging current protection
 #define ADC_DSG_HIGH_CURRENT_DETECT             537     //; 8000mA; 2bytes; for switch High/Low OT Protection
-//#define OC_PROTECTION_RELEASE_TIME              5         // 5 sec; unit: sec.; 1byte; over current protection release time
+//remove //#define OC_PROTECTION_RELEASE_TIME              5         // 5 sec; unit: sec.; 1byte; over current protection release time
 
 
 //=====================================================================================================================

@@ -21,6 +21,8 @@
 #define CHG_OT_Protection_Delay_Cycle       3   //times
 #define UT_Protection_Delay_Cycle           3   //times
 
+#define COC_Protection_LOCK_Times           3   //times
+
 /********************************************************************************
 * Extern Function																*
 ********************************************************************************/
@@ -49,6 +51,7 @@ static unsigned char DSG_Low_OT_Counter;
 static unsigned char DSG_High_OT_Counter;
 static unsigned char CHG_OT_Counter;
 static unsigned char UT_Counter;
+static unsigned char COC_Repeat_Counter;
 
 /********************************************************************************
 * 															                    *
@@ -66,17 +69,21 @@ void InitSubPollingProtectionVariables(){
     DSG_High_OT_Counter = 0;
     CHG_OT_Counter = 0;
     UT_Counter = 0;
+    COC_Repeat_Counter = 0;
 }
 /********************************************************************************
 * 															                    *
 ********************************************************************************/
 void GetAllADCValuesAndSetDirection(){
+    unsigned int adcArr[5];
+    
+        Get_ADC_Values(adcArr, 5);
   
-      G_DSG_Current_ADC = getDSGCurrentADC();
-      G_CHG_Current_ADC = getCHGCurrentADC();
-      G_VBAT_ADC = getVbatADC();
-      G_TH1_ADC = getThermal1ADC();
-      G_TH2_ADC = getThermal2ADC();
+      G_DSG_Current_ADC = adcArr[0];
+      G_CHG_Current_ADC = adcArr[1];
+      G_VBAT_ADC = adcArr[2];
+      G_TH1_ADC = adcArr[3];
+      G_TH2_ADC = adcArr[4];
 
       /////////////////////////////////////////////////////////////////////////////////////////////
       // checking Current Direction status
@@ -114,33 +121,59 @@ void ProtectionForPolling(){
     // compare if Discharging Current greater than ADC_DOC_PROTECTION,
     // it will be into DSG OC protection.
     if(((G_Module_Status & Module_D_OC)==0) && G_DSG_Current_ADC >= ADC_DOC_PROTECTION){
-    DSG_OC_Counter++;
-    if(DSG_OC_Counter >= DSG_OC_Protection_Delay_Cycle){
-      G_Module_Status |= Module_D_OC;
-      DSG_OC_Counter = 0;
-      ///////////////////////////////////////////////////////////////////
-      // Set Protection Flag,set counting time 100 (100 * 50 ms = 5 sec).
-      //setDSGOverCurrentCounting(DeviceOn);
-    }//if(((G_Module_Status & Module_D_OC)==0) && G_DSG_Current_ADC >= ADC_DOC_PROTECTION){
+        DSG_OC_Counter++;
+        if(DSG_OC_Counter >= DSG_OC_Protection_Delay_Cycle){
+            G_Module_Status |= Module_D_OC;
+            DSG_OC_Counter = 0;
+            ///////////////////////////////////////////////////////////////////
+            //Enable DOC counting for DOC release
+            G_Device_Interface_Status1 |= ENABLE_DOC_COUNTER;
+        }//if(((G_Module_Status & Module_D_OC)==0) && G_DSG_Current_ADC >= ADC_DOC_PROTECTION){
     }else{
-    DSG_OC_Counter = 0;
+        DSG_OC_Counter = 0;
     }      
     /////////////////////////////////////////////////////////////////////////////////////////////
     // checking if it's C_OC
     // compare if Charging Current greater than ADC_COC_PROTECTION,
     // it will be into CHG OC protection.
     if(((G_Module_Status & Module_C_OC)==0) && G_CHG_Current_ADC >= ADC_COC_PROTECTION){
-    CHG_OC_Counter++;
-    if(CHG_OC_Counter >= CHG_OC_Protection_Delay_Cycle){
-      G_Module_Status |= Module_C_OC;
-      CHG_OC_Counter = 0;
-      ///////////////////////////////////////////////////////////////////
-      // Set Protection Flag,set counting time 100 (100 * 50 ms = 5 sec).
-      //setCHGOverCurrentCounting(DeviceOn);
-    }//if(((G_Module_Status & Module_C_OC)==0) && G_CHG_Current_ADC >= ADC_COC_PROTECTION){
+        CHG_OC_Counter++;
+        if(CHG_OC_Counter >= CHG_OC_Protection_Delay_Cycle){
+            G_Module_Status |= Module_C_OC;
+            CHG_OC_Counter = 0;
+            ///////////////////////////////////////////////////////////////////
+            //Enable COC counting for COC release
+            G_Device_Interface_Status1 |= ENABLE_COC_COUNTER;
+            ///////////////////////////////////////////////////////////////////
+            //Check COC Repeat times COC release
+            if(G_Device_Interface_Status1 & COC_RELEASE_FOR_REPEATED_CHECK){
+                COC_Repeat_Counter++;
+                G_Device_Interface_Status1 &= ~COC_RELEASE_FOR_REPEATED_CHECK;
+                if(COC_Repeat_Counter >= COC_Protection_LOCK_Times){
+                    G_Module_Status |= Module_C_OC_LOCK;
+                    COC_Repeat_Counter = 0;
+                }
+            }else{
+                COC_Repeat_Counter = 0;
+            }
+        }//if(((G_Module_Status & Module_C_OC)==0) && G_CHG_Current_ADC >= ADC_COC_PROTECTION){
     }else{
-    CHG_OC_Counter = 0;
+        CHG_OC_Counter = 0;
     }       
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    //DOC Release and clear Flag
+    if((G_Module_Status & Module_D_OC) && (G_Device_Interface_Status1 & DOC_COUNTING_FINISH)){
+        G_Device_Interface_Status1 &= ~DOC_COUNTING_FINISH;
+        G_Module_Status &= ~Module_D_OC;
+    }
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    //COC Release and clear Flag
+    if((G_Module_Status & Module_C_OC) && (G_Device_Interface_Status1 & COC_COUNTING_FINISH)){
+        G_Device_Interface_Status1 &= ~COC_COUNTING_FINISH;
+        G_Module_Status &= ~Module_C_OC;
+        G_Device_Interface_Status1 |= COC_RELEASE_FOR_REPEATED_CHECK;
+    }
+    
 
   
 //      /////////////////////////////////////////////////////////////////////////////////////////////
@@ -335,9 +368,44 @@ void ProtectionForPolling(){
     }
         
     
-    
+    ///////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    // MosFet control and Protection release    
+    //////////////////////////////////////////////////////////////////////////////
+    // CHG MosFet control and Protection release    
+    if((G_Module_Status & (Module_C_OC + Module_BAT_OV + Module_PIC_OV + Module_CHG_OT + Module_UT + Module_C_OC_LOCK))){
+        setMosFET(CHG_MOSFET, TurnOff);
+      
+        //COC Lock Release while dsg or button click
+        if(G_Module_Status & Module_C_OC_LOCK){
+            if((G_Module_Status & Current_Dir_DSG) || (G_Device_Interface_Status1 & BUTTON_CLICK)){
+                G_Module_Status &= ~Module_C_OC_LOCK;
+            }
+        }
+    }// if CHG protection
+    else{
+      setMosFET(CHG_MOSFET, TurnOn);
+    }    
+    //////////////////////////////////////////////////////////////////////////////
+    // DSG MosFet control and Protection release    
+    if((G_Module_Status & (Module_D_OC + Module_BAT_UV + Module_PIC_UV + Module_DSG_OT))){
+        setMosFET(DSG_MOSFET, TurnOff);
+    }else{
+        setMosFET(DSG_MOSFET, TurnOn);
+    }    
+}//void ProtectionForPolling(){
+
+
+
+//delay_cycles(10);	//200us at 4MHz
+//delay_cycles(20);	//400us at 4MHz
+//delay_cycles(30);	//600us at 4MHz
+//delay_cycles(40);	//800us at 4MHz
+//delay_cycles(50);	//1ms at 4MHz
+void delay_cycles(unsigned long cycleCount)
+{
+	unsigned long count;
+	for(count = 0l; count < cycleCount; count++){
+        asm("nop");
+	}
 }
-
-
-
-
