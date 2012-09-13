@@ -1,12 +1,20 @@
 
 
-//#include "stm8s.h"
-#include "lev_device_define.h"
+#include "stm8s.h"
+#include "Devices.h"
+//#include "lev_device_define.h"
+
+/********************************************************************************
+* clk_setup	,peripheral = 4MHz, CLK(CPU) freq = 4Mhz							*
+********************************************************************************/
+// System Clock Setup
+#define dSourceFreqDivided			CLK_PRESCALER_HSIDIV4 //for fMaster freq = 16MHz / 4 = 4MHz, for peripheral device
+#define dMCUFreqDivided				CLK_PRESCALER_CPUDIV1 //for MCLK(CPU) freq = 4MHz / 1 = 4MHz
 
 /********************************************************************************
 * clk_setup																		*
 ********************************************************************************/
-void clk_setup(void)
+void _Device_System_clk_setup(void)
 {
 	CLK_HSIPrescalerConfig(dSourceFreqDivided); // fMaster, speed 16MHz / 4 = 4MHz, for peripheral device
 	CLK_SYSCLKConfig(dMCUFreqDivided); // CPU speed, 4MHz / 1 = 4MHz

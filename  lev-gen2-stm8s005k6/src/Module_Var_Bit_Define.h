@@ -14,7 +14,7 @@ enum For_G_SysModeStatusCode  //unsigned char
   FailureMode,
   ShutdownMode,
   CalibrationMode,
-  //ShippingMode,
+  ShippingMode,
   SuspendMode
 };
 
@@ -37,19 +37,17 @@ enum For_G_SysModeStatusCode  //unsigned char
 #define NoUse2        				(0x0008)    //No Use,
 #define NoUse3        				(0x0010)    //No Use,
 #define NoUse4        				(0x0020)    //No Use,
-#define NoUse5        				(0x0040)    //No Use,
-#define Module_UT        			(0x0080)    // Under Temperature Alarm
+#define Module_UT                   (0x0040)    // Under Temperature Alarm
+#define Module_C_OC_LOCK            (0x0080)    // Repeat COC for setting times, CHG Mos will be lock, until dsg current
 //Hight byte
-#define Module_D_OC         (0x0100)    //=D_OC, DisCharge over current flag
-#define Module_C_OC         (0x0200)    //=C_OC, Charge over current flag
-#define Module_BAT_OV       (0x0400)    // Over Voltage Alarm, Whole Battery voltage
-#define Module_BAT_UV       (0x0800)    // Under Voltage Alarm, Whole Battery voltage
-#define Module_PIC_OV       (0x1000)    // Cell Voltage Over Voltage Alarm
-#define Module_PIC_UV       (0x2000)    // Cell Voltage Under Voltage Alarm
-#define Module_CHG_OT       (0x4000)    // CHG Over Temperature Alarm
-#define Module_DSG_OT       (0x8000)    // DSG Over Temperature Alarm 
-//#define Module_2nd_OV       (0x1000)    // 2nd level Over Voltage Alarm
-//#define Module_2nd_UV       (0x2000)    // 2nd level Under Voltage Alarm
+#define Module_D_OC                 (0x0100)    //=D_OC, DisCharge over current flag
+#define Module_C_OC                 (0x0200)    //=C_OC, Charge over current flag
+#define Module_BAT_OV               (0x0400)    // Over Voltage Alarm, Whole Battery voltage
+#define Module_BAT_UV               (0x0800)    // Under Voltage Alarm, Whole Battery voltage
+#define Module_PIC_OV               (0x1000)    // Cell Voltage Over Voltage Alarm
+#define Module_PIC_UV               (0x2000)    // Cell Voltage Under Voltage Alarm
+#define Module_CHG_OT               (0x4000)    // CHG Over Temperature Alarm
+#define Module_DSG_OT               (0x8000)    // DSG Over Temperature Alarm 
 
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
@@ -73,6 +71,7 @@ enum For_G_SysModeStatusCode  //unsigned char
 //#define _No_Used_      (0x2000)    //
 //#define _No_Used_      (0x4000)    //
 //#define _No_Used_      (0x8000)    //
+
 
 
 

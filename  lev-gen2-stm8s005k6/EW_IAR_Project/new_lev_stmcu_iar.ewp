@@ -1522,9 +1522,9 @@
   </configuration>
   <group>
     <name>Drivers</name>
-    <excluded>
-      <configuration>Debug</configuration>
-    </excluded>
+    <file>
+      <name>$PROJ_DIR$\..\src\Drivers\Adapter_SOC_Signal.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\src\Drivers\adc_read.c</name>
     </file>
@@ -1535,6 +1535,9 @@
       <name>$PROJ_DIR$\..\src\Drivers\clk_setting.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\src\Drivers\Devices.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\src\Drivers\gpio_control.c</name>
     </file>
     <file>
@@ -1542,9 +1545,15 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\Drivers\lev_device_define.h</name>
+      <excluded>
+        <configuration>Debug</configuration>
+      </excluded>
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\Drivers\Modbus_CRC.c</name>
+      <excluded>
+        <configuration>Debug</configuration>
+      </excluded>
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\Drivers\mosfet_control.c</name>
@@ -1554,6 +1563,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\Drivers\timer4_8bit.c</name>
+      <excluded>
+        <configuration>Debug</configuration>
+      </excluded>
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\Drivers\uart2.c</name>
@@ -1595,10 +1607,7 @@
       <name>$PROJ_DIR$\..\src\GolbalVariableArray.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\src\lev_g2_main_fun.c</name>
-      <excluded>
-        <configuration>Debug</configuration>
-      </excluded>
+      <name>$PROJ_DIR$\..\src\LevG2_mainfun.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\main.c</name>

@@ -3,40 +3,16 @@
 /********************************************************************************
 * Include																		*
 ********************************************************************************/
+#include "Devices.h"
 #include "Global_config.h"
 #include "Module_Driver_Define.h"
 //#include "Module_Flash_Information.h"
 //#include "Module_Variable_Define.h"
 //#include "Module_Var_Bit_Define.h"
 /********************************************************************************
-* Extern Function for Device													*
+* Extern Function                       										*
 ********************************************************************************/
-// LED control
-void _Device_Init_Led_Function();
-void _Device_Set_Led_PWM_Function(unsigned char LEDNumBits, unsigned char enable);
-void _Device_Set_Led_OnOff(unsigned char LEDNumBits, unsigned char enable);
-//Mos Fet Control
-void _Device_Init_MosControl_Function();
-void _Device_Set_MosFET(unsigned char MosFetCode, unsigned char enable);
-void _Device_Set_Led_LightOnOff(unsigned char LEDNumCode, unsigned char enable);
-//Button
-void _Device_Init_Button_Event_Function();
-unsigned char _Device_Get_Button_Status();
-void _Device_Interrupt_Calling_ButtonEvent_Press_Trigger();
-//void Interrupt_Calling_ButtonEvent_Release_Trigger();
-//Input_Signal_Pin
-void _Device_Init_Input_Signal_Pin_Function();
-unsigned char _Device_Get_PIC_UVP_Status();
-unsigned char _Device_Get_PIC_OVP_Status();
-//ADC Function
-void _Device_Init_ADC_Function();
-void _Device_Start_ADC_Conversion();
-void _Device_Stop_ADC_Conversion();
-unsigned int _Device_Get_CHG_ADC_Values();
-unsigned int _Device_Get_DSG_ADC_Values();
-unsigned int _Device_Get_VBAT_ADC_Values();
-unsigned int _Device_Get_Thermal1_ADC_Values();
-unsigned int _Device_Get_Thermal2_ADC_Values();
+
 
 
 /********************************************************************************
@@ -46,11 +22,30 @@ unsigned int _Device_Get_Thermal2_ADC_Values();
 /********************************************************************************
 * Local file Variable										                    *
 ********************************************************************************/
+unsigned char G_All_LED_Bits_Mask;
 
+
+//////////////////////////////////////////////////
+// System Clock Setup  : (section start)
+void System_clk_setup(){
+    _Device_System_clk_setup();
+}
+// System Clock Setup  : (section stop)
+//////////////////////////////////////////////////
 
 //////////////////////////////////////////////////
 // LED function  : (section start)
 void InitLEDDisplay(){
+    unsigned char i = 0;
+    unsigned char bit;
+    
+    G_All_LED_Bits_Mask = 0;
+    for(i=0; i<LEDNumbers; i++){
+        bit = 1;
+        bit <<= i;
+        G_All_LED_Bits_Mask |= bit;
+    }
+    
     G_LED_Interface_Status1 = 0;
     G_LED_Interface_Status2 = 0;
     _Device_Init_Led_Function();
@@ -58,7 +53,7 @@ void InitLEDDisplay(){
 
 
 void SetLedOnOff(unsigned char LEDNumBits, unsigned char enable){
-    LEDNumBits = LEDNumBits & All_LED_Bits_Mask;
+    LEDNumBits = LEDNumBits & G_All_LED_Bits_Mask;
     if(enable == 0){
         _Device_Set_Led_OnOff(LEDNumBits, TurnOff);
         G_LED_Interface_Status1 &= ~LEDNumBits;
@@ -69,7 +64,7 @@ void SetLedOnOff(unsigned char LEDNumBits, unsigned char enable){
 }
 
 void SetLedLightOnFlag(unsigned char LEDNumBits, unsigned char enable){
-    LEDNumBits = LEDNumBits & All_LED_Bits_Mask;
+    LEDNumBits = LEDNumBits & G_All_LED_Bits_Mask;
     if(enable == 0){
         G_LED_Interface_Status1 &= ~(LEDNumBits << 8);
     }else{
@@ -78,7 +73,7 @@ void SetLedLightOnFlag(unsigned char LEDNumBits, unsigned char enable){
 }
 
 void SetLedBlinkFlag(unsigned char LEDNumBits, unsigned char enable){
-    LEDNumBits = LEDNumBits & All_LED_Bits_Mask;
+    LEDNumBits = LEDNumBits & G_All_LED_Bits_Mask;
     if(enable == 0){
         G_LED_Interface_Status2 &= ~LEDNumBits;
     }else{
@@ -87,7 +82,7 @@ void SetLedBlinkFlag(unsigned char LEDNumBits, unsigned char enable){
 }
 
 void SetLedPWMFunction(unsigned char LEDNumBits, unsigned char enable){
-    LEDNumBits = LEDNumBits & All_LED_Bits_Mask;
+    LEDNumBits = LEDNumBits & G_All_LED_Bits_Mask;
     if(enable == 0){
         _Device_Set_Led_PWM_Function(LEDNumBits, TurnOff);
         G_LED_Interface_Status2 &= ~(LEDNumBits << 8);
@@ -95,6 +90,10 @@ void SetLedPWMFunction(unsigned char LEDNumBits, unsigned char enable){
         _Device_Set_Led_PWM_Function(LEDNumBits, TurnOn);
         G_LED_Interface_Status2 |= (LEDNumBits << 8);
     }
+}
+void SetLedPWM20Steps(unsigned char PWM_Steps){
+    //LEDNumBits = LEDNumBits & G_All_LED_Bits_Mask;
+    _Device_Set_Led_PWM_20_Steps(PWM_Steps);
 }
 
 // LED function  : (section stop)
@@ -139,9 +138,13 @@ void setMosFET(unsigned char MosFetCode, unsigned char enable){
 
 ////////////////////////////////////////////
 // Button control  : (section start)
+void Interrupt_Calling_ButtonEvent_Press_Trigger(){
+    G_Device_Interface_Status1 |= BUTTON_PRESS;
+}
 void InitButtonEvent(){
     G_Device_Interface_Status1 &= ~BUTTON_PRESS;
     _Device_Init_Button_Event_Function();
+    _Device_Set_Interrupt_ButtonEvent_Press_Trigger_Function(Interrupt_Calling_ButtonEvent_Press_Trigger);
 }
 unsigned char GetButtonStatus(){
     if(_Device_Get_Button_Status() == ButtonRelease){
@@ -151,9 +154,6 @@ unsigned char GetButtonStatus(){
     }
 }
 
-void _Device_Interrupt_Calling_ButtonEvent_Press_Trigger(){
-    G_Device_Interface_Status1 |= BUTTON_PRESS;
-}
 // Button control  : (section stop)
 ////////////////////////////////////////////
 
@@ -204,20 +204,46 @@ void stopAdcConversion(){
     G_Device_Interface_Status1 &= ~ADC_CONVERSION;
     _Device_Stop_ADC_Conversion();
 }
-unsigned int getCHGCurrentADC(){
-    return _Device_Get_CHG_ADC_Values();
+void Set_Interrupt_ADC_Conversion_Finish_Function(void (*calling_fun)()){
+    _Device_Set_Interrupt_ADC_Conversion_Finish_Function(calling_fun);
 }
-unsigned int getDSGCurrentADC(){
-    return _Device_Get_DSG_ADC_Values();
+void Reomve_Interrupt_ADC_Conversion_Finish_Function(){
+    _Device_Remove_Interrupt_ADC_Conversion_Finish_Function();
 }
-unsigned int getVbatADC(){
-    return _Device_Get_VBAT_ADC_Values();
+void Get_ADC_Values(unsigned int *valueArray, unsigned char length){
+    _Device_Get_ADC_Conversion_Values(valueArray, length);
 }
-unsigned int getThermal1ADC(){
-    return _Device_Get_Thermal1_ADC_Values();
-}
-unsigned int getThermal2ADC(){
-    return _Device_Get_Thermal2_ADC_Values();
-}
+
 // ADC Function Data Getting  : (section stop)
+////////////////////////////////////////////
+
+////////////////////////////////////////////
+// Timer1 (50ms)  : (section start)
+void InitTimer1Function(){
+    _Device_Timer3_init();
+}
+void Set_Interrupt_Timer1_Calling_Function(unsigned char fun_index, void (*calling_fun)()){
+    _Device_Set_Interrupt_Timer1_Calling_Function(fun_index, calling_fun);
+}
+void Remove_Interrupt_Timer1_Calling_Function(unsigned char fun_index, void (*calling_fun)()){
+    _Device_Remove_Interrupt_Timer1_Calling_Function(fun_index);
+}
+
+// Timer1 (50ms)  : (section stop)
+////////////////////////////////////////////
+////////////////////////////////////////////
+// Adapter SOC  : (section start)	
+void InitAdapterOutputSignal(){
+    G_Add_Device_Interface_Status &= ~ADP_SOC_Status;
+    _Device_Init_Adapter_Output_Signal_Pin_Function();
+}
+void SetADPSOC(unsigned char enable){
+    if(enable){
+        G_Add_Device_Interface_Status |= ADP_SOC_Status;
+    }else{
+        G_Add_Device_Interface_Status &= ~ADP_SOC_Status;
+    }
+    _Device_Set_ADP_SOC(enable);
+}
+// Adapter SOC  : (section stop)	
 ////////////////////////////////////////////

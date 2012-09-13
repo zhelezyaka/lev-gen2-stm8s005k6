@@ -11,14 +11,22 @@
 
 
 /********************************************************************************
-* Define																        *
+* Define	(could not be modified, because it's base on function define)       *
 ********************************************************************************/
 // Timer 
 #define TimerIntervalTimeBase_MS                50  // unit: ms
-#define LED_PWM_TurnOn_CycleTimes               40  //unit:cycles , 2 sec = LED_PWM_TurnOn_CycleTimes * TimerIntervalTimeBase_MS
+// PWM Function has 10 setp different frequency and light on and ligh off, so total PWM turn on is LED_PWM_One_Step_CycleTimes * LED_PWM_Whole_Steps
+#define LED_PWM_Whole_Steps                     20  //could not be modified, because it's base on function define
+/********************************************************************************
+* Define	                                                                    *
+********************************************************************************/
+#define LED_PWM_One_Step_CycleTimes             3   //unit:cycles , 200ms = LED_PWM_One_Step_CycleTimes * TimerIntervalTimeBase_MS
 #define LED_Blink_OnOffInterval_CycleTimes      10  //unit:cycles , 500 ms = LED_Blink_OnOffInterval_CycleTimes * TimerIntervalTimeBase_MS
-#define Button_Click_CycleTimes                 12 //unit:cycles ,  600 ms = Button_Click_CycleTimes * TimerIntervalTimeBase_MS
+#define Button_Click_CycleTimes                 12  //unit:cycles ,  600 ms = Button_Click_CycleTimes * TimerIntervalTimeBase_MS
 #define Button_Long_Press_CycleTimes            100 //unit:cycles , 5 sec = Button_Long_Press_CycleTimes * TimerIntervalTimeBase_MS
+#define OC_PROTECTION_CycleTimes                100 //unit:cycles , 5 sec = OC_PROTECTION_CycleTimes * TimerIntervalTimeBase_MS
+#define COC_RELEASE_HOLDING_CycleTimes          20  //unit:cycles , 1 sec = COC_RELEASE_HOLDING_CycleTimes * TimerIntervalTimeBase_MS
+
 /********************************************************************************
 * Extern Function																*
 ********************************************************************************/
@@ -40,37 +48,68 @@
 * Local file Variable										                    *
 ********************************************************************************/
 static unsigned char LED_Blink_inverse_Flag;
-static unsigned char LED_Blink_Counter;
-static unsigned char LED_PWM_Counter;
+static unsigned char LED_PWM_One_step_Cycle_Counter;
+static unsigned char LED_PWM_Steps;
 static unsigned char ButtonPressCounter;
+static unsigned char DOC_ReleaseCounter;
+static unsigned char COC_ReleaseCounter;
+static unsigned char COC_ReleaseHoldingCounter;
 
+static unsigned char temp;
 /********************************************************************************
 * 															                    *
 ********************************************************************************/
 void InitTimerPollingVariables(){
     
-    LED_PWM_Counter = 0;
-    LED_Blink_Counter = 0;
+    LED_PWM_One_step_Cycle_Counter = 0;
+    LED_PWM_Steps = 0;
     LED_Blink_inverse_Flag = 0;
     ButtonPressCounter = 0;
+    DOC_ReleaseCounter = 0;
+    COC_ReleaseCounter = 0;
+    COC_ReleaseHoldingCounter = 0;
+    
+    InitTimer1Function();
+
+    
+    Set_Interrupt_Timer1_Calling_Function(1, TimerCounterForPolling);
+    
+    temp = 0;
 }
 /********************************************************************************
 * 															                    *
 ********************************************************************************/
 
 void TimerCounterForPolling(){
-    unsigned temp_char1, temp_char2;
     
+//    if(temp == 0){
+//        SetLedOnOff(LED1, TurnOn);
+//    }else{
+//        SetLedOnOff(LED1, TurnOff);
+//    }
+//    temp ^= 0x01;
+    return;
+    
+    
+    unsigned temp_char1, temp_char2;
     //////////////////////////////////////////////////////////////////////////
     //get LED PWM bit Flag  : (section start)
     temp_char1 = (unsigned char)(G_LED_Interface_Status2 >> 8);
     if(temp_char1 > 0){
-        if(LED_PWM_Counter >=LED_PWM_TurnOn_CycleTimes){
-            SetLedPWMFunction(temp_char1, TurnOff);
-            LED_PWM_Counter = 0;
+        if(LED_PWM_One_step_Cycle_Counter >=LED_PWM_One_Step_CycleTimes){
+            LED_PWM_One_step_Cycle_Counter = 0;
+            SetLedPWM20Steps(LED_PWM_Steps);
+            LED_PWM_Steps++;
+            if(LED_PWM_Steps >= LED_PWM_Whole_Steps){
+                LED_PWM_Steps = 0;
+                SetLedPWMFunction(temp_char1, TurnOff);
+            }
         }else{
-            LED_PWM_Counter++;
+            LED_PWM_One_step_Cycle_Counter++;
         }
+    }else{
+        LED_PWM_Steps = 0;
+        LED_PWM_One_step_Cycle_Counter = 0;
     }
     //get LED PWM bit Flag  : (section stop)
     //////////////////////////////////////////////////////////////////////////
@@ -97,7 +136,7 @@ void TimerCounterForPolling(){
     if(temp_char1 > 0){
         SetLedOnOff(temp_char1, TurnOn);
     }else{
-        SetLedOnOff(All_LED_Bits_Mask, TurnOn);
+        SetLedOnOff(G_All_LED_Bits_Mask, TurnOn);
     }
     //get light on flag excluding PWM and Blink flag  : (section stop)
     //////////////////////////////////////////////////////////////////////////
@@ -124,6 +163,47 @@ void TimerCounterForPolling(){
     //Button  : (section stop)
     //////////////////////////////////////////////////////////////////////////
   
+    //////////////////////////////////////////////////////////////////////////
+    //DOC Counter : (section start)
+    if(G_Device_Interface_Status1 & ENABLE_DOC_COUNTER){
+        DOC_ReleaseCounter++;
+        if(DOC_ReleaseCounter >= OC_PROTECTION_CycleTimes){
+            G_Device_Interface_Status1 |= DOC_COUNTING_FINISH;
+            G_Device_Interface_Status1 &= ~ENABLE_DOC_COUNTER;
+            DOC_ReleaseCounter = 0;
+        }
+    }else{
+        DOC_ReleaseCounter = 0;
+    }
+    //DOC Counter : (section stop)
+    //////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    //COC Counter : (section start)
+    if(G_Device_Interface_Status1 & ENABLE_COC_COUNTER){
+        COC_ReleaseCounter++;
+        if(COC_ReleaseCounter >= OC_PROTECTION_CycleTimes){
+            G_Device_Interface_Status1 |= COC_COUNTING_FINISH;
+            G_Device_Interface_Status1 &= ~ENABLE_COC_COUNTER;
+            COC_ReleaseCounter = 0;
+        }
+    }else{
+        COC_ReleaseCounter = 0;
+    }
+    //COC Counter : (section stop)
+    //////////////////////////////////////////////////////////////////////////
+    
+    //////////////////////////////////////////////////////////////////////////
+    //COC Holding Counter After Release : (section start)
+    if(G_Device_Interface_Status1 & COC_RELEASE_FOR_REPEATED_CHECK){
+        COC_ReleaseHoldingCounter++;
+        if(COC_ReleaseHoldingCounter >= COC_RELEASE_HOLDING_CycleTimes){
+            G_Device_Interface_Status1 &= ~COC_RELEASE_FOR_REPEATED_CHECK;
+            COC_ReleaseHoldingCounter = 0;
+        }
+    }else{
+        COC_ReleaseHoldingCounter = 0;
+    }
+    //COC Holding Counter After Release : (section stop)
+    //////////////////////////////////////////////////////////////////////////
 
 }
-

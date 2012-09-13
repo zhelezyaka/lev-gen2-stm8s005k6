@@ -1,17 +1,28 @@
 
+#include "stm8s.h"
+#include "Devices.h"
 //#include "stm8s.h"
-#include "lev_device_define.h"
+//#include "lev_device_define.h"
 
 
 
-unsigned char startReceiveCount;
-unsigned int UratCRC16;
-unsigned int UratCRC16_compute;
+/********************************************************************************
+* tim3_init	16 bit	, for system Main function									*
+********************************************************************************/
+// freq =4M / dTimer3Divided = 4M / TIM3_PRESCALER_32; 
+//period = 1/freq * dTimer3CountValues = 50ms
+#define dTimer3Divided				TIM3_PRESCALER_32
+#define dTimer3CountValues			6250
+#define dTimer3IntervalTimeBase_ms	50
 
+#define Max_INTERRUPT_Calling_Function  5
+
+void (*Intupt_Timer1_ptr_fuc[Max_INTERRUPT_Calling_Function])();
+void empty_timer_fun(){};
 /********************************************************************************
 * tim3_init	16 bit																*
 ********************************************************************************/
-void tim3_init(void)
+void _Device_Timer3_init(void)
 {
 	//runtime_data.tick = 0;
 	TIM3_DeInit();
@@ -19,20 +30,46 @@ void tim3_init(void)
 	TIM3_ITConfig(TIM3_IT_UPDATE, ENABLE);
 	TIM3_Cmd(ENABLE);
 	
-	startReceiveCount = 0;
+    for(int i = 0; i < Max_INTERRUPT_Calling_Function; i++){
+        Intupt_Timer1_ptr_fuc[i] = empty_timer_fun;
+    }
 }
 
-//delay_cycles(10);	//200us at 4MHz
-//delay_cycles(20);	//400us at 4MHz
-//delay_cycles(30);	//600us at 4MHz
-//delay_cycles(40);	//800us at 4MHz
-//delay_cycles(50);	//1ms at 4MHz
-void delay_cycles(unsigned long cycleCount)
-{
-	unsigned long count;
-	for(count = 0l; count < cycleCount; count++){
-	}
+void _Device_Set_Interrupt_Timer1_Calling_Function(unsigned char fun_index, void (*calling_fun)()){
+    if(fun_index >= Max_INTERRUPT_Calling_Function){
+        return;
+    }
+    Intupt_Timer1_ptr_fuc[fun_index] = calling_fun;
 }
+void _Device_Remove_Interrupt_Timer1_Calling_Function(unsigned char fun_index){
+    if(fun_index >= Max_INTERRUPT_Calling_Function){
+        return;
+    }
+    Intupt_Timer1_ptr_fuc[fun_index] = empty_timer_fun;
+}
+                                                        
+/********************************************************************************
+* Timer3 Update/Overflow/Break Interrupt routine.								*
+*******************************************************************************/
+#if defined(_IAR_)	
+INTERRUPT_HANDLER(TIM3_UPD_OVF_BRK_IRQHandler, 15)
+{
+#endif
+#if defined(_COSMIC_)	
+INTERRUPT void TIM3_UPD_OVF_BRK_IRQHandler(void)
+{
+#endif
+    
+    for(int i = 0; i < Max_INTERRUPT_Calling_Function; i++){
+        (*Intupt_Timer1_ptr_fuc[i])();
+    }
+
+    
+	TIM3_ClearITPendingBit(TIM3_IT_UPDATE);
+	return;
+}
+
+#if 0
 
 /********************************************************************************
 * Timer3 Update/Overflow/Break Interrupt routine.								*
@@ -138,7 +175,7 @@ INTERRUPT void TIM3_UPD_OVF_BRK_IRQHandler(void)
 
 	return;
 }
-
+#endif
 
 
 
