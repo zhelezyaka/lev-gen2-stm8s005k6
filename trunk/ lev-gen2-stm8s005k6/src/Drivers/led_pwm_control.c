@@ -106,16 +106,19 @@ void _Device_Init_Led_Function(void)
 	GPIO_Init(LED5_PORT, LED5_PIN, GPIO_MODE_OUT_PP_LOW_FAST);  // set as output and PP Low level
 }
 
-void _Device_Set_Led_PWM_Function(unsigned char LEDNumBits, unsigned char enable){
+void _Device_Set_Led_PWM_BITs(unsigned char LEDNumBits){
 	TIM1_DeInit();
-    if(enable){
+    if(LEDNumBits != 0){
         TIM1_TimeBaseInit(0, TIM1_COUNTERMODE_UP, _TIM1_Frequency_Prescaler_, 0);
         // turn on , set high
         if(LEDNumBits & LED1){
             /*TIM1_Pulse = CCR1_Val*/
             TIM1_OC1Init(TIM1_OCMODE_PWM1, TIM1_OUTPUTSTATE_ENABLE, TIM1_OUTPUTNSTATE_ENABLE,
-                         _Init_Duty_, TIM1_OCPOLARITY_HIGH, TIM1_OCNPOLARITY_LOW, TIM1_OCIDLESTATE_SET,
+                         _Init_Duty_, TIM1_OCPOLARITY_LOW, TIM1_OCNPOLARITY_HIGH, TIM1_OCIDLESTATE_SET,
                          TIM1_OCNIDLESTATE_RESET); 
+//            TIM1_OC1Init(TIM1_OCMODE_PWM1, TIM1_OUTPUTSTATE_ENABLE, TIM1_OUTPUTNSTATE_ENABLE,
+//                         _Init_Duty_, TIM1_OCPOLARITY_HIGH, TIM1_OCNPOLARITY_LOW, TIM1_OCIDLESTATE_SET,
+//                         TIM1_OCNIDLESTATE_RESET); 
         }
         if(LEDNumBits & LED2){
             /*TIM1_Pulse = CCR2_Val*/
@@ -147,8 +150,8 @@ void _Device_Set_Led_PWM_Function(unsigned char LEDNumBits, unsigned char enable
         TIM1_CtrlPWMOutputs(DISABLE);
         TIM1_Cmd(DISABLE);
         TIM2_Cmd(DISABLE);
-        TIM1_DeInit();
         TIM2_DeInit();
+        TIM1_DeInit();
     }    
 }
 void _Device_Set_Led_PWM_20_Steps(unsigned char steps){
@@ -157,11 +160,13 @@ void _Device_Set_Led_PWM_20_Steps(unsigned char steps){
     if( steps > 10){
         steps = 10 - (steps - 10);
     }
-    if(steps == 0){
-        scaler =0;
+    if(steps <= 0){
+        scaler = 0;
     }else{
         scaler =( _One_Step_Frequency_Prescaler_ * steps ) - 1;
     }
+
+
     
     /* Set the Pulse value */
     TIM1->CCR1H = (uint8_t)(scaler >> 8);
@@ -183,46 +188,119 @@ void _Device_Set_Led_PWM_20_Steps(unsigned char steps){
 
 
 
-void _Device_Set_Led_OnOff(unsigned char LEDNumBits, unsigned char enable)
+void _Device_Set_Led_OnOff_BITs(unsigned char LEDNumBits)
 {
-    if(enable){
         // turn on , set high
-        if(LEDNumBits & LED1){
-            GPIO_WriteHigh(LED1_PORT, LED1_PIN);
-        }
-        if(LEDNumBits & LED2){
-            GPIO_WriteHigh(LED2_PORT, LED2_PIN);
-        }
-        if(LEDNumBits & LED3){
-            GPIO_WriteHigh(LED3_PORT, LED3_PIN);
-        }
-        if(LEDNumBits & LED4){
-            GPIO_WriteHigh(LED4_PORT, LED4_PIN);
-        }
-        if(LEDNumBits & LED5){
-            GPIO_WriteHigh(LED5_PORT, LED5_PIN);
-        }
-    }else{
         // turn off , set low
         if(LEDNumBits & LED1){
+            GPIO_WriteHigh(LED1_PORT, LED1_PIN);
+        }else{
             GPIO_WriteLow(LED1_PORT, LED1_PIN);
         }
         if(LEDNumBits & LED2){
+            GPIO_WriteHigh(LED2_PORT, LED2_PIN);
+        }else{
             GPIO_WriteLow(LED2_PORT, LED2_PIN);
         }
         if(LEDNumBits & LED3){
+            GPIO_WriteHigh(LED3_PORT, LED3_PIN);
+        }else{
             GPIO_WriteLow(LED3_PORT, LED3_PIN);
         }
         if(LEDNumBits & LED4){
+            GPIO_WriteHigh(LED4_PORT, LED4_PIN);
+        }else{
             GPIO_WriteLow(LED4_PORT, LED4_PIN);
         }
         if(LEDNumBits & LED5){
+            GPIO_WriteHigh(LED5_PORT, LED5_PIN);
+        }else{
             GPIO_WriteLow(LED5_PORT, LED5_PIN);
         }
-        
-    }
-    
 }
-
-
+//void _Device_Set_Led_PWM_Function(unsigned char LEDNumBits, unsigned char enable){
+//	TIM1_DeInit();
+//    if(enable){
+//        TIM1_TimeBaseInit(0, TIM1_COUNTERMODE_UP, _TIM1_Frequency_Prescaler_, 0);
+//        // turn on , set high
+//        if(LEDNumBits & LED1){
+//            /*TIM1_Pulse = CCR1_Val*/
+//            TIM1_OC1Init(TIM1_OCMODE_PWM1, TIM1_OUTPUTSTATE_ENABLE, TIM1_OUTPUTNSTATE_ENABLE,
+//                         _Init_Duty_, TIM1_OCPOLARITY_HIGH, TIM1_OCNPOLARITY_LOW, TIM1_OCIDLESTATE_SET,
+//                         TIM1_OCNIDLESTATE_RESET); 
+//        }
+//        if(LEDNumBits & LED2){
+//            /*TIM1_Pulse = CCR2_Val*/
+//            TIM1_OC2Init(TIM1_OCMODE_PWM1, TIM1_OUTPUTSTATE_ENABLE, TIM1_OUTPUTNSTATE_ENABLE,
+//                         _Init_Duty_, TIM1_OCPOLARITY_HIGH, TIM1_OCNPOLARITY_LOW, TIM1_OCIDLESTATE_SET,
+//                         TIM1_OCNIDLESTATE_RESET);
+//        }
+//        if(LEDNumBits & LED3){
+//            /*TIM1_Pulse = CCR3_Val*/
+//            TIM1_OC3Init(TIM1_OCMODE_PWM1, TIM1_OUTPUTSTATE_ENABLE, TIM1_OUTPUTNSTATE_ENABLE,
+//                         _Init_Duty_, TIM1_OCPOLARITY_HIGH, TIM1_OCNPOLARITY_LOW, TIM1_OCIDLESTATE_SET,
+//                         TIM1_OCNIDLESTATE_RESET);
+//        }
+//        if(LEDNumBits & LED4){
+//            /*TIM1_Pulse = CCR4_Val*/
+//            TIM1_OC4Init(TIM1_OCMODE_PWM1, TIM1_OUTPUTSTATE_ENABLE, _Init_Duty_, TIM1_OCPOLARITY_HIGH,
+//                         TIM1_OCIDLESTATE_SET);
+//        }
+//        if(LEDNumBits & LED5){
+//            tim2_PWM_init();
+//        }
+//        /* TIM1 counter enable */
+//        TIM1_Cmd(ENABLE);
+//        /* TIM1 Main Output Enable */
+//        TIM1_CtrlPWMOutputs(ENABLE);
+//        
+//    }else{
+//        // turn off , set low
+//        TIM1_CtrlPWMOutputs(DISABLE);
+//        TIM1_Cmd(DISABLE);
+//        TIM2_Cmd(DISABLE);
+//        TIM1_DeInit();
+//        TIM2_DeInit();
+//    }    
+//}
+//void _Device_Set_Led_OnOff_org(unsigned char LEDNumBits, unsigned char enable)
+//{
+//    if(enable){
+//        // turn on , set high
+//        if(LEDNumBits & LED1){
+//            GPIO_WriteHigh(LED1_PORT, LED1_PIN);
+//        }
+//        if(LEDNumBits & LED2){
+//            GPIO_WriteHigh(LED2_PORT, LED2_PIN);
+//        }
+//        if(LEDNumBits & LED3){
+//            GPIO_WriteHigh(LED3_PORT, LED3_PIN);
+//        }
+//        if(LEDNumBits & LED4){
+//            GPIO_WriteHigh(LED4_PORT, LED4_PIN);
+//        }
+//        if(LEDNumBits & LED5){
+//            GPIO_WriteHigh(LED5_PORT, LED5_PIN);
+//        }
+//    }else{
+//        // turn off , set low
+//        if(LEDNumBits & LED1){
+//            GPIO_WriteLow(LED1_PORT, LED1_PIN);
+//        }
+//        if(LEDNumBits & LED2){
+//            GPIO_WriteLow(LED2_PORT, LED2_PIN);
+//        }
+//        if(LEDNumBits & LED3){
+//            GPIO_WriteLow(LED3_PORT, LED3_PIN);
+//        }
+//        if(LEDNumBits & LED4){
+//            GPIO_WriteLow(LED4_PORT, LED4_PIN);
+//        }
+//        if(LEDNumBits & LED5){
+//            GPIO_WriteLow(LED5_PORT, LED5_PIN);
+//        }
+//        
+//    }
+//    
+//}
 

@@ -52,23 +52,25 @@ void InitLEDDisplay(){
 }
 
 
-void SetLedOnOff(unsigned char LEDNumBits, unsigned char enable){
+void SetLed_DirectIO_BITs(unsigned char LEDNumBits){
+    unsigned int temp = 0;
     LEDNumBits = LEDNumBits & G_All_LED_Bits_Mask;
-    if(enable == 0){
-        _Device_Set_Led_OnOff(LEDNumBits, TurnOff);
-        G_LED_Interface_Status1 &= ~LEDNumBits;
-    }else{
-        _Device_Set_Led_OnOff(LEDNumBits, TurnOn);
-        G_LED_Interface_Status1 |= LEDNumBits;
-    }    
+    temp = LEDNumBits;
+    
+    G_LED_Interface_Status1 = G_LED_Interface_Status1 & 0xff00;
+    G_LED_Interface_Status1 |= temp;
+
+    _Device_Set_Led_OnOff_BITs((unsigned char)G_LED_Interface_Status1);
 }
 
 void SetLedLightOnFlag(unsigned char LEDNumBits, unsigned char enable){
+    unsigned int temp = 0;
     LEDNumBits = LEDNumBits & G_All_LED_Bits_Mask;
+    temp = LEDNumBits;
     if(enable == 0){
-        G_LED_Interface_Status1 &= ~(LEDNumBits << 8);
+        G_LED_Interface_Status1 &= ~(temp << 8);
     }else{
-        G_LED_Interface_Status1 |= (LEDNumBits << 8);
+        G_LED_Interface_Status1 |= (temp << 8);
     }    
 }
 
@@ -82,14 +84,19 @@ void SetLedBlinkFlag(unsigned char LEDNumBits, unsigned char enable){
 }
 
 void SetLedPWMFunction(unsigned char LEDNumBits, unsigned char enable){
+    unsigned int temp = 0;
     LEDNumBits = LEDNumBits & G_All_LED_Bits_Mask;
-    if(enable == 0){
-        _Device_Set_Led_PWM_Function(LEDNumBits, TurnOff);
-        G_LED_Interface_Status2 &= ~(LEDNumBits << 8);
+    temp = LEDNumBits;
+    
+    if(enable){
+        //turn on
+        G_LED_Interface_Status2 |= (temp << 8);
     }else{
-        _Device_Set_Led_PWM_Function(LEDNumBits, TurnOn);
-        G_LED_Interface_Status2 |= (LEDNumBits << 8);
+        //turn off
+        G_LED_Interface_Status2 &= ~(temp << 8);
     }
+    _Device_Set_Led_PWM_BITs((unsigned char)(G_LED_Interface_Status2 >> 8));
+    
 }
 void SetLedPWM20Steps(unsigned char PWM_Steps){
     //LEDNumBits = LEDNumBits & G_All_LED_Bits_Mask;
@@ -247,3 +254,83 @@ void SetADPSOC(unsigned char enable){
 }
 // Adapter SOC  : (section stop)	
 ////////////////////////////////////////////
+////////////////////////////////////////////
+// Uart2  : (section start)	
+#define Uart_Send_Error_Code    0x0080
+#define Slave_Address           0x48
+#define Read_funcition_code     0x03
+#define Write_funcition_code    0x04
+
+void InitUARTFunction(){
+    _Device_Init_Uart();
+    
+    _Device_Set_Uart_Receive_Fram_Data_Calling_Function(ReceiveDataParsing);
+    _Device_Set_Uart_RX_Interrupt(TurnOn);
+}
+void Set_Uart_RX_Interrupt(unsigned char enable){
+    _Device_Set_Uart_RX_Interrupt(enable);
+}
+void UART_Send_Word_CRC(unsigned int *sendData, unsigned int length){
+	unsigned int i, usCRC16;
+    if(length > GVarArraySize){
+        length = GVarArraySize;
+    }
+	for(i = 0; i < length; i++){
+        G_Communication_Array[i] = (*(sendData + i));
+    }
+    
+    /* Calculate CRC16 checksum for Modbus-Serial-Line-PDU. */
+    usCRC16 = usMBCRC16( ( unsigned char * ) G_Communication_Array, length * 2 );
+    G_Communication_Array[length + 1] = usCRC16;
+//        /* Calculate CRC16 checksum for Modbus-Serial-Line-PDU. */
+//        usCRC16 = usMBCRC16( ( UCHAR * ) pucSndBufferCur, usSndBufferCount );
+//        ucRTUBuf[usSndBufferCount++] = ( UCHAR )( usCRC16 & 0xFF );
+//        ucRTUBuf[usSndBufferCount++] = ( UCHAR )( usCRC16 >> 8 );
+    
+    _Device_Uart_Send_Byte(( unsigned char * ) G_Communication_Array, length * 2 + 2); // send high byte first, send low byte second
+}
+
+
+void ReceiveDataParsing(unsigned char *receiveData, unsigned int length){
+	unsigned int i, usCRC16;
+    
+    if(length > GVarArraySize + GVarArraySize){
+        length = GVarArraySize + GVarArraySize;
+    }
+	for( i = 0; i < length; i++){
+        ((unsigned char *)G_Communication_Array)[i] = (*(receiveData + i));
+    }
+    
+    /* Calculate CRC16 checksum for Modbus-Serial-Line-PDU. */
+    usCRC16 = usMBCRC16( ( unsigned char * ) G_Communication_Array, length - 2 );
+    
+    if(     (( unsigned char )( usCRC16 & 0xFF )) != ((unsigned char *)G_Communication_Array)[length - 2] ||
+            (( unsigned char )( usCRC16 >> 8 ))  != ((unsigned char *)G_Communication_Array)[length - 1]){
+          // CRC16 checksum fail
+          G_Communication_Array[0] = Uart_Send_Error_Code;
+          UART_Send_Word_CRC(G_Communication_Array, 1);
+          return;
+    }
+    
+}
+
+
+
+// Uart2  : (section stop)	
+////////////////////////////////////////////
+
+
+////////////////////////////////////////////
+////////////////////////////////////////////
+////////////////////////////////////////////
+void device_function_test(){ 
+//    SetLed_DirectIO_OnOff(LED2, TurnOn);
+//    SetLed_DirectIO_OnOff(LED2, TurnOff);
+}
+void device_function_test1(){
+    _Device_uart_tim4_init();
+    _Device_Set_Function_to_Timer_counter(10, device_function_test);
+}
+void device_function_test2(){
+    _Device_Set_Function_to_Timer_counter(6, device_function_test);
+}

@@ -85,7 +85,7 @@ INTERRUPT void EXTI_PORTE_IRQHandler(void)
     
 	//debounce
     //aa = GPIO_ReadInputPin(BUTTON_PORT, BUTTON_PIN);
-	delay_cycles(5);	//100us at 4MHz
+	delay_cycles(5);	//90us at 4MHz
 	if(GPIO_ReadInputPin(BUTTON_PORT, BUTTON_PIN) != RESET)
 	{ // press
         (*Intupt_Button_ptr_fuc)();

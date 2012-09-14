@@ -1544,31 +1544,16 @@
       <name>$PROJ_DIR$\..\src\Drivers\led_pwm_control.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\src\Drivers\lev_device_define.h</name>
-      <excluded>
-        <configuration>Debug</configuration>
-      </excluded>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\src\Drivers\Modbus_CRC.c</name>
-      <excluded>
-        <configuration>Debug</configuration>
-      </excluded>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\src\Drivers\mosfet_control.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\Drivers\timer3.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\src\Drivers\timer4_8bit.c</name>
-      <excluded>
-        <configuration>Debug</configuration>
-      </excluded>
+      <name>$PROJ_DIR$\..\src\Drivers\uart2.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\src\Drivers\uart2.c</name>
+      <name>$PROJ_DIR$\..\src\Drivers\Uart_timer4_8bit.c</name>
     </file>
   </group>
   <group>
@@ -1598,6 +1583,9 @@
       </file>
     </group>
     <file>
+      <name>$PROJ_DIR$\..\src\communication.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\src\Driver_Common_interface.c</name>
     </file>
     <file>
@@ -1617,6 +1605,9 @@
       <excluded>
         <configuration>Debug</configuration>
       </excluded>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\src\Modbus_CRC.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\Module_Driver_Define.h</name>

@@ -24,6 +24,7 @@
 #define LED_Blink_OnOffInterval_CycleTimes      10  //unit:cycles , 500 ms = LED_Blink_OnOffInterval_CycleTimes * TimerIntervalTimeBase_MS
 #define Button_Click_CycleTimes                 12  //unit:cycles ,  600 ms = Button_Click_CycleTimes * TimerIntervalTimeBase_MS
 #define Button_Long_Press_CycleTimes            100 //unit:cycles , 5 sec = Button_Long_Press_CycleTimes * TimerIntervalTimeBase_MS
+
 #define OC_PROTECTION_CycleTimes                100 //unit:cycles , 5 sec = OC_PROTECTION_CycleTimes * TimerIntervalTimeBase_MS
 #define COC_RELEASE_HOLDING_CycleTimes          20  //unit:cycles , 1 sec = COC_RELEASE_HOLDING_CycleTimes * TimerIntervalTimeBase_MS
 
@@ -55,7 +56,6 @@ static unsigned char DOC_ReleaseCounter;
 static unsigned char COC_ReleaseCounter;
 static unsigned char COC_ReleaseHoldingCounter;
 
-static unsigned char temp;
 /********************************************************************************
 * 															                    *
 ********************************************************************************/
@@ -69,12 +69,9 @@ void InitTimerPollingVariables(){
     COC_ReleaseCounter = 0;
     COC_ReleaseHoldingCounter = 0;
     
-    InitTimer1Function();
-
+//    InitTimer1Function();
+//    Set_Interrupt_Timer1_Calling_Function(1, TimerCounterForPolling);
     
-    Set_Interrupt_Timer1_Calling_Function(1, TimerCounterForPolling);
-    
-    temp = 0;
 }
 /********************************************************************************
 * 															                    *
@@ -83,12 +80,12 @@ void InitTimerPollingVariables(){
 void TimerCounterForPolling(){
     
 //    if(temp == 0){
-//        SetLedOnOff(LED1, TurnOn);
+//        SetLed_DirectIO_OnOff(LED1, TurnOn);
 //    }else{
-//        SetLedOnOff(LED1, TurnOff);
+//        SetLed_DirectIO_OnOff(LED1, TurnOff);
 //    }
 //    temp ^= 0x01;
-    return;
+    //return;
     
     
     unsigned temp_char1, temp_char2;
@@ -100,7 +97,7 @@ void TimerCounterForPolling(){
             LED_PWM_One_step_Cycle_Counter = 0;
             SetLedPWM20Steps(LED_PWM_Steps);
             LED_PWM_Steps++;
-            if(LED_PWM_Steps >= LED_PWM_Whole_Steps){
+            if(LED_PWM_Steps > LED_PWM_Whole_Steps){
                 LED_PWM_Steps = 0;
                 SetLedPWMFunction(temp_char1, TurnOff);
             }
@@ -121,9 +118,9 @@ void TimerCounterForPolling(){
     //Blinking
     if(temp_char2 > 0){
         if(LED_Blink_inverse_Flag == 0){
-            SetLedOnOff(temp_char2, TurnOn);
+            SetLed_DirectIO_BITs(temp_char2);
         }else{
-            SetLedOnOff(temp_char2, TurnOff);
+            SetLed_DirectIO_BITs(0);
         }
         LED_Blink_inverse_Flag ^= 0x01;
     }
@@ -134,9 +131,9 @@ void TimerCounterForPolling(){
     //get light on flag excluding PWM and Blink flag  : (section start)
     temp_char1 = (temp_char1 | temp_char2) ^ (unsigned char)(G_LED_Interface_Status1 >> 8);
     if(temp_char1 > 0){
-        SetLedOnOff(temp_char1, TurnOn);
+        SetLed_DirectIO_BITs(temp_char1);
     }else{
-        SetLedOnOff(G_All_LED_Bits_Mask, TurnOn);
+        SetLed_DirectIO_BITs(0);
     }
     //get light on flag excluding PWM and Blink flag  : (section stop)
     //////////////////////////////////////////////////////////////////////////

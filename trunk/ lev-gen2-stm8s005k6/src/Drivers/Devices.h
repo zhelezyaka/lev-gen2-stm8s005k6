@@ -1,7 +1,33 @@
 
+/********************************************************************************
+* Include																		*
+********************************************************************************/
+
+//#include "stm8s.h"
+
+/********************************************************************************
+* Define																*
+********************************************************************************/
+#define true            1
+#define false           0
 
 #define Disable     0
 #define Enable      1
+/********************************************************************************
+* Enum Define																*
+********************************************************************************/
+enum Device_Enable
+{
+  DeviceOff,
+  DeviceOn
+};
+/********************************************************************************
+* Golbal Variable																*
+********************************************************************************/
+
+/********************************************************************************
+* Control Bits Define															*
+********************************************************************************/
 
 /********************************************************************************
 * Extern Function for Device													*
@@ -31,10 +57,10 @@ void _Device_System_clk_setup();
 //void tim2_init(void);
 // LED control (checked)
 void _Device_Init_Led_Function();
-void _Device_Set_Led_PWM_Function(unsigned char LEDNumBits, unsigned char enable);
+void _Device_Set_Led_PWM_BITs(unsigned char LEDNumBits);
 void _Device_Set_Led_PWM_20_Steps(unsigned char steps);
-void _Device_Set_Led_OnOff(unsigned char LEDNumBits, unsigned char enable);
-void _Device_Set_Led_LightOnOff(unsigned char LEDNumCode, unsigned char enable);
+void _Device_Set_Led_OnOff_BITs(unsigned char LEDNumBits);
+//void _Device_Set_Led_LightOnOff(unsigned char LEDNumCode, unsigned char enable);
 /********************************************************************************
 * Mos Fet Control_init															*
 ********************************************************************************/
@@ -117,7 +143,11 @@ void _Device_Set_ADP_SOC(unsigned char enable);
 ********************************************************************************/
 void _Device_Init_Uart(void);
 void _Device_Set_Uart_RX_Interrupt(unsigned char enable);
-void _Device_Uart_Send_Data(unsigned int *sendData, unsigned char length);
-void _Device_Set_Interrupt_Uart_Receive_Calling_Function(void (*calling_fun)(unsigned char receiveData));
-void _Device_Remove_Interrupt_Uart_Receive_Calling_Function();
+void _Device_Uart_Send_Byte(unsigned char *sendByte, unsigned int length);
+void _Device_Set_Uart_Receive_Fram_Data_Calling_Function(void (*calling_fun)(unsigned char *receiveData, unsigned int length));
+void _Device_Remove_Interrupt_Uart_Receive_Frame_Calling_Function();
+//////// four urat data fram
+void _Device_uart_tim4_init(void);
+void _Device_Set_Function_to_Timer_counter(unsigned int count, void (*counterFinishCallingFun)(void));
+void _Device_Set_Uart_Timer_Disable();
 

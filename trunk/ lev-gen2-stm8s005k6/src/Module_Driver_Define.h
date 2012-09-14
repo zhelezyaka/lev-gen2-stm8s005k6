@@ -16,6 +16,14 @@ enum forLEDNumberBits
     LED4 = 0x08,
     LED5 = 0x10
 };
+//enum forLEDNumberCodes
+//{
+//    LED1,
+//    LED2,
+//    LED3,
+//    LED4,
+//    LED5
+//};
 #define LEDNumbers              5
 //#define All_LED_Bits_Mask       (2^LEDNumbers) // 2^LEDNumbers - 1
 //#define All_LED_Bits_Mask       0x0f  // 2^LEDNumbers - 1
@@ -30,7 +38,7 @@ enum forLEDNumberBits
 /* For G_LED_Interface_Status1 ; unsigned int */
 //LED showing priority : PWM > Blink > Light ON
 //Low byte
-#define LED1_Control    (0x0001)    //
+#define LED1_Control    (0x0001)    //Direct I/O On Off , it's control by Timer polling , not user
 #define LED2_Control    (0x0002)    //
 #define LED3_Control    (0x0004)    //
 #define LED4_Control    (0x0008)    //
@@ -134,7 +142,7 @@ void System_clk_setup();
 
 extern unsigned char G_All_LED_Bits_Mask;
 void InitLEDDisplay();
-void SetLedOnOff(unsigned char LEDNumBits, unsigned char enable);
+void SetLed_DirectIO_BITs(unsigned char LEDNumBits);
 void SetLedLightOnFlag(unsigned char LEDNumBits, unsigned char enable);
 void SetLedBlinkFlag(unsigned char LEDNumBits, unsigned char enable);
 void SetLedPWMFunction(unsigned char LEDNumBits, unsigned char enable);
@@ -181,8 +189,15 @@ void delay_cycles(unsigned long cycleCount);
 void InitAdapterOutputSignal(void);
 void SetADPSOC(unsigned char enable);
 
+void InitUARTFunction();
+void Set_Uart_RX_Interrupt(unsigned char enable);
+void UART_Send_Word_CRC(unsigned int *sendData, unsigned int length);
+void ReceiveDataParsing(unsigned char *receiveData, unsigned int length);
+unsigned int usMBCRC16( unsigned char * pucFrame, unsigned int usLen );
 
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+void device_function_test1();
+void device_function_test2();
 
 
 
