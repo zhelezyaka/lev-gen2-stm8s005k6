@@ -30,6 +30,8 @@ extern unsigned int Calibration_Func(void);
 ********************************************************************************/
 
 unsigned int G_Var_Array[GVarArraySize];
+unsigned int G_Communication_Array[GVarArraySize + 1];
+
 //unsigned char c1,c1,c2,c4;
 //unsigned int test_a[200];
 //unsigned int temp_i;
@@ -52,10 +54,10 @@ main()
 #if _INITIAL_1_Sec_Delay_ > 0
   //delay 2 sec
   for(int i = 0; i < 1000;i++){
-	delay_cycles(50);	//1ms at 4MHz
+      delay_cycles(100); //about 960us at 4MHz
   }
 #else
-	//delay_cycles(50);	//1ms at 4MHz
+      //delay_cycles(100); //about 960us at 4MHz
 #endif
 
 

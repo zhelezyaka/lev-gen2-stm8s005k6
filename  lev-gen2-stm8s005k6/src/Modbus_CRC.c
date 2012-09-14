@@ -65,3 +65,9 @@ unsigned int usMBCRC16( unsigned char * pucFrame, unsigned int usLen )
     }
     return ( unsigned int )( ucCRCHi << 8 | ucCRCLo );
 }
+
+
+//        /* Calculate CRC16 checksum for Modbus-Serial-Line-PDU. */
+//        usCRC16 = usMBCRC16( ( UCHAR * ) pucSndBufferCur, usSndBufferCount );
+//        ucRTUBuf[usSndBufferCount++] = ( UCHAR )( usCRC16 & 0xFF );
+//        ucRTUBuf[usSndBufferCount++] = ( UCHAR )( usCRC16 >> 8 );

@@ -30,103 +30,139 @@
 unsigned int FirstInitial_Func(){
 	
 	System_clk_setup();
+    InitMosControl();
 	InitLEDDisplay();
 
-//    SetLedOnOff(LED1, TurnOn);
-//    SetLedOnOff(LED2, TurnOn);
-//    SetLedOnOff(LED3, TurnOn);
-//    SetLedOnOff(LED4, TurnOn);
-//    SetLedOnOff(LED5, TurnOn);
+//    SetLed_DirectIO_OnOff(LED1, TurnOn);
+//    SetLed_DirectIO_OnOff(LED2, TurnOn);
+//    SetLed_DirectIO_OnOff(LED3, TurnOn);
+//    SetLed_DirectIO_OnOff(LED4, TurnOn);
+//    SetLed_DirectIO_OnOff(LED5, TurnOn);
 
 	// Initialize LEDs
-	//InitLEDPort(); 
-	//InitBlinkLEDs();
 	
 	//Setup_USI_Slave();
 	
-	
-	delay_cycles(10);	//200us at 4MHz
-	delay_cycles(20);	//400us at 4MHz
-	delay_cycles(30);	//600us at 4MHz
-	delay_cycles(40);	//800us at 4MHz
-	delay_cycles(50);	//1ms at 4MHz
+      delay_cycles(5);  //about 90us at 4MHz
+      delay_cycles(10); //about 132us at 4MHz
+      delay_cycles(20); //about 224us at 4MHz
+      delay_cycles(30); //about 318us at 4MHz
+      delay_cycles(40); //about 410us at 4MHz
+      delay_cycles(50); //about 502us at 4MHz
+      delay_cycles(100); //about 960us at 4MHz
+      delay_cycles(100); //about 960us at 4MHz
+      delay_cycles(100); //about 960us at 4MHz
 	
 	
   return StartUp;
 }
 
+unsigned char inverse_led1_flag = 0;
+unsigned char inverse_led2_flag = 0;
 
 unsigned int Startup_Func()
 {
   
 	//Initialization
 	disableInterrupts();  /* disable interrupts */
-	//_DINT();
-	// Initialize LEDs
-	//InitLEDPort();
-	//InitBlinkLEDs();
+
 	
 	G_Module_Status = 0;
     G_Auxiliary_Module_Status = 0;
 	G_SystemFailureStatus = 0;
+    G_LED_Interface_Status1 = 0;
+    G_LED_Interface_Status2 = 0;
     G_Device_Interface_Status1 = 0;
     G_Add_Device_Interface_Status = 0;
-	
-	
-//	LED_test_init();
-//	//tim4_init();
-//	tim3_init();
-//	
-//	button_init();
-//	uart_init();
-//    adc_init();
-	
-	delay_cycles(50);	//1ms at 4MHz
-	delay_cycles(50);	//1ms at 4MHz
-	delay_cycles(50);	//1ms at 4MHz
- 
-  
-  
-	//Setup_USI_Slave();
-	//InitTimerA();
-	//InitButton();
-	//Enable_SW_Interrupt(true);
-	
-	//InitAdcReader();
-	//InitInputSignalGetting();
-	//InitMosControl();
-	
-	//_EINT();
-	//enableInterrupts();  /* enable interrupts */
-	
-	//StartAdcConversion();
-	
 
-	//return ShippingMode;
-	//InitCoulombCounter();
+ 
+    G_DSG_Current_ADC = 0;
+    G_CHG_Current_ADC = 0;
+    G_VBAT_ADC = 0;
+    G_TH1_ADC = 0;
+    G_TH2_ADC = 0;
+
 	
-	//StartAdcConversion();  
-	//MOSFET Fail Check
-	//  if( GetADCValue(IDSG_ADC) > ADC_DETECT_CURRENT_OF_DSG_STATUS ||
-	//      GetADCValue(ICHG_ADC) > ADC_DETECT_CURRENT_OF_CHG_STATUS ){
-	//      G_uc_SystemFailureCode = MOSFETFail;
-	//      setBlinkLED(SystemFailBlinkLED, true);
-	//      return FailureMode;
-	//    }
-    
-    InitTimerPollingVariables();
-    
-    InitButtonEvent();
-    
-    InitADCFunction();
-    //Set_Interrupt_ADC_Conversion_Finish_Function(ProtectionForPolling);
-    
+	InitLEDDisplay();
     InitMosControl();
-    InitAdapterOutputSignal();
+    InitButtonEvent();
+    InitInputSignalPin();
+  
     delay_cycles(5);
+    InitAdapterOutputSignal();
+    InitUARTFunction();
+    
+    /////////////////////////////////
+    InitSubPollingProtectionVariables();
+    InitADCFunction();
+    Set_Interrupt_ADC_Conversion_Finish_Function(ProtectionForPolling); //wait for startAdcConversion()
+    
+    /////////////////////////////////
+    InitTimerPollingVariables();
+    InitTimer1Function();
+    
 
     
 	enableInterrupts();  /* enable interrupts */
+    
+    Set_Interrupt_Timer1_Calling_Function(1, TimerCounterForPolling);
+    Set_Interrupt_Timer1_Calling_Function(2, startAdcConversion);
+    //startAdcConversion();
+    
+    
+    inverse_led1_flag = 0;
+    inverse_led2_flag = 0;
+    while(1){
+        //wfi();  /* Wait For Interrupt */
+        
+        if(G_Device_Interface_Status1 & BUTTON_CLICK){
+            G_Device_Interface_Status1 &= ~BUTTON_CLICK;
+            
+            if(inverse_led1_flag == 0){
+                SetLedPWMFunction(LED1, TurnOn);
+                //SetLedLightOnFlag(LED1, TurnOn);
+            }else{
+                SetLedPWMFunction(LED1, TurnOff);
+                //SetLedLightOnFlag(LED1, TurnOff);
+            }
+            inverse_led1_flag ^= 0x01;
+        }
+        
+        if(G_Device_Interface_Status1 & BUTTON_LONG_PRESS){
+            G_Device_Interface_Status1 &= ~BUTTON_LONG_PRESS;
+            
+            if(inverse_led2_flag == 0){
+                SetLedLightOnFlag(LED2, TurnOn);
+            }else{
+                SetLedLightOnFlag(LED2, TurnOff);
+            }
+            inverse_led2_flag ^= 0x01;
+        }
+        
+        //SetLedPWMFunction(0x1f, TurnOn);
+        //SetLed_DirectIO_OnOff(LED2, TurnOn);
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        delay_cycles(5);  //about 90us at 4MHz
+        delay_cycles(10); //about 132us at 4MHz
+        delay_cycles(20); //about 224us at 4MHz
+        delay_cycles(30); //about 318us at 4MHz
+        delay_cycles(40); //about 410us at 4MHz
+        delay_cycles(50); //about 502us at 4MHz
+        delay_cycles(100); //about 960us at 4MHz
+        delay_cycles(100); //about 960us at 4MHz
+        delay_cycles(100); //about 960us at 4MHz
+        for(int i = 0; i < 10;i++){
+            //delay_cycles(100); //about 960us at 4MHz
+        }        
+    }//while(1);
     
 //    while(1){
 //    SetLedPWMFunction(0x1f, TurnOn);
@@ -151,27 +187,15 @@ unsigned int Startup_Func()
 //            delay_cycles(ddelay);
 //        }
 //    }
-    while(1){
-      delay_cycles(5);  //about 90us at 4MHz
-      delay_cycles(10); //about 132us at 4MHz
-      delay_cycles(20); //about 224us at 4MHz
-      delay_cycles(30); //about 318us at 4MHz
-      delay_cycles(40); //about 410us at 4MHz
-      delay_cycles(50); //about 502us at 4MHz
-      delay_cycles(100); //about 960us at 4MHz
-      
-      SetLedOnOff(LED2, TurnOn);
-      startAdcConversion();
-      SetLedOnOff(LED2, TurnOff);
-    };
+
     
-unsigned char temp = 0;
-    if(temp == 0){
-        SetLedOnOff(LED1, TurnOn);
-    }else{
-        SetLedOnOff(LED1, TurnOff);
-    }
-    temp ^= 0x01;
+//unsigned char temp = 0;
+//    if(temp == 0){
+//        SetLed_DirectIO_OnOff(LED1, TurnOn);
+//    }else{
+//        SetLed_DirectIO_OnOff(LED1, TurnOff);
+//    }
+//    temp ^= 0x01;
     
     return NormalMode;
 }

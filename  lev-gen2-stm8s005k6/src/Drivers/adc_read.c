@@ -126,7 +126,7 @@ void _Device_Get_ADC_Conversion_Values(unsigned int *valueArray, unsigned char l
 INTERRUPT void ADC1_IRQHandler(void)
 {
 #endif
-        GPIO_WriteHigh(LED1_PORT, LED1_PIN);
+        //GPIO_WriteHigh(LED1_PORT, LED1_PIN);
 	    ADC1_ClearITPendingBit(ADC1_IT_EOC);  //clear end of conversion flag, for one signal channel
     
     if(adc_second_scan_flag == 0){
@@ -148,6 +148,6 @@ INTERRUPT void ADC1_IRQHandler(void)
 
     }
   
-        GPIO_WriteLow(LED1_PORT, LED1_PIN);
+        //GPIO_WriteLow(LED1_PORT, LED1_PIN);
 	return;
 }
