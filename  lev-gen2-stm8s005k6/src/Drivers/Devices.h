@@ -8,8 +8,6 @@
 /********************************************************************************
 * Define																*
 ********************************************************************************/
-#define true            1
-#define false           0
 
 #define Disable     0
 #define Enable      1
@@ -58,7 +56,8 @@ void _Device_System_clk_setup();
 // LED control (checked)
 void _Device_Init_Led_Function();
 void _Device_Set_Led_PWM_BITs(unsigned char LEDNumBits);
-void _Device_Set_Led_PWM_20_Steps(unsigned char steps);
+void _Device_Set_Led_PWM_20_Steps(unsigned char LEDNumBits, unsigned char steps);
+//void _Device_Set_Led_PWM_20_Steps(unsigned char steps);
 void _Device_Set_Led_OnOff_BITs(unsigned char LEDNumBits);
 //void _Device_Set_Led_LightOnOff(unsigned char LEDNumCode, unsigned char enable);
 /********************************************************************************
@@ -141,12 +140,17 @@ void _Device_Set_ADP_SOC(unsigned char enable);
 /********************************************************************************
 * Uart2 Init																	*
 ********************************************************************************/
+#define URAT_TX_Setting_PORT	GPIOD
+#define URAT_TX_Setting_PIN	    GPIO_PIN_3
+
 void _Device_Init_Uart(void);
 void _Device_Set_Uart_RX_Interrupt(unsigned char enable);
 void _Device_Uart_Send_Byte(unsigned char *sendByte, unsigned int length);
 void _Device_Set_Uart_Receive_Fram_Data_Calling_Function(void (*calling_fun)(unsigned char *receiveData, unsigned int length));
 void _Device_Remove_Interrupt_Uart_Receive_Frame_Calling_Function();
-//////// four urat data fram
+//////// four urat I/O Control TX/RX
+
+//////// four urat data frame
 void _Device_uart_tim4_init(void);
 void _Device_Set_Function_to_Timer_counter(unsigned int count, void (*counterFinishCallingFun)(void));
 void _Device_Set_Uart_Timer_Disable();

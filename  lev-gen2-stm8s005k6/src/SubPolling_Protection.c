@@ -207,7 +207,7 @@ void ProtectionForPolling(){
 //        CHGMosFet_Fail_Counter = 0;
 //      }
  
-      
+ //ADC_BATTERY_OV_RELEASE     
     /////////////////////////////////////////////////////////////////////////////////////////////
     // checking if it's Battery OV
     if(((G_Module_Status & Module_BAT_OV)==0) && G_VBAT_ADC >= ADC_BATTERY_OV_PROTECTION){
@@ -219,18 +219,31 @@ void ProtectionForPolling(){
     }else{
     Battery_OV_Counter = 0;
     }      
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // release Battery OV if it's Battery OV
+    if((G_Module_Status & Module_BAT_OV) && G_VBAT_ADC < ADC_BATTERY_OV_RELEASE){
+      G_Module_Status &= ~Module_BAT_OV;
+      Battery_OV_Counter = 0;
+    }
+ 
     
     /////////////////////////////////////////////////////////////////////////////////////////////
     // checking if it's Battery UV
-    if(((G_Module_Status & Module_BAT_UV)==0) && G_VBAT_ADC >= ADC_BATTERY_UV_PROTECTION){
+    if(((G_Module_Status & Module_BAT_UV)==0) && G_VBAT_ADC <= ADC_BATTERY_UV_PROTECTION){
     Battery_UV_Counter++;
     if(Battery_UV_Counter >= Battery_UV_Protection_Delay_Cycle){
       G_Module_Status |= Module_BAT_UV;
       Battery_UV_Counter = 0;
-    }//if(((G_Module_Status & Module_BAT_UV)==0) && G_VBAT_ADC >= ADC_BATTERY_UV_PROTECTION){
+    }//if(((G_Module_Status & Module_BAT_UV)==0) && G_VBAT_ADC <= ADC_BATTERY_UV_PROTECTION){
     }else{
     Battery_UV_Counter = 0;
     }      
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // release Battery UV if it's Battery UV
+    if((G_Module_Status & Module_BAT_UV) && G_VBAT_ADC > ADC_BATTERY_UV_RELEASE){
+      G_Module_Status &= ~Module_BAT_UV;
+      Battery_UV_Counter = 0;
+    }
     
     /////////////////////////////////////////////////////////////////////////////////////////////
     //Cell OV/UV protection and release

@@ -91,18 +91,50 @@ void SetLedPWMFunction(unsigned char LEDNumBits, unsigned char enable){
     if(enable){
         //turn on
         G_LED_Interface_Status2 |= (temp << 8);
+        _Device_Set_Led_PWM_BITs((unsigned char)(G_LED_Interface_Status2 >> 8));
     }else{
         //turn off
         G_LED_Interface_Status2 &= ~(temp << 8);
+        _Device_Set_Led_PWM_BITs(0);
     }
-    _Device_Set_Led_PWM_BITs((unsigned char)(G_LED_Interface_Status2 >> 8));
+    //_Device_Set_Led_PWM_BITs((unsigned char)(G_LED_Interface_Status2 >> 8));
     
 }
 void SetLedPWM20Steps(unsigned char PWM_Steps){
     //LEDNumBits = LEDNumBits & G_All_LED_Bits_Mask;
-    _Device_Set_Led_PWM_20_Steps(PWM_Steps);
+    _Device_Set_Led_PWM_20_Steps((unsigned char)(G_LED_Interface_Status2 >> 8), PWM_Steps);
 }
 
+void SetLedSerialTurnOnOff(unsigned char enable){
+    unsigned char i, bit;
+    SetLedPWMFunction(G_All_LED_Bits_Mask, TurnOff);
+    SetLedBlinkFlag(G_All_LED_Bits_Mask, TurnOff);
+    SetLedLightOnFlag(G_All_LED_Bits_Mask, TurnOff);
+        
+    if(enable){
+        //turn on
+        bit=0;
+        for(i=0; i < LEDNumbers; i++){
+            bit = (bit << 1) + 1;
+            SetLedLightOnFlag(bit, TurnOn);
+            for(int j = 0; j < 1000;j++){
+                delay_cycles(100); //about 960us at 4MHz
+            }
+        }
+        SetLedLightOnFlag(G_All_LED_Bits_Mask, TurnOff);
+    }else{
+        bit=G_All_LED_Bits_Mask;
+        SetLedLightOnFlag(bit, TurnOn);
+        for(i=0; i < LEDNumbers; i++){
+            SetLedLightOnFlag(~bit, TurnOff);
+            bit = (bit >> 1);
+            for(int j = 0; j < 1000;j++){
+                delay_cycles(100); //about 960us at 4MHz
+            }
+        }
+        SetLedLightOnFlag(G_All_LED_Bits_Mask, TurnOff);
+    }
+}
 // LED function  : (section stop)
 //////////////////////////////////////////////////
 
@@ -270,8 +302,10 @@ void InitUARTFunction(){
 void Set_Uart_RX_Interrupt(unsigned char enable){
     _Device_Set_Uart_RX_Interrupt(enable);
 }
-void UART_Send_Word_CRC(unsigned int *sendData, unsigned int length){
-	unsigned int i, usCRC16;
+void UART_Send_Word_CRC(unsigned int *sendData, unsigned int length, unsigned char enable_with_PrecedingCode){
+	unsigned int sendingLength, usCRC16;
+    int i;
+    
     if(length > GVarArraySize){
         length = GVarArraySize;
     }
@@ -281,13 +315,26 @@ void UART_Send_Word_CRC(unsigned int *sendData, unsigned int length){
     
     /* Calculate CRC16 checksum for Modbus-Serial-Line-PDU. */
     usCRC16 = usMBCRC16( ( unsigned char * ) G_Communication_Array, length * 2 );
-    G_Communication_Array[length + 1] = usCRC16;
+    G_Communication_Array[length] = usCRC16;
+    sendingLength = (length + 1) * 2;
+    if(enable_with_PrecedingCode){
+        //shift two arrays back
+        for(i = length; i >= 0; i--){
+            G_Communication_Array[i + 2] = G_Communication_Array[i];
+        }
+        
+        G_Communication_Array[0] = PrecedingCheckCode;
+        G_Communication_Array[1] = PrecedingCheckCode;
+        G_Communication_Array[length + 2 + 1] = EndCheckCode;
+        G_Communication_Array[length + 2 + 2] = EndCheckCode;
+        sendingLength = (length + 1 + 2 + 2) * 2;
+    }//if(enable_with_PrecedingCode){
+    
 //        /* Calculate CRC16 checksum for Modbus-Serial-Line-PDU. */
 //        usCRC16 = usMBCRC16( ( UCHAR * ) pucSndBufferCur, usSndBufferCount );
 //        ucRTUBuf[usSndBufferCount++] = ( UCHAR )( usCRC16 & 0xFF );
 //        ucRTUBuf[usSndBufferCount++] = ( UCHAR )( usCRC16 >> 8 );
-    
-    _Device_Uart_Send_Byte(( unsigned char * ) G_Communication_Array, length * 2 + 2); // send high byte first, send low byte second
+    _Device_Uart_Send_Byte(( unsigned char * ) G_Communication_Array, sendingLength); // send high byte first, send low byte second
 }
 
 
@@ -308,9 +355,12 @@ void ReceiveDataParsing(unsigned char *receiveData, unsigned int length){
             (( unsigned char )( usCRC16 >> 8 ))  != ((unsigned char *)G_Communication_Array)[length - 1]){
           // CRC16 checksum fail
           G_Communication_Array[0] = Uart_Send_Error_Code;
-          UART_Send_Word_CRC(G_Communication_Array, 1);
+          UART_Send_Word_CRC(G_Communication_Array, 1, false);
           return;
     }
+
+
+
     
 }
 

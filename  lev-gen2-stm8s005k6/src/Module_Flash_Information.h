@@ -88,9 +88,9 @@
 // 理論值 = 實際值 - Offset
 ////////////////////////////////////////////////////////////////
 #define ADC_BATTERY_OV_PROTECTION             721 // 42.5V; unit: 10mV; 2bytes; 2nd level BATTERY OV PROTECTION
-//#define ADC_BATTERY_OV_RELEASE                704 // 41.5V; unit: 10mV; 2bytes; 2nd level BATTERY OV RELEASE
+#define ADC_BATTERY_OV_RELEASE                704 // 41.5V; unit: 10mV; 2bytes; 2nd level BATTERY OV RELEASE
 #define ADC_BATTERY_UV_PROTECTION             475 // 28V; unit: 10mV; 2bytes; 2nd level BATTERY UV PROTECTION
-//#define ADC_BATTERY_UV_RELEASE                543 // 32V; unit: 10mV; 2bytes; 2nd level BATTERY UV RELEASE 
+#define ADC_BATTERY_UV_RELEASE                543 // 32V; unit: 10mV; 2bytes; 2nd level BATTERY UV RELEASE 
 
 
 //=====================================================================================================================
