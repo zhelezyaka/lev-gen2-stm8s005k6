@@ -20,7 +20,7 @@
 
 #define SendingTimeOutCycle	1000
 #define UratRXBufferSize	10
-#define UratRXFrameInternalGapTime	10  // 10 ms
+#define UratRXFrameInternalGapTime	5  // 5 ms
 /********************************************************************************
 * Golbal Variable																*
 ********************************************************************************/
@@ -39,7 +39,12 @@ void empty_uart_receive_frame_fun(unsigned char *receiveData, unsigned int lengt
 ********************************************************************************/
 void _Device_Init_Uart(void)
 {
+    
+    GPIO_Init(URAT_TX_Setting_PORT, URAT_TX_Setting_PIN, GPIO_MODE_OUT_PP_LOW_FAST);    //  normal set as RX Status
+
+    
     _Device_uart_tim4_init();
+    
     
 	UART2_DeInit();
 	UART2_Init(UratBaudRates, UART2_WORDLENGTH_8D, UART2_STOPBITS_1, UART2_PARITY_NO, UART2_SYNCMODE_CLOCK_DISABLE, UART2_MODE_TXRX_ENABLE);
@@ -63,16 +68,32 @@ void _Device_Set_Uart_RX_Interrupt(unsigned char enable){
 
 void _Device_Uart_Send_Byte(unsigned char *sendByte, unsigned int length){
 	unsigned int i;
+    
+    //GPIO_WriteHigh(LED2_PORT, LED2_PIN);
+
+    
+    //set TX status
+    GPIO_WriteHigh(URAT_TX_Setting_PORT, URAT_TX_Setting_PIN);
+    GPIO_WriteHigh(URAT_TX_Setting_PORT, URAT_TX_Setting_PIN);  //for delay
+
 	for(i = 0; i < length; i++){
 		UART2_SendData8((*(sendByte + i))); 
 		SendingWhileTimeOutCount = 0;
-		while (UART2_GetFlagStatus(UART2_FLAG_TXE) == RESET){
+		//while (UART2_GetFlagStatus(UART2_FLAG_TXE) == RESET){     //Transmit Data Register Empty flag
+		while (UART2_GetFlagStatus(UART2_FLAG_TC) == RESET){        //Transmission Complete flag
 			if(SendingWhileTimeOutCount >= SendingTimeOutCycle){
 				break;
 			}
 			SendingWhileTimeOutCount++;
 		}//while (UART2_GetFlagStatus(UART2_FLAG_TXE) == RESET)
     }
+    //disable TX status
+    GPIO_WriteLow(URAT_TX_Setting_PORT, URAT_TX_Setting_PIN);
+    
+    
+    //GPIO_WriteLow(LED2_PORT, LED2_PIN);
+
+    
 }
 
 void _Device_Set_Uart_Receive_Fram_Data_Calling_Function(void (*calling_fun)(unsigned char *receiveData, unsigned int length)){

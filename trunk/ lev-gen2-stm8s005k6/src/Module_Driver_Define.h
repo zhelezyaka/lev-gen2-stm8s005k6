@@ -1,6 +1,8 @@
 /********************************************************************************
 * Enum Variable define  														*
 ********************************************************************************/
+#define true            1
+#define false           0
 
 #define TurnOff     0
 #define TurnOn      1
@@ -99,8 +101,8 @@ enum forButtonStatusCode
 #define BUTTON_CLICK            (0x0008)    //
 #define BUTTON_LONG_PRESS       (0x0010)    //
 #define ADC_CONVERSION          (0x0020)    //
-//#define _No_Used_   (0x0040)    //
-//#define _No_Used_   (0x0080)    //
+//#define LED_Serial_Light_On     (0x0040)    //
+//#define LED_Serial_Light_Off    (0x0080)    //
 //Hight byte
 #define PIC_UVP_STATUS          (0x0100)    // pic uvp input pin
 #define PIC_OVP_STATUS          (0x0200)    // pic ovp input pin
@@ -147,6 +149,7 @@ void SetLedLightOnFlag(unsigned char LEDNumBits, unsigned char enable);
 void SetLedBlinkFlag(unsigned char LEDNumBits, unsigned char enable);
 void SetLedPWMFunction(unsigned char LEDNumBits, unsigned char enable);
 void SetLedPWM20Steps(unsigned char PWM_Steps);
+void SetLedSerialTurnOnOff(unsigned char enable);
     
 void InitMosControl();
 void setMosFET(unsigned char MosFetCode, unsigned char enable);
@@ -188,10 +191,12 @@ void delay_cycles(unsigned long cycleCount);
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 void InitAdapterOutputSignal(void);
 void SetADPSOC(unsigned char enable);
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+#define PrecedingCheckCode  0x80f8
+#define EndCheckCode        0x70f7
 void InitUARTFunction();
 void Set_Uart_RX_Interrupt(unsigned char enable);
-void UART_Send_Word_CRC(unsigned int *sendData, unsigned int length);
+void UART_Send_Word_CRC(unsigned int *sendData, unsigned int length, unsigned char enable_with_PrecedingCode);
 void ReceiveDataParsing(unsigned char *receiveData, unsigned int length);
 unsigned int usMBCRC16( unsigned char * pucFrame, unsigned int usLen );
 

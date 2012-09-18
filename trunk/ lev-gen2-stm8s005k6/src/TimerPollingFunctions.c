@@ -28,6 +28,7 @@
 #define OC_PROTECTION_CycleTimes                100 //unit:cycles , 5 sec = OC_PROTECTION_CycleTimes * TimerIntervalTimeBase_MS
 #define COC_RELEASE_HOLDING_CycleTimes          20  //unit:cycles , 1 sec = COC_RELEASE_HOLDING_CycleTimes * TimerIntervalTimeBase_MS
 
+#define System_1_Sec_Flag_CycleTimes            20  //unit:cycles , 1 sec = System_1_Sec_Flag_CycleTimes * TimerIntervalTimeBase_MS
 /********************************************************************************
 * Extern Function																*
 ********************************************************************************/
@@ -55,6 +56,7 @@ static unsigned char ButtonPressCounter;
 static unsigned char DOC_ReleaseCounter;
 static unsigned char COC_ReleaseCounter;
 static unsigned char COC_ReleaseHoldingCounter;
+static unsigned char System_1_Sec_Flag_Counter;
 
 /********************************************************************************
 * 															                    *
@@ -64,11 +66,12 @@ void InitTimerPollingVariables(){
     LED_PWM_One_step_Cycle_Counter = 0;
     LED_PWM_Steps = 0;
     LED_Blink_inverse_Flag = 0;
+    
     ButtonPressCounter = 0;
     DOC_ReleaseCounter = 0;
     COC_ReleaseCounter = 0;
     COC_ReleaseHoldingCounter = 0;
-    
+    System_1_Sec_Flag_Counter = 0;
 //    InitTimer1Function();
 //    Set_Interrupt_Timer1_Calling_Function(1, TimerCounterForPolling);
     
@@ -114,7 +117,7 @@ void TimerCounterForPolling(){
     //////////////////////////////////////////////////////////////////////////
     //get LED Blink Flag  : (section start)
     temp_char2 = (unsigned char)G_LED_Interface_Status2;
-    temp_char2 = temp_char2 ^ temp_char1;   //XOR to get blink bits
+    temp_char2 = temp_char2 & (~temp_char1);   //and with mask PWM to get blink bits
     //Blinking
     if(temp_char2 > 0){
         if(LED_Blink_inverse_Flag == 0){
@@ -129,14 +132,20 @@ void TimerCounterForPolling(){
     
     //////////////////////////////////////////////////////////////////////////
     //get light on flag excluding PWM and Blink flag  : (section start)
-    temp_char1 = (temp_char1 | temp_char2) ^ (unsigned char)(G_LED_Interface_Status1 >> 8);
-    if(temp_char1 > 0){
-        SetLed_DirectIO_BITs(temp_char1);
-    }else{
-        SetLed_DirectIO_BITs(0);
-    }
+    temp_char1 = (unsigned char)(G_LED_Interface_Status2 >> 8); // get PWM bits
+    temp_char2 = (unsigned char)G_LED_Interface_Status2;        // get Blink bits
+    temp_char1 = ~(temp_char1 | temp_char2);    //OR with PWM and Blink to mask
+    temp_char2 = (unsigned char)(G_LED_Interface_Status1 >> 8); // get light on bits
+    temp_char2 = temp_char1 & temp_char2;
+    SetLed_DirectIO_BITs(temp_char2);
+//    if(temp_char2 > 0){
+//        SetLed_DirectIO_BITs(temp_char2);
+//    }else{
+//        SetLed_DirectIO_BITs(0);
+//    }
     //get light on flag excluding PWM and Blink flag  : (section stop)
     //////////////////////////////////////////////////////////////////////////
+
     
     //////////////////////////////////////////////////////////////////////////
     //Button  : (section start)
@@ -203,4 +212,14 @@ void TimerCounterForPolling(){
     //COC Holding Counter After Release : (section stop)
     //////////////////////////////////////////////////////////////////////////
 
+    //////////////////////////////////////////////////////////////////////////
+    //System 1 sec Counter : (section start)
+    System_1_Sec_Flag_Counter++;
+    if(System_1_Sec_Flag_Counter >= System_1_Sec_Flag_CycleTimes){
+        G_Auxiliary_Module_Status |= SYS_1_SEC_FLAG;
+        System_1_Sec_Flag_Counter = 0;
+    }
+    //System 1 sec Counter : (section stop)
+    //////////////////////////////////////////////////////////////////////////
+    
 }

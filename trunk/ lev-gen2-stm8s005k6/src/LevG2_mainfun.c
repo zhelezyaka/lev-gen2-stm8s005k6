@@ -57,8 +57,6 @@ unsigned int FirstInitial_Func(){
   return StartUp;
 }
 
-unsigned char inverse_led1_flag = 0;
-unsigned char inverse_led2_flag = 0;
 
 unsigned int Startup_Func()
 {
@@ -105,64 +103,7 @@ unsigned int Startup_Func()
     
 	enableInterrupts();  /* enable interrupts */
     
-    Set_Interrupt_Timer1_Calling_Function(1, TimerCounterForPolling);
-    Set_Interrupt_Timer1_Calling_Function(2, startAdcConversion);
-    //startAdcConversion();
-    
-    
-    inverse_led1_flag = 0;
-    inverse_led2_flag = 0;
-    while(1){
-        //wfi();  /* Wait For Interrupt */
-        
-        if(G_Device_Interface_Status1 & BUTTON_CLICK){
-            G_Device_Interface_Status1 &= ~BUTTON_CLICK;
-            
-            if(inverse_led1_flag == 0){
-                SetLedPWMFunction(LED1, TurnOn);
-                //SetLedLightOnFlag(LED1, TurnOn);
-            }else{
-                SetLedPWMFunction(LED1, TurnOff);
-                //SetLedLightOnFlag(LED1, TurnOff);
-            }
-            inverse_led1_flag ^= 0x01;
-        }
-        
-        if(G_Device_Interface_Status1 & BUTTON_LONG_PRESS){
-            G_Device_Interface_Status1 &= ~BUTTON_LONG_PRESS;
-            
-            if(inverse_led2_flag == 0){
-                SetLedLightOnFlag(LED2, TurnOn);
-            }else{
-                SetLedLightOnFlag(LED2, TurnOff);
-            }
-            inverse_led2_flag ^= 0x01;
-        }
-        
-        //SetLedPWMFunction(0x1f, TurnOn);
-        //SetLed_DirectIO_OnOff(LED2, TurnOn);
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        delay_cycles(5);  //about 90us at 4MHz
-        delay_cycles(10); //about 132us at 4MHz
-        delay_cycles(20); //about 224us at 4MHz
-        delay_cycles(30); //about 318us at 4MHz
-        delay_cycles(40); //about 410us at 4MHz
-        delay_cycles(50); //about 502us at 4MHz
-        delay_cycles(100); //about 960us at 4MHz
-        delay_cycles(100); //about 960us at 4MHz
-        delay_cycles(100); //about 960us at 4MHz
-        for(int i = 0; i < 10;i++){
-            //delay_cycles(100); //about 960us at 4MHz
-        }        
-    }//while(1);
+
     
 //    while(1){
 //    SetLedPWMFunction(0x1f, TurnOn);
@@ -199,8 +140,83 @@ unsigned int Startup_Func()
     
     return NormalMode;
 }
+
+unsigned char inverse_led1_flag = 0;
+unsigned char inverse_led2_flag = 0;
+
 unsigned int Normal_Func(){
     
+    Set_Interrupt_Timer1_Calling_Function(1, TimerCounterForPolling);   //50ms
+    Set_Interrupt_Timer1_Calling_Function(2, startAdcConversion);       //50ms
+    //startAdcConversion();
+    
+    
+    inverse_led1_flag = 0;
+    inverse_led2_flag = 0;
+    while(1){
+        //wfi();  /* Wait For Interrupt */
+        
+        if(G_Device_Interface_Status1 & BUTTON_CLICK){
+            G_Device_Interface_Status1 &= ~BUTTON_CLICK;
+            
+            if(inverse_led1_flag == 0){
+                SetLedPWMFunction(LED1+LED4+LED5, TurnOn);
+                
+                //SetLedLightOnFlag(LED1, TurnOn);
+            }else{
+                SetLedPWMFunction(LED1+LED4+LED5, TurnOff);
+                //SetLedLightOnFlag(LED1, TurnOff);
+            }
+            inverse_led1_flag ^= 0x01;
+        }
+        
+        if(G_Device_Interface_Status1 & BUTTON_LONG_PRESS){
+            G_Device_Interface_Status1 &= ~BUTTON_LONG_PRESS;
+            
+            if(inverse_led2_flag == 0){
+                //SetLedLightOnFlag(LED2, TurnOn);
+                SetLedSerialTurnOnOff(TurnOn);
+            }else{
+                //SetLedLightOnFlag(LED2, TurnOff);
+                SetLedSerialTurnOnOff(TurnOff);
+            }
+            inverse_led2_flag ^= 0x01;
+        }
+        
+        
+        if(G_Auxiliary_Module_Status & SYS_1_SEC_FLAG){
+            G_Auxiliary_Module_Status &= ~SYS_1_SEC_FLAG;
+            UART_Send_Word_CRC(G_Var_Array, GVarArraySize, true);
+        }
+        //SetLedPWMFunction(0x1f, TurnOn);
+        //SetLed_DirectIO_OnOff(LED2, TurnOn);
+        
+//        SetLed_DirectIO_BITs(0xff);
+//        //delay 1 sec
+//        for(int i = 0; i < 200;i++){
+//            delay_cycles(100); //about 960us at 4MHz
+//        }
+//        SetLed_DirectIO_BITs(0);
+//        //delay 1 sec
+//        for(int i = 0; i < 200;i++){
+//            delay_cycles(100); //about 960us at 4MHz
+//        }
+        
+        wfi();
+        
+//        delay_cycles(5);  //about 90us at 4MHz
+//        delay_cycles(10); //about 132us at 4MHz
+//        delay_cycles(20); //about 224us at 4MHz
+//        delay_cycles(30); //about 318us at 4MHz
+//        delay_cycles(40); //about 410us at 4MHz
+//        delay_cycles(50); //about 502us at 4MHz
+//        delay_cycles(100); //about 960us at 4MHz
+//        delay_cycles(100); //about 960us at 4MHz
+//        delay_cycles(100); //about 960us at 4MHz
+//        for(int i = 0; i < 10;i++){
+//            //delay_cycles(100); //about 960us at 4MHz
+//        }        
+    }//while(1);   
     return ShutdownMode;
 }
 

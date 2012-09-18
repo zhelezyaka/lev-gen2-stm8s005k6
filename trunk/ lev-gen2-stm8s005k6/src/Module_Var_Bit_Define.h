@@ -58,7 +58,7 @@ enum For_G_SysModeStatusCode  //unsigned char
 #define DSG_HIGH_OTA                (0x0002)    // if temperature reach High level OT setting
 #define DSG_HIGH_CURRENT_FOR_OT     (0x0004)    // if current over High currentsetting or not
 #define USE_DSG_HIGH_OT_SETTING     (0x0008)    ////1 = Use DSG HIGH OT Protection setting, 0 = Use (Normal) OT Protection setting.
-//#define _No_Used_    (0x0010)    //
+#define SYS_1_SEC_FLAG              (0x0010)    // every 1 second will be set
 //#define _No_Used_      (0x0020)    //
 //#define _No_Used_      (0x0040)    //
 //#define _No_Used_      (0x0080)    //

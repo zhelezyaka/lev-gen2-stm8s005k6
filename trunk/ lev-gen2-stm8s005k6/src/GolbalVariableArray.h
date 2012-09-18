@@ -3,7 +3,9 @@
 #define GVarArraySize	13
 
 extern unsigned int G_Var_Array[GVarArraySize];
-extern unsigned int G_Communication_Array[GVarArraySize + 1];
+
+#define CheckCodeIntSize       4
+extern unsigned int G_Communication_Array[];
 
 #define G_SysModeStatusCode             (G_Var_Array[ 0])
 #define G_Module_Status                 (G_Var_Array[ 1])   //use
