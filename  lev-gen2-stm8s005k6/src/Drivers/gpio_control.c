@@ -33,10 +33,11 @@
 * gpio_init																		*
 ********************************************************************************/
 void _Device_Init_Input_Signal_Pin_Function(void){
-	
+    
 	// UVP & OVP
 	GPIO_Init(UVP_PORT, UVP_PIN, GPIO_MODE_IN_FL_NO_IT);
-	GPIO_Init(OVP_PORT, OVP_PIN, GPIO_MODE_IN_FL_NO_IT);
+    GPIO_Init(OVP_PORT, OVP_PIN, GPIO_MODE_IN_FL_NO_IT);
+    
 //	// ADP Soc
 //	GPIO_Init(ADP_SOC_PORT, ADP_SOC_PIN, GPIO_MODE_OUT_PP_LOW_FAST);
 //	//for Urat TX continues send out control

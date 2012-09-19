@@ -29,6 +29,7 @@ unsigned char G_All_LED_Bits_Mask;
 // System Clock Setup  : (section start)
 void System_clk_setup(){
     _Device_System_clk_setup();
+
 }
 // System Clock Setup  : (section stop)
 //////////////////////////////////////////////////

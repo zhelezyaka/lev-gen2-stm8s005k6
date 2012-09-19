@@ -29,6 +29,12 @@ void _Device_System_clk_setup(void)
 	CLK_PeripheralClockConfig(CLK_PERIPHERAL_TIMER4, ENABLE);
 	// UART
 	CLK_PeripheralClockConfig(CLK_PERIPHERAL_UART2, ENABLE);
+    
+//  GPIO_Init(GPIOD, GPIO_PIN_0, GPIO_MODE_OUT_PP_LOW_FAST);
+//  CLK_CCOConfig(CLK_OUTPUT_CPUDIV8);
+//    CLK_CCOConfig(CLK_OUTPUT_CPU);
+//  CLK_CCOCmd(ENABLE);    
+
 	
 }
 

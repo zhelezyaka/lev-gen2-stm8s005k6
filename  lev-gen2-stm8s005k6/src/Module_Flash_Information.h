@@ -44,30 +44,30 @@
 // CHG / DSG Current Detector (op amp)
 ////////////////////////////////////////////////////////////////////////////////
 //ADC_resolution  1024    // 10 bit ADC
-//ADC_Ref         2500    // mV
-//ADC_Step        2.44140625f  ==>(float)ADC_Ref /  ADC_resolution ==> (mV)
+//ADC_Ref         3300    // mV
+//ADC_Step        3.22265625f  ==>(float)ADC_Ref /  ADC_resolution ==> (mV)
 ////////////////////////////////////////////////////////////////////////////////
-//Rsense                  3.3333f    //mR
+//Rsense                  2.0f    //mR
 ////////////////////////////////////////////////////////////////////////////////
 //mA to ADC factor 
 //Factor = Rsense(R) * op_gain / ADC step(mV) => Multiplicative inverse Factor
 ////////////////////////////////////////////////////////////////
 // CHG_OP_Gain             120.0f
-// _CHG_mA_to_ADC_factor_    0.098304f   ==> (Rsense_mR * CHG_OP_Gain / ADC_Step / 1000)==>小數點6位
+// _CHG_mA_to_ADC_factor_    0.074473f   ==> (Rsense_mR * CHG_OP_Gain / ADC_Step / 1000)==>小數點6位
 // CHG_OP_ADC_OFFSET         (signed char)0    //實際值-理論值 
 ////////////////////////////////////////////////////////////////
 // DSG_OP_Gain   82.0f
-// _DSG_mA_to_ADC_factor_      0.0671744f  ==> (Rsense_mR * DSG_OP_Gain/ADC_Step/1000)==>小數點6位
+// _DSG_mA_to_ADC_factor_      0.05089f  ==> (Rsense_mR * DSG_OP_Gain/ADC_Step/1000)==>小數點6位
 // DSG_OP_ADC_OFFSET         (signed char)0    //實際值-理論值 
 // 理論值 = 實際值 - Offset
 ////////////////////////////////////////////////////////////////////////////////
 //(無條件進位==> 會比實際值還大一點)
 //(使用四捨五入)
-#define ADC_CURRENT_DETECT_FOR_DSG_STATUS       5       //80mA; unit: mA; 2bytes; if current > the define, in discharging status
-#define ADC_CURRENT_DETECT_FOR_CHG_STATUS       5       //50mA; unit: mA; 2bytes; if current > the define, in charging status
-#define ADC_DOC_PROTECTION                      1352    // 20A; unit: 10mA; discharging current protection is positive
-#define ADC_COC_PROTECTION                      393     // 4A; unit: 10mA; charging current protection
-#define ADC_DSG_HIGH_CURRENT_DETECT             537     //; 8000mA; 2bytes; for switch High/Low OT Protection
+#define ADC_CURRENT_DETECT_FOR_DSG_STATUS       4       //80mA; unit: mA; 2bytes; if current > the define, in discharging status
+#define ADC_CURRENT_DETECT_FOR_CHG_STATUS       7       //100mA; unit: mA; 2bytes; if current > the define, in charging status
+#define ADC_DOC_PROTECTION                      1018    // 20A; unit: 10mA; discharging current protection is positive
+#define ADC_COC_PROTECTION                      298     // 4A; unit: 10mA; charging current protection
+#define ADC_DSG_HIGH_CURRENT_DETECT             407     // 8000mA; 2bytes; for switch High/Low OT Protection
 //remove //#define OC_PROTECTION_RELEASE_TIME              5         // 5 sec; unit: sec.; 1byte; over current protection release time
 
 
@@ -87,10 +87,10 @@
 //VBAT_ADC_OFFSET          (signed char)(-5)   //實際值-理論值
 // 理論值 = 實際值 - Offset
 ////////////////////////////////////////////////////////////////
-#define ADC_BATTERY_OV_PROTECTION             721 // 42.5V; unit: 10mV; 2bytes; 2nd level BATTERY OV PROTECTION
-#define ADC_BATTERY_OV_RELEASE                704 // 41.5V; unit: 10mV; 2bytes; 2nd level BATTERY OV RELEASE
-#define ADC_BATTERY_UV_PROTECTION             475 // 28V; unit: 10mV; 2bytes; 2nd level BATTERY UV PROTECTION
-#define ADC_BATTERY_UV_RELEASE                543 // 32V; unit: 10mV; 2bytes; 2nd level BATTERY UV RELEASE 
+#define ADC_BATTERY_OV_PROTECTION             708 // 55.12V(cell:4.24); unit: 10mV; 2bytes; 2nd level BATTERY OV PROTECTION
+#define ADC_BATTERY_OV_RELEASE                693 // 53.95V(cell:4.15); unit: 10mV; 2bytes; 2nd level BATTERY OV RELEASE
+#define ADC_BATTERY_UV_PROTECTION             468 // 36.4V(cell:2.8); unit: 10mV; 2bytes; 2nd level BATTERY UV PROTECTION
+#define ADC_BATTERY_UV_RELEASE                534 // 41.6V(cell:3.2); unit: 10mV; 2bytes; 2nd level BATTERY UV RELEASE 
 
 
 //=====================================================================================================================
@@ -114,19 +114,19 @@
 //65					2.6144		683.94
 //70					2.2559		607.42
 //75					1.9538		539.37
-//80					1.698			479
+//80					1.698       479
 //85					1.4805		425.56
 //////////////////////////////////////////////////////////////////
-//Thermistor_mV_To_ADC_Factor     0.4096f   // = 1/ADC_Step
+//Thermistor_mV_To_ADC_Factor     0.310303f   // = 1/ADC_Step
 //=====================================================================================================================
-#define ADC_DSG_OT_HIGH_PROTECTION              174    //unit: 425.56 mV; 85 Celcius; Over temperature protection for discharging(Low divided voltage)
-#define ADC_DSG_OT_HIGH_RELEASE                 196    //unit: 479 mV; 80 Celcius; Over temperature release for discharging(Low divided voltage)
-#define ADC_DSG_OT_LOW_PROTECTION               249    //unit: 607.42 mV; 70 Celcius; Over temperature protection for discharging(Low divided voltage)
-#define ADC_DSG_OT_LOW_RELEASE                  280    //unit: 683.94 mV; 65 Celcius; Over temperature release for discharging(Low divided voltage)
-#define ADC_CHG_OT_PROTECTION                   398    //unit: 971 mV; 50 Celcius; Over temperature protection for charging(Low divided voltage)
-#define ADC_CHG_OT_RELEASE                      445    //unit: 1087 mV; 45 Celcius; Over temperature release for charging(Low divided voltage)
-#define ADC_UT_PROTECTION                       990    //unit: 2417 mV; 0 Celcius;  Under temperature protection(Low divided voltage)
-#define ADC_UT_RELEASE                          931    //unit: 2272 mV; 5 Celcius;  Under temperature release(Low divided voltage)
+#define ADC_DSG_OT_HIGH_PROTECTION              132    //unit: 425.56 mV; 85 Celcius; Over temperature protection for discharging(Low divided voltage)
+#define ADC_DSG_OT_HIGH_RELEASE                 148    //unit: 479 mV; 80 Celcius; Over temperature release for discharging(Low divided voltage)
+#define ADC_DSG_OT_LOW_PROTECTION               188    //unit: 607.42 mV; 70 Celcius; Over temperature protection for discharging(Low divided voltage)
+#define ADC_DSG_OT_LOW_RELEASE                  212    //unit: 683.94 mV; 65 Celcius; Over temperature release for discharging(Low divided voltage)
+#define ADC_CHG_OT_PROTECTION                   301    //unit: 971 mV; 50 Celcius; Over temperature protection for charging(Low divided voltage)
+#define ADC_CHG_OT_RELEASE                      337    //unit: 1087 mV; 45 Celcius; Over temperature release for charging(Low divided voltage)
+#define ADC_UT_PROTECTION                       750    //unit: 2417 mV; 0 Celcius;  Under temperature protection(Low divided voltage)
+#define ADC_UT_RELEASE                          705    //unit: 2272 mV; 5 Celcius;  Under temperature release(Low divided voltage)
 //
 //#define BUTTON_PRESS_TIME                       5         // 5 sec; unit: sec.; 1byte; button press delay time
 
