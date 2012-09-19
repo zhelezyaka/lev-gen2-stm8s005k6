@@ -30,6 +30,7 @@
 unsigned int FirstInitial_Func(){
 	
 	System_clk_setup();
+    
     InitMosControl();
 	InitLEDDisplay();
 

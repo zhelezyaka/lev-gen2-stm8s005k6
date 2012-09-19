@@ -48,7 +48,6 @@ main()
 	test_i = eeprom_uint_array[0];
 	/////////////////////////////////////////////////
 #endif	
-    
 	G_SysModeStatusCode = FirstInitial_Func(); 
 
   
