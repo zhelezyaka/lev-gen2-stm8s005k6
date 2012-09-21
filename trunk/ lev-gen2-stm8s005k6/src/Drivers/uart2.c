@@ -17,14 +17,15 @@
 ********************************************************************************/
 //#define UratBaudRates		115200
 #define UratBaudRates		57600
+//#define UratBaudRates		38400
 
 #define SendingTimeOutCycle	1000
-#define UratRXBufferSize	10
-#define UratRXFrameInternalGapTime	5  // 5 ms
+#define UratRXBufferSize	16
+#define UratRXFrameInternalGapTime	10  // 10 ms
 /********************************************************************************
 * Golbal Variable																*
 ********************************************************************************/
-static unsigned char Uart_RX_Buffer[UratRXBufferSize];
+static unsigned char Uart_RX_Buffer[UratRXBufferSize + 2];
 static unsigned int Uart_RX_Count;
 
 
@@ -33,6 +34,7 @@ static unsigned int SendingWhileTimeOutCount;
 void (*Interrupt_Uart_Receive_frame_ptr_fuc)(unsigned char *receiveData, unsigned int length);
 void empty_uart_receive_frame_fun(unsigned char *receiveData, unsigned int length){};
 
+///////////////////////////////////
 
 /********************************************************************************
 * uart_init																		*
@@ -57,13 +59,17 @@ void _Device_Init_Uart(void)
 	
 	//UART2_ITConfig(UART2_IT_RXNE, ENABLE);
 	//UART2_ITConfig(UART2_IT_RXNE_OR, ENABLE);
+    
+
 }
 void _Device_Set_Uart_RX_Interrupt(unsigned char enable){
-  if(enable){
-      UART2_ITConfig(UART2_IT_RXNE, ENABLE);
-  }else{
-      UART2_ITConfig(UART2_IT_RXNE, DISABLE);
-  }
+    if(enable){
+        UART2_ClearITPendingBit(UART2_IT_RXNE);
+        UART2_ITConfig(UART2_IT_RXNE, ENABLE);
+    }else{
+        UART2_ITConfig(UART2_IT_RXNE, DISABLE);
+        UART2_ClearITPendingBit(UART2_IT_RXNE);
+    }
 }
 
 void _Device_Uart_Send_Byte(unsigned char *sendByte, unsigned int length){
@@ -89,6 +95,7 @@ void _Device_Uart_Send_Byte(unsigned char *sendByte, unsigned int length){
     }
     //disable TX status
     GPIO_WriteLow(URAT_TX_Setting_PORT, URAT_TX_Setting_PIN);
+    GPIO_WriteLow(URAT_TX_Setting_PORT, URAT_TX_Setting_PIN);  //for delay
     
     
     //GPIO_WriteLow(LED2_PORT, LED2_PIN);
@@ -101,10 +108,12 @@ void _Device_Set_Uart_Receive_Fram_Data_Calling_Function(void (*calling_fun)(uns
 }
 void Uart_Receive_Frame_Finish_Function(){
     unsigned int length;
-    
     length = Uart_RX_Count;
     Uart_RX_Count = 0;
-    (*Interrupt_Uart_Receive_frame_ptr_fuc)(Uart_RX_Buffer, length);
+    //_Device_Set_Uart_RX_Interrupt(DISABLE);
+    //(*Interrupt_Uart_Receive_frame_ptr_fuc)(Uart_RX_Buffer, length);
+    //_Device_Set_Uart_RX_Interrupt(ENABLE);
+    _Device_Uart_Send_Byte(Uart_RX_Buffer, length);
 }
 
 void _Device_Remove_Interrupt_Uart_Receive_Frame_Calling_Function(){
@@ -125,13 +134,19 @@ INTERRUPT void URAT2_RX_IRQHandler(void)
 #endif
     
     
-    if(Uart_RX_Count < UratRXBufferSize){
-        _Device_Set_Function_to_Timer_counter(UratRXFrameInternalGapTime, Uart_Receive_Frame_Finish_Function);
-        Uart_RX_Buffer[Uart_RX_Count++]= UART2_ReceiveData8();
-    }
-    
-	
 	UART2_ClearITPendingBit(UART2_IT_RXNE);
+    
+    if(Uart_RX_Count < UratRXBufferSize){
+        if(UART2->SR &UART2_SR_OR){
+            Uart_RX_Buffer[Uart_RX_Count++]= UART2_ReceiveData8();
+        }
+        Uart_RX_Buffer[Uart_RX_Count++]= UART2_ReceiveData8();
+    }else{
+        Uart_RX_Buffer[Uart_RX_Count - 1]= UART2_ReceiveData8();
+    }
+    _Device_Set_Function_to_Timer_counter(UratRXFrameInternalGapTime, Uart_Receive_Frame_Finish_Function);
+   
+    //_Device_Uart_Send_Byte(Uart_RX_Buffer, 3);
 	return;
 }
 
