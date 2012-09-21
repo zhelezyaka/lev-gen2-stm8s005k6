@@ -30,7 +30,7 @@
 unsigned int FirstInitial_Func(){
 	
 	System_clk_setup();
-    
+
     InitMosControl();
 	InitLEDDisplay();
 
@@ -189,6 +189,9 @@ unsigned int Normal_Func(){
             G_Auxiliary_Module_Status &= ~SYS_1_SEC_FLAG;
             UART_Send_Word_CRC(G_Var_Array, GVarArraySize, true);
         }
+        
+        
+        
         //SetLedPWMFunction(0x1f, TurnOn);
         //SetLed_DirectIO_OnOff(LED2, TurnOn);
         

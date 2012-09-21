@@ -161,6 +161,7 @@ void TimerCounterForPolling(){
         }else{
             if(ButtonPressCounter <= Button_Click_CycleTimes){
                 G_Device_Interface_Status1 |= BUTTON_CLICK;
+                G_Device_Interface_Status1 |= BUTTON_CLICK_For_Polling;
             }
             G_Device_Interface_Status1 &= ~BUTTON_PRESS;
             ButtonPressCounter = 0;

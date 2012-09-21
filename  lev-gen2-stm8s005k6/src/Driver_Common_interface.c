@@ -358,6 +358,11 @@ void ReceiveDataParsing(unsigned char *receiveData, unsigned int length){
           G_Communication_Array[0] = Uart_Send_Error_Code;
           UART_Send_Word_CRC(G_Communication_Array, 1, false);
           return;
+    }else{
+          // CRC16 checksum fail
+          G_Communication_Array[0] = Read_funcition_code;
+          UART_Send_Word_CRC(G_Communication_Array, 1, false);
+        
     }
 
 

@@ -65,7 +65,7 @@
 //(使用四捨五入)
 #define ADC_CURRENT_DETECT_FOR_DSG_STATUS       4       //80mA; unit: mA; 2bytes; if current > the define, in discharging status
 #define ADC_CURRENT_DETECT_FOR_CHG_STATUS       7       //100mA; unit: mA; 2bytes; if current > the define, in charging status
-#define ADC_DOC_PROTECTION                      1018    // 20A; unit: 10mA; discharging current protection is positive
+#define ADC_DOC_PROTECTION                      2544    // 50A; unit: 10mA; discharging current protection is positive
 #define ADC_COC_PROTECTION                      298     // 4A; unit: 10mA; charging current protection
 #define ADC_DSG_HIGH_CURRENT_DETECT             407     // 8000mA; 2bytes; for switch High/Low OT Protection
 //remove //#define OC_PROTECTION_RELEASE_TIME              5         // 5 sec; unit: sec.; 1byte; over current protection release time

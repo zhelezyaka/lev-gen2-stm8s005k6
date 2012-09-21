@@ -34,7 +34,6 @@ void _Device_System_clk_setup(void)
 //  CLK_CCOConfig(CLK_OUTPUT_CPUDIV8);
 //    CLK_CCOConfig(CLK_OUTPUT_CPU);
 //  CLK_CCOCmd(ENABLE);    
-
 	
 }
 

@@ -111,7 +111,7 @@ enum forButtonStatusCode
 #define ENABLE_COC_COUNTER      (0x1000)    ///Start CHG Over current counting for releasing OC. if finish, will set COC_COUNTING_FINISH flag
 #define COC_COUNTING_FINISH     (0x2000)    //COC Over current counting Finish.
 #define COC_RELEASE_FOR_REPEATED_CHECK (0x4000)    //After COC release, this flag will set until holding time out.
-//#define _No_Used_   (0x8000)    //
+#define BUTTON_CLICK_For_Polling    (0x8000)    //
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////

@@ -41,7 +41,6 @@ unsigned int G_Communication_Array[GVarArraySize + 1 + CheckCodeIntSize];
 
 main()
 {
-  
 #if _BURN_IN_EEPROM_SEG_BY_STVD_DEBUG_ > 0 
 	/////////////////////////////////////////////////
 	// for eeprom Burnning
