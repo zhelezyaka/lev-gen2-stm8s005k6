@@ -86,7 +86,8 @@ unsigned int Startup_Func()
     InitMosControl();
     InitButtonEvent();
     InitInputSignalPin();
-  
+    
+    
     delay_cycles(5);
     InitAdapterOutputSignal();
     InitUARTFunction();
@@ -104,7 +105,6 @@ unsigned int Startup_Func()
     
 	enableInterrupts();  /* enable interrupts */
     
-
     
 //    while(1){
 //    SetLedPWMFunction(0x1f, TurnOn);
@@ -206,7 +206,7 @@ unsigned int Normal_Func(){
 //            delay_cycles(100); //about 960us at 4MHz
 //        }
         
-        wfi();
+        //wfi();
         
 //        delay_cycles(5);  //about 90us at 4MHz
 //        delay_cycles(10); //about 132us at 4MHz

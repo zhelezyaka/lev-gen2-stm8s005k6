@@ -26,7 +26,15 @@
 #define Button_Long_Press_CycleTimes            100 //unit:cycles , 5 sec = Button_Long_Press_CycleTimes * TimerIntervalTimeBase_MS
 
 #define OC_PROTECTION_CycleTimes                100 //unit:cycles , 5 sec = OC_PROTECTION_CycleTimes * TimerIntervalTimeBase_MS
-#define COC_RELEASE_HOLDING_CycleTimes          20  //unit:cycles , 1 sec = COC_RELEASE_HOLDING_CycleTimes * TimerIntervalTimeBase_MS
+
+/* 
+    COC_RELEASE_HOLDING_CycleTimes
+    must biger than CHG_OC_Protection_Delay_Cycle
+    for COC_RELEASE_FOR_REPEATED_CHECK
+*/
+#define COC_RELEASE_HOLDING_CycleTimes          23  //unit:cycles , 1 sec = COC_RELEASE_HOLDING_CycleTimes * TimerIntervalTimeBase_MS
+//#define COC_RELEASE_HOLDING_CycleTimes        (CHG_OC_Protection_Delay_Cycle+3)  //unit:cycles , 1 sec = COC_RELEASE_HOLDING_CycleTimes * TimerIntervalTimeBase_MS
+
 
 #define System_1_Sec_Flag_CycleTimes            20  //unit:cycles , 1 sec = System_1_Sec_Flag_CycleTimes * TimerIntervalTimeBase_MS
 /********************************************************************************

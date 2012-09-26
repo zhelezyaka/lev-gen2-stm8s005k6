@@ -14,6 +14,13 @@
 //1 time = 50ms, based on timer interval time
 #define DSG_OC_Protection_Delay_Cycle       20   //times, 20 times * 50 ms = 1000 ms = 1sec
 #define CHG_OC_Protection_Delay_Cycle       20   //times, 20 times * 50 ms = 1000 ms = 1sec
+/* 
+    COC_RELEASE_HOLDING_CycleTimes
+    must biger than CHG_OC_Protection_Delay_Cycle about 3 cycle timies
+    for COC_RELEASE_FOR_REPEATED_CHECK
+*/
+#define COC_RELEASE_HOLDING_CycleTimes          20  //unit:cycles , 1 sec = COC_RELEASE_HOLDING_CycleTimes * TimerIntervalTimeBase_MS
+
 #define Battery_OV_Protection_Delay_Cycle   60   //times, 60 times * 50 ms = 3000 ms = 3sec
 #define Battery_UV_Protection_Delay_Cycle   60   //times, 60 times * 50 ms = 3000 ms = 3sec
 #define DSG_Low_OT_Protection_Delay_Cycle   20   //times, 20 times * 50 ms = 1000 ms = 1sec
@@ -225,6 +232,18 @@ void ProtectionForPolling(){
       G_Module_Status &= ~Module_BAT_OV;
       Battery_OV_Counter = 0;
     }
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    //Cell OV/UV protection and release
+    if(get_PIC_UVP_Status()){
+      G_Module_Status |= Module_PIC_UV;
+    }else{
+      G_Module_Status &= ~Module_PIC_UV;
+    }
+    if(get_PIC_OVP_Status()){
+      G_Module_Status |= Module_PIC_OV;
+    }else{
+      G_Module_Status &= ~Module_PIC_OV;
+    }   
  
     
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -240,23 +259,19 @@ void ProtectionForPolling(){
     }      
     /////////////////////////////////////////////////////////////////////////////////////////////
     // release Battery UV if it's Battery UV
-    if((G_Module_Status & Module_BAT_UV) && G_VBAT_ADC > ADC_BATTERY_UV_RELEASE){
-      G_Module_Status &= ~Module_BAT_UV;
-      Battery_UV_Counter = 0;
-    }
-    
+//    if((G_Module_Status & Module_BAT_UV) && G_VBAT_ADC > ADC_BATTERY_UV_RELEASE){
+//      G_Module_Status &= ~Module_BAT_UV;
+//      Battery_UV_Counter = 0;
+//    }
     /////////////////////////////////////////////////////////////////////////////////////////////
-    //Cell OV/UV protection and release
-    if(get_PIC_UVP_Status()){
-      G_Module_Status |= Module_PIC_UV;
-    }else{
-      G_Module_Status &= ~Module_PIC_UV;
+    // release Battery UV and PIC UV , only at charging
+    if((G_Module_Status & Module_BAT_UV) || (G_Module_Status & Module_PIC_UV)){
+        //relese UV By Charger staus
+        if(G_Module_Status & Current_Dir_CHG){
+          G_Module_Status &= ~Module_BAT_UV;
+          Battery_UV_Counter = 0;
+        }
     }
-    if(get_PIC_OVP_Status()){
-      G_Module_Status |= Module_PIC_OV;
-    }else{
-      G_Module_Status &= ~Module_PIC_OV;
-    }   
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     // checking if it's Aux OT without current direction
