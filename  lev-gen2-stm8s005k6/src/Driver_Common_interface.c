@@ -23,13 +23,13 @@
 * Local file Variable										                    *
 ********************************************************************************/
 unsigned char G_All_LED_Bits_Mask;
+static unsigned char Button_INT_counter;
 
 
 //////////////////////////////////////////////////
 // System Clock Setup  : (section start)
 void System_clk_setup(){
     _Device_System_clk_setup();
-
 }
 // System Clock Setup  : (section stop)
 //////////////////////////////////////////////////
@@ -62,6 +62,14 @@ void SetLed_DirectIO_BITs(unsigned char LEDNumBits){
     G_LED_Interface_Status1 |= temp;
 
     _Device_Set_Led_OnOff_BITs((unsigned char)G_LED_Interface_Status1);
+}
+
+void SetLed_DirectIO_Pin_OnOff(unsigned char LEDNumPin, unsigned char enable){
+    unsigned int temp = 0;
+    LEDNumPin = LEDNumPin & G_All_LED_Bits_Mask;
+    temp = LEDNumPin;
+
+    _Device_Set_Led_Pin_OnOff(temp, enable);
 }
 
 void SetLedLightOnFlag(unsigned char LEDNumBits, unsigned char enable){
@@ -180,6 +188,17 @@ void setMosFET(unsigned char MosFetCode, unsigned char enable){
 // Button control  : (section start)
 void Interrupt_Calling_ButtonEvent_Press_Trigger(){
     G_Device_Interface_Status1 |= BUTTON_PRESS;
+    if(G_Add_Device_Interface_Status & ENABLE_MULTI_CLICK_COUNTER){
+        Button_INT_counter++;
+        if(Button_INT_counter >= MULTI_CLICK_PRESS_TIMES){
+            G_Device_Interface_Status1 |= BUTTON_MULTI_CLICK;
+            G_Add_Device_Interface_Status &= ~ENABLE_MULTI_CLICK_COUNTER;
+            Button_INT_counter = 0;
+        }
+    }else{
+        G_Add_Device_Interface_Status |= ENABLE_MULTI_CLICK_COUNTER;
+        Button_INT_counter = 1;
+    }
 }
 void InitButtonEvent(){
     G_Device_Interface_Status1 &= ~BUTTON_PRESS;
@@ -258,18 +277,36 @@ void Get_ADC_Values(unsigned int *valueArray, unsigned char length){
 ////////////////////////////////////////////
 
 ////////////////////////////////////////////
-// Timer1 (50ms)  : (section start)
-void InitTimer1Function(){
+// Timer (50ms)  : (section start)
+void InitTimerFunction(){
     _Device_Timer3_init();
 }
-void Set_Interrupt_Timer1_Calling_Function(unsigned char fun_index, void (*calling_fun)()){
-    _Device_Set_Interrupt_Timer1_Calling_Function(fun_index, calling_fun);
+void DisableTimerFunction(){
+    _Device_Disable_Timer3();
 }
-void Remove_Interrupt_Timer1_Calling_Function(unsigned char fun_index, void (*calling_fun)()){
-    _Device_Remove_Interrupt_Timer1_Calling_Function(fun_index);
+void Set_Interrupt_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)()){
+    _Device_Set_Interrupt_Timer3_Calling_Function(fun_index, calling_fun);
 }
-
-// Timer1 (50ms)  : (section stop)
+void Remove_Interrupt_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)()){
+    _Device_Remove_Interrupt_Timer3_Calling_Function(fun_index);
+}
+// Timer (50ms)  : (section stop)
+////////////////////////////////////////////
+////////////////////////////////////////////
+// AWU Timer (50ms)  : (section start)
+void InitAWUTimerFunction(){
+    _Device_AWU_HALT_Timer_Init();
+}
+void DisableAWUTimerFunction(){
+    _Device_Disable_AWU_HALT_Timer();
+}
+void Set_Interrupt_AWU_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)()){
+    _Device_Set_AWU_Interrupt_Timer_Calling_Function(fun_index, calling_fun);
+}
+void Remove_Interrupt_AWU_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)()){
+    _Device_Remove_AWU_Interrupt_Timer_Calling_Function(fun_index);
+}
+// AWU Timer (50ms)  : (section stop)
 ////////////////////////////////////////////
 ////////////////////////////////////////////
 // Adapter SOC  : (section start)	

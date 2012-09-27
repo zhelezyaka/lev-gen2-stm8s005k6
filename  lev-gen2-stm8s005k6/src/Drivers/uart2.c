@@ -16,8 +16,9 @@
 * uart_init																		*
 ********************************************************************************/
 //#define UratBaudRates		115200
-#define UratBaudRates		57600
+//#define UratBaudRates		57600
 //#define UratBaudRates		38400
+#define UratBaudRates		9600
 
 #define SendingTimeOutCycle	1000
 #define UratRXBufferSize	16

@@ -101,8 +101,8 @@ enum forButtonStatusCode
 #define BUTTON_CLICK            (0x0008)    //
 #define BUTTON_LONG_PRESS       (0x0010)    //
 #define ADC_CONVERSION          (0x0020)    //
-//#define LED_Serial_Light_On     (0x0040)    //
-//#define LED_Serial_Light_Off    (0x0080)    //
+#define BUTTON_MULTI_CLICK      (0x0040)    //
+//#define _No_Used_    (0x0080)    //
 //Hight byte
 #define PIC_UVP_STATUS          (0x0100)    // pic uvp input pin
 #define PIC_OVP_STATUS          (0x0200)    // pic ovp input pin
@@ -111,7 +111,7 @@ enum forButtonStatusCode
 #define ENABLE_COC_COUNTER      (0x1000)    ///Start CHG Over current counting for releasing OC. if finish, will set COC_COUNTING_FINISH flag
 #define COC_COUNTING_FINISH     (0x2000)    //COC Over current counting Finish.
 #define COC_RELEASE_FOR_REPEATED_CHECK (0x4000)    //After COC release, this flag will set until holding time out.
-#define BUTTON_CLICK_For_Polling    (0x8000)    //
+#define BUTTON_CLICK_For_Polling    (0x8000)    // to send click event to polling function
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -119,14 +119,14 @@ enum forButtonStatusCode
 /* G_Add_Device_Interface_Status Control Bits */
 /* For G_Add_Device_Interface_Status ; unsigned int */
 //Low byte
-#define ADP_SOC_Status      (0x0001)    //adapter_soc signal output pin status
-//#define _No_Used_                (0x0002) 
-//#define _No_Used_     (0x0004)    // 
-//#define _No_Used_     (0x0008)    //
-//#define _No_Used_    (0x0010)    //
+#define ADP_SOC_Status          (0x0001)    //adapter_soc signal output pin status
+#define ENABLE_AUX1_COUNTER     (0x0002)    //
+#define AUX1_COUNTING_FINISH    (0x0004)    // 
+#define ENABLE_MULTI_CLICK_COUNTER     (0x0008)    //
+#define MULTI_CLICK_COUNTING_FINISH    (0x0010)    //
 //#define _No_Used_      (0x0020)    //
-//#define _No_Used_      (0x0040)    //
-//#define _No_Used_      (0x0080)    //
+//#define LED_Serial_Light_On      (0x0040)    //
+//#define LED_Serial_Light_Off      (0x0080)    //
 //Hight byte
 //#define _No_Used_     (0x0100)    //
 //#define _No_Used_     (0x0200)    //
@@ -150,10 +150,12 @@ void SetLedBlinkFlag(unsigned char LEDNumBits, unsigned char enable);
 void SetLedPWMFunction(unsigned char LEDNumBits, unsigned char enable);
 void SetLedPWM20Steps(unsigned char PWM_Steps);
 void SetLedSerialTurnOnOff(unsigned char enable);
+void SetLed_DirectIO_Pin_OnOff(unsigned char LEDNumPin, unsigned char enable);
     
 void InitMosControl();
 void setMosFET(unsigned char MosFetCode, unsigned char enable);
-    
+
+#define MULTI_CLICK_PRESS_TIMES     3   //press times
 void InitButtonEvent();
 unsigned char GetButtonStatus();
 
@@ -172,17 +174,23 @@ void Get_ADC_Values(unsigned int *valueArray, unsigned char length);
 
 
 
-void InitTimer1Function();
-void Set_Interrupt_Timer1_Calling_Function(unsigned char fun_index, void (*calling_fun)());
-void Remove_Interrupt_Timer1_Calling_Function(unsigned char fun_index, void (*calling_fun)());
+void InitTimerFunction();
+void DisableTimerFunction();
+void Set_Interrupt_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)());
+void Remove_Interrupt_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)());
 
-
+void InitAWUTimerFunction();
+void DisableAWUTimerFunction();
+void Set_Interrupt_AWU_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)());
+void Remove_Interrupt_AWU_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)());
 
 ////////////////////////////////////
 // Polling function
 void InitSubPollingProtectionVariables();
 void ProtectionForPolling();
 void InitTimerPollingVariables();
+void Set_Aux1_Counter_Cycles(unsigned char cycles);
+void Reset_Aux1_Counter();
 void TimerCounterForPolling();
 void delay_cycles(unsigned long cycleCount);
 

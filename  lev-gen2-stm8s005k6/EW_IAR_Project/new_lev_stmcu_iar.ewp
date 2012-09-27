@@ -1529,6 +1529,9 @@
       <name>$PROJ_DIR$\..\src\Drivers\adc_read.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\src\Drivers\AWU_Timer_With_Halt_Mode.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\src\Drivers\button_control.c</name>
     </file>
     <file>
@@ -1645,6 +1648,9 @@
         <name>$PROJ_DIR$\..\STM8S_StdPeriph_Driver\inc\stm8s_adc1.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\STM8S_StdPeriph_Driver\inc\stm8s_awu.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\STM8S_StdPeriph_Driver\inc\stm8s_clk.h</name>
       </file>
       <file>
@@ -1682,6 +1688,9 @@
       <name>Src</name>
       <file>
         <name>$PROJ_DIR$\..\STM8S_StdPeriph_Driver\src\stm8s_adc1.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\STM8S_StdPeriph_Driver\src\stm8s_awu.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\STM8S_StdPeriph_Driver\src\stm8s_clk.c</name>

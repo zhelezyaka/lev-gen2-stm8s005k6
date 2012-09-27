@@ -47,6 +47,7 @@ void _Device_Init_Button_Event_Function(void)
      
      
 	GPIO_Init(BUTTON_PORT, BUTTON_PIN, GPIO_MODE_IN_FL_IT);	
+	//GPIO_Init(BUTTON_PORT, BUTTON_PIN, GPIO_MODE_IN_FL_NO_IT);	
     
     //ITC_DeInit();
 	/* Initialize the Interrupt sensitivity */
@@ -83,6 +84,7 @@ INTERRUPT void EXTI_PORTE_IRQHandler(void)
 {
 #endif
     
+    //GPIO_WriteHigh(LED1_PORT, LED1_PIN);
 	//debounce
     //aa = GPIO_ReadInputPin(BUTTON_PORT, BUTTON_PIN);
 	delay_cycles(5);	//90us at 4MHz
@@ -90,6 +92,7 @@ INTERRUPT void EXTI_PORTE_IRQHandler(void)
 	{ // press
         (*Intupt_Button_ptr_fuc)();
 	}
+    //GPIO_WriteHigh(LED1_PORT, LED1_PIN);
     return;
     
 }

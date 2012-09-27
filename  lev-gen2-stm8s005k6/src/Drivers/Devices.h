@@ -60,6 +60,8 @@ void _Device_Set_Led_PWM_20_Steps(unsigned char LEDNumBits, unsigned char steps)
 //void _Device_Set_Led_PWM_20_Steps(unsigned char steps);
 void _Device_Set_Led_OnOff_BITs(unsigned char LEDNumBits);
 //void _Device_Set_Led_LightOnOff(unsigned char LEDNumCode, unsigned char enable);
+void _Device_Set_Led_Pin_OnOff(unsigned char LEDNumPin, unsigned char enable);
+
 /********************************************************************************
 * Mos Fet Control_init															*
 ********************************************************************************/
@@ -126,8 +128,19 @@ void _Device_Get_ADC_Conversion_Values(unsigned int *valueArray, unsigned char l
 ********************************************************************************/
 //Timer3 function (checked)
 void _Device_Timer3_init();
-void _Device_Set_Interrupt_Timer1_Calling_Function(unsigned char fun_index, void (*calling_fun)());
-void _Device_Remove_Interrupt_Timer1_Calling_Function(unsigned char fun_index);
+void _Device_Disable_Timer3(void);
+void _Device_Set_Interrupt_Timer3_Calling_Function(unsigned char fun_index, void (*calling_fun)());
+void _Device_Remove_Interrupt_Timer3_Calling_Function(unsigned char fun_index);
+
+/********************************************************************************
+* AWU Timer init  																*
+********************************************************************************/
+void _Device_AWU_HALT_Timer_Init();
+void _Device_Disable_AWU_HALT_Timer();
+void _Device_Set_AWU_Shorter_Timer_Interval_Time_Base();
+void _Device_Set_AWU_Longer_Timer_Interval_Time_Base();
+void _Device_Set_AWU_Interrupt_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)());
+void _Device_Remove_AWU_Interrupt_Timer_Calling_Function(unsigned char fun_index);
 
 /********************************************************************************
 * ADP SOC Init																	*
