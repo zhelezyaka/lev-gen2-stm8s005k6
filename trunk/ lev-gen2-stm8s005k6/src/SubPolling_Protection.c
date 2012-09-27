@@ -12,22 +12,23 @@
 /////////////////////////////////////////////////
 // Current Sub Functions Vairable Define
 //1 time = 50ms, based on timer interval time
-#define DSG_OC_Protection_Delay_Cycle       20   //times, 20 times * 50 ms = 1000 ms = 1sec
-#define CHG_OC_Protection_Delay_Cycle       20   //times, 20 times * 50 ms = 1000 ms = 1sec
+#define DSG_OC_Protection_Delay_Cycle       15   //times,1000 ms = 1sec = DSG_OC_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
+#define CHG_OC_Protection_Delay_Cycle       15   //times,1000 ms = 1sec = CHG_OC_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
 /* 
     COC_RELEASE_HOLDING_CycleTimes
     must biger than CHG_OC_Protection_Delay_Cycle about 3 cycle timies
     for COC_RELEASE_FOR_REPEATED_CHECK
 */
-#define COC_RELEASE_HOLDING_CycleTimes          20  //unit:cycles , 1 sec = COC_RELEASE_HOLDING_CycleTimes * TimerIntervalTimeBase_MS
+#define COC_RELEASE_HOLDING_CycleTimes      15  //unit:cycles , 1 sec = COC_RELEASE_HOLDING_CycleTimes * TimerIntervalTimeBase_MS
 
-#define Battery_OV_Protection_Delay_Cycle   60   //times, 60 times * 50 ms = 3000 ms = 3sec
-#define Battery_UV_Protection_Delay_Cycle   60   //times, 60 times * 50 ms = 3000 ms = 3sec
-#define DSG_Low_OT_Protection_Delay_Cycle   20   //times, 20 times * 50 ms = 1000 ms = 1sec
-#define DSG_High_OT_Protection_Delay_Cycle  20   //times, 20 times * 50 ms = 1000 ms = 1sec
-#define CHG_OT_Protection_Delay_Cycle       20   //times, 20 times * 50 ms = 1000 ms = 1sec
-#define UT_Protection_Delay_Cycle           20   //times, 20 times * 50 ms = 1000 ms = 1sec
-
+#define Battery_OV_Protection_Delay_Cycle   46   //times, 3000 ms = 3sec = Battery_OV_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
+#define Battery_UV_Protection_Delay_Cycle   46   //times, 3000 ms = 3sec = Battery_UV_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
+#define DSG_Low_OT_Protection_Delay_Cycle   15   //times, 1000 ms = 1sec = DSG_Low_OT_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
+#define DSG_High_OT_Protection_Delay_Cycle  15   //times, 1000 ms = 1sec = DSG_High_OT_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
+#define CHG_OT_Protection_Delay_Cycle       15   //times, 1000 ms = 1sec = CHG_OT_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
+#define UT_Protection_Delay_Cycle           15   //times, 1000 ms = 1sec = UT_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
+//////////////////////////////////////////////////////////////////////////////////////////////
+// the unit is cycles
 #define COC_Repeat_For_LOCK_Times           3   //times, COC Repeat 3 times then LOCK
 
 /********************************************************************************

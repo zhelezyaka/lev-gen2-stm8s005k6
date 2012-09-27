@@ -11,7 +11,7 @@
 /********************************************************************************
 * Define																		*
 ********************************************************************************/
-
+#define INTO_HALT_MODE_DELAY_CYCLE  156     //10 sec = INTO_HALT_MODE_DELAY_CYCLE * TimerIntervalTimeBase_MS
 /********************************************************************************
 * Extern Function																*
 ********************************************************************************/
@@ -99,13 +99,20 @@ unsigned int Startup_Func()
     
     /////////////////////////////////
     InitTimerPollingVariables();
-    InitTimer1Function();
+    //InitTimerFunction();
+    InitAWUTimerFunction();
     
 
     
 	enableInterrupts();  /* enable interrupts */
     
-    
+//    while(1){
+//        SetLed_DirectIO_Pin_OnOff(LED2,1);
+//        delay_cycles(100); //about 960us at 4MHz
+//        SetLed_DirectIO_Pin_OnOff(LED2,0);
+//        halt();
+//        
+//    }
 //    while(1){
 //    SetLedPWMFunction(0x1f, TurnOn);
 //    
@@ -147,18 +154,35 @@ unsigned char inverse_led2_flag = 0;
 
 unsigned int Normal_Func(){
     
-    Set_Interrupt_Timer1_Calling_Function(1, TimerCounterForPolling);   //50ms
-    Set_Interrupt_Timer1_Calling_Function(2, startAdcConversion);       //50ms
-    //startAdcConversion();
+    //Set_Interrupt_Timer_Calling_Function(1, TimerCounterForPolling);   //64ms
+    //Set_Interrupt_Timer_Calling_Function(2, startAdcConversion);       //64ms
+    //G_Auxiliary_Module_Status &= ~Halt_Mode;
     
+    Set_Interrupt_AWU_Timer_Calling_Function(1, TimerCounterForPolling);   //64ms
+    Set_Interrupt_AWU_Timer_Calling_Function(2, startAdcConversion);       //64ms
+    G_Auxiliary_Module_Status |= Halt_Mode;
+    
+    Set_Aux1_Counter_Cycles(INTO_HALT_MODE_DELAY_CYCLE);
     
     inverse_led1_flag = 0;
     inverse_led2_flag = 0;
     while(1){
-        //wfi();  /* Wait For Interrupt */
         
         if(G_Device_Interface_Status1 & BUTTON_CLICK){
             G_Device_Interface_Status1 &= ~BUTTON_CLICK;
+            
+            ////////////////////////////////////////////////////////////
+            // into normal wfi mode
+            if(G_Auxiliary_Module_Status & Halt_Mode){
+                DisableAWUTimerFunction();
+                InitTimerFunction();
+                Set_Interrupt_Timer_Calling_Function(1, TimerCounterForPolling);   //64ms
+                Set_Interrupt_Timer_Calling_Function(2, startAdcConversion);       //64ms
+                G_Auxiliary_Module_Status &= ~Halt_Mode;
+                G_Add_Device_Interface_Status |= ENABLE_AUX1_COUNTER;
+            }else{
+                Reset_Aux1_Counter();
+            }
             
             if(inverse_led1_flag == 0){
                 SetLedPWMFunction(LED1+LED4+LED5, TurnOn);
@@ -173,6 +197,20 @@ unsigned int Normal_Func(){
         
         if(G_Device_Interface_Status1 & BUTTON_LONG_PRESS){
             G_Device_Interface_Status1 &= ~BUTTON_LONG_PRESS;
+
+            ////////////////////////////////////////////////////////////
+            // into normal wfi mode
+            if(G_Auxiliary_Module_Status & Halt_Mode){
+                DisableAWUTimerFunction();
+                InitTimerFunction();
+                Set_Interrupt_Timer_Calling_Function(1, TimerCounterForPolling);   //64ms
+                Set_Interrupt_Timer_Calling_Function(2, startAdcConversion);       //64ms
+                G_Auxiliary_Module_Status &= ~Halt_Mode;
+                G_Add_Device_Interface_Status |= ENABLE_AUX1_COUNTER;
+            }else{
+                Reset_Aux1_Counter();
+            }
+
             
             if(inverse_led2_flag == 0){
                 //SetLedLightOnFlag(LED2, TurnOn);
@@ -191,6 +229,23 @@ unsigned int Normal_Func(){
         }
         
         
+        ////////////////////////////////////////////////////////////
+        // into Halt mode
+        if(((G_Auxiliary_Module_Status & Halt_Mode)==0)&&(G_Add_Device_Interface_Status & AUX1_COUNTING_FINISH)){
+            G_Add_Device_Interface_Status &= ~AUX1_COUNTING_FINISH;
+            DisableTimerFunction();
+            InitAWUTimerFunction();
+            Set_Interrupt_AWU_Timer_Calling_Function(1, TimerCounterForPolling);   //64ms
+            Set_Interrupt_AWU_Timer_Calling_Function(2, startAdcConversion);       //64ms
+            G_Auxiliary_Module_Status |= Halt_Mode;
+        }
+        
+        //delay_cycles(100); //about 960us at 4MHz
+        if(G_Auxiliary_Module_Status & Halt_Mode){
+            halt();
+        }else{
+            wfi();  /* Wait For Interrupt */
+        }
         
         //SetLedPWMFunction(0x1f, TurnOn);
         //SetLed_DirectIO_OnOff(LED2, TurnOn);

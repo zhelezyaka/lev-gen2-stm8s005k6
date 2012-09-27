@@ -238,3 +238,45 @@ void _Device_Set_Led_OnOff_BITs(unsigned char LEDNumBits)
             GPIO_WriteLow(LED5_PORT, LED5_PIN);
         }
 }
+
+void _Device_Set_Led_Pin_OnOff(unsigned char LEDNumPin, unsigned char enable)
+{
+        // turn on , set high
+        // turn off , set low
+        if(LEDNumPin & LED1){
+            if(enable){
+                GPIO_WriteHigh(LED1_PORT, LED1_PIN);
+            }else{
+                GPIO_WriteLow(LED1_PORT, LED1_PIN);
+            }
+        }
+        
+        if(LEDNumPin & LED2){
+            if(enable){
+                GPIO_WriteHigh(LED2_PORT, LED2_PIN);
+            }else{
+                GPIO_WriteLow(LED2_PORT, LED2_PIN);
+            }
+        }
+        if(LEDNumPin & LED3){
+            if(enable){
+                GPIO_WriteHigh(LED3_PORT, LED3_PIN);
+            }else{
+                GPIO_WriteLow(LED3_PORT, LED3_PIN);
+            }
+        }
+        if(LEDNumPin & LED4){
+            if(enable){
+                GPIO_WriteHigh(LED4_PORT, LED4_PIN);
+            }else{
+                GPIO_WriteLow(LED4_PORT, LED4_PIN);
+            }
+        }
+        if(LEDNumPin & LED5){
+            if(enable){
+                GPIO_WriteHigh(LED5_PORT, LED5_PIN);
+            }else{
+                GPIO_WriteLow(LED5_PORT, LED5_PIN);
+            }
+        }
+}
