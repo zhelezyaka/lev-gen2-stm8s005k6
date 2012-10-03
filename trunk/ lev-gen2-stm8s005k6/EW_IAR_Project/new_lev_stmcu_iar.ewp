@@ -196,23 +196,23 @@
         </option>
         <option>
           <name>CCListCFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListCMnemonics</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListCMessages</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListAssFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListAssSource</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCEnableRemarks</name>
@@ -240,7 +240,7 @@
         </option>
         <option>
           <name>CCCompilerRuntimeInfo</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>PreInclude</name>
@@ -341,7 +341,7 @@
         </option>
         <option>
           <name>AsmListFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>AsmListNoDiagnostics</name>
@@ -349,11 +349,11 @@
         </option>
         <option>
           <name>AsmListIncludeCrossRef</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>AsmListMacroDefinitions</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>AsmListNoMacroExpansion</name>
@@ -496,7 +496,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild></prebuild>
+        <prebuild>$PROJ_DIR$\..\Bin_Tools\Header_Parser_For_LEVD2 $PROJ_DIR$\..\src\SystemInformation\User1.h</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -1541,6 +1541,9 @@
       <name>$PROJ_DIR$\..\src\Drivers\Devices.h</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\src\Drivers\EEPROM_Access.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\src\Drivers\gpio_control.c</name>
     </file>
     <file>
@@ -1569,6 +1572,24 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\EEPROM_Setting\SystemInformation.h</name>
+    </file>
+  </group>
+  <group>
+    <name>SOC</name>
+    <file>
+      <name>$PROJ_DIR$\..\src\SOC\CoulombCounter.c</name>
+      <excluded>
+        <configuration>Debug</configuration>
+      </excluded>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\src\SOC\SOC.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\src\SOC\SOC_Calculation.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\src\SOC\SOC_OCV_Table.h</name>
     </file>
   </group>
   <group>
@@ -1623,6 +1644,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\Module_Variable_Define.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\src\RecordingData.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\stm8_interrupt_vector.c</name>
@@ -1726,6 +1750,18 @@
         <name>$PROJ_DIR$\..\STM8S_StdPeriph_Driver\src\stm8s_uart2.c</name>
       </file>
     </group>
+  </group>
+  <group>
+    <name>SystemInformation</name>
+    <file>
+      <name>$PROJ_DIR$\..\src\SystemInformation\SystemInfo.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\src\SystemInformation\SystemInfo.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\src\SystemInformation\User_Define_Common_Information.h</name>
+    </file>
   </group>
 </project>
 

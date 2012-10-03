@@ -7,6 +7,7 @@
 #include "Module_Flash_Information.h"
 #include "Module_Variable_Define.h"
 #include "Module_Var_Bit_Define.h"
+#include "SystemInformation\SystemInfo.h"
 
 /********************************************************************************
 * Define																		*
@@ -24,16 +25,128 @@
 /********************************************************************************
 * Global Variable																*
 ********************************************************************************/
-
+/* Public functions ----------------------------------------------------------*/
+/**
+  * @brief Example firmware main entry point.
+  * @par Parameters:
+  * None
+  * @retval
+  * None
+  */
+//IN_RAM(void system_halt(void))
+//{
+//	while (1)
+//	{
+//            halt();
+//	}
+//}
 
 //////////////////////////////////////////////////////////////////////////////
+unsigned char check;
+//unsigned char count;
+//unsigned char testArray[128];
+//unsigned char t1;
+//unsigned int t2;
+//unsigned long t3;
+//float f;
+//__no_init EEPROM unsigned int eeprom_t1;
+//unsigned char __eeprom *p;
+//unsigned int __eeprom *p1;
 unsigned int FirstInitial_Func(){
 	
 	System_clk_setup();
+    delay_cycles(100); //about 960us at 4MHz
+/////////////////////////////////
 
+//	/*Configure all the IO as Output Push pull at low level exept PA1 and PA2 (OSCIN and OSCOUT)*/
+//	/*GPIOA*/
+//	/*otherwise it's defined as Push pull at low level */
+//	GPIOA->ODR = 0x00;
+//	GPIOA->DDR = 0x7F;
+//	GPIOA->CR1 = 0x7F;
+//	/*GPIOB*/
+//	GPIOB->ODR = 0x00;
+//	GPIOB->DDR = 0xFF;
+//	GPIOB->CR1 = 0xFF;
+//	/*GPIOC*/
+//	GPIOC->ODR = 0x00;
+//	GPIOC->DDR = 0xFF;
+//	GPIOC->CR1 = 0xFF;
+//	/*GPIOD*/
+//	GPIOD->ODR = 0x00;
+//	GPIOD->DDR = 0xFF;
+//	GPIOD->CR1 = 0xFF;
+//	/*GPIOE*/
+//	GPIOE->ODR = 0x00;
+//	GPIOE->DDR = 0xFF;
+//	GPIOE->CR1 = 0xFF;
+//	/*GPIOF*/
+//	GPIOF->ODR = 0x00;
+//	GPIOF->DDR = 0xFF;
+//	GPIOF->CR1 = 0xFF;
+//
+//    
+//    system_halt();
+
+    
+//////////////////////////////    
     InitMosControl();
 	InitLEDDisplay();
+    
+    
+   
+    ////////////////////////////////
+    
+    while(1){
+        SysInfo_init();
+        for(int i=0; i<128;i++){
+            delay_cycles(100); //about 960us at 4MHz
+        }
+    }
+    
+    //InitTimerFunction();
+	//enableInterrupts();  /* enable interrupts */
+    while(0){
+        //SetLed_DirectIO_BITs(0xff);
+        //check = EEPROM_WriteByte(0, 3300);
+        //check = EEPROM_WriteByte(0x22, 4400);
+        check = EEPROM_WriteDoubleWord(4, 1430546039);
+        check = EEPROM_WriteDoubleWord(0x10, 1430546039);
+        
+        //check = EEPROM_ReadWholeMemory(testArray, 128);
+        //SetLed_DirectIO_BITs(0);
+        delay_cycles(100); //about 960us at 4MHz
+        if(check){
+            //fail
+//            SetLed_DirectIO_BITs(0xff);
+//            SetLed_DirectIO_BITs(0);
+//            SetLed_DirectIO_BITs(0xff);
+//            SetLed_DirectIO_BITs(0);
+//            SetLed_DirectIO_BITs(0xff);
+//            SetLed_DirectIO_BITs(0);
+        }else{
+            //pass
+//            SetLed_DirectIO_BITs(0xff);
+//            SetLed_DirectIO_BITs(0);
+//            SetLed_DirectIO_BITs(0xff);
+//            SetLed_DirectIO_BITs(0);
+        }
+        
+        delay_cycles(100); //about 960us at 4MHz
+        delay_cycles(100); //about 960us at 4MHz
+        delay_cycles(100); //about 960us at 4MHz
+        delay_cycles(100); //about 960us at 4MHz
+        delay_cycles(100); //about 960us at 4MHz
+        delay_cycles(100); //about 960us at 4MHz
+        delay_cycles(100); //about 960us at 4MHz
+        delay_cycles(100); //about 960us at 4MHz
+        delay_cycles(100); //about 960us at 4MHz
+        delay_cycles(100); //about 960us at 4MHz
+    }
 
+    while(0);
+    
+    
 //    SetLed_DirectIO_OnOff(LED1, TurnOn);
 //    SetLed_DirectIO_OnOff(LED2, TurnOn);
 //    SetLed_DirectIO_OnOff(LED3, TurnOn);
@@ -101,7 +214,7 @@ unsigned int Startup_Func()
     InitTimerPollingVariables();
     //InitTimerFunction();
     InitAWUTimerFunction();
-    
+    Set_AWU_Shorter_Timer_Interval_Time_Base();
 
     
 	enableInterrupts();  /* enable interrupts */

@@ -23,9 +23,13 @@
 /********************************************************************************
 * AWU_timer_init	                            								*
 ********************************************************************************/
+//for Shorter
+//#define dAWU_ShorterTimerIntervalTimeBase_ms	AWU_TIMEBASE_12S
 #define dAWU_ShorterTimerIntervalTimeBase_ms	AWU_TIMEBASE_64MS
 //#define dAWU_ShorterTimerIntervalTimeBase_ms	AWU_TIMEBASE_128MS
 //#define dAWU_ShorterTimerIntervalTimeBase_ms	AWU_TIMEBASE_1S
+
+//for longer 
 #define dAWU_LongerTimerIntervalTimeBase_ms	    AWU_TIMEBASE_1S
 
 #define Max_AWU_INTERRUPT_Calling_Function  5
@@ -41,9 +45,11 @@ void _Device_AWU_HALT_Timer_Init(){
     AWU_DeInit();
     // CLK setup
     //設定AWU，和進halt模式時MVR和Flash的電源關閉
+    //
     CLK_SlowActiveHaltWakeUpCmd(ENABLE);
     CLK_FastHaltWakeUpCmd(DISABLE);
     CLK_PeripheralClockConfig(CLK_PERIPHERAL_AWU, ENABLE);
+    //FLASH設定在進入halt時切到low power mode
     FLASH_SetLowPowerMode(FLASH_LPMODE_POWERDOWN);
     
     AWU_Init(dAWU_ShorterTimerIntervalTimeBase_ms);
@@ -95,11 +101,12 @@ INTERRUPT void AWU_IRQHandler(void)
 #endif
     //GPIO_WriteHigh(LED1_PORT, LED1_PIN);
     
+    AWU_GetFlagStatus();
+    
     for(int i = 0; i < Max_AWU_INTERRUPT_Calling_Function; i++){
         (*Intupt_AWUTimer_ptr_fuc[i])();
     }
 
-    AWU_GetFlagStatus();
     //GPIO_WriteLow(LED1_PORT, LED1_PIN);
 }
 

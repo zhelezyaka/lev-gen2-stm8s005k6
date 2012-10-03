@@ -1,14 +1,17 @@
 /********************************************************************************
 * Enum Variable define  														*
 ********************************************************************************/
-#define true            1
 #define false           0
+#define true            1
 
-#define TurnOff     0
-#define TurnOn      1
+#define TurnOff         false
+#define TurnOn          true
 
 #define Signal_Low      TurnOff
 #define Signal_High     TurnOn
+
+#define Data_Error      false
+#define Data_Success    true
 
 enum forLEDNumberBits
 {
@@ -181,6 +184,8 @@ void Remove_Interrupt_Timer_Calling_Function(unsigned char fun_index, void (*cal
 
 void InitAWUTimerFunction();
 void DisableAWUTimerFunction();
+void Set_AWU_Shorter_Timer_Interval_Time_Base();
+void Set_AWU_Longer_Timer_Interval_Time_Base();
 void Set_Interrupt_AWU_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)());
 void Remove_Interrupt_AWU_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)());
 
@@ -207,6 +212,12 @@ void Set_Uart_RX_Interrupt(unsigned char enable);
 void UART_Send_Word_CRC(unsigned int *sendData, unsigned int length, unsigned char enable_with_PrecedingCode);
 void ReceiveDataParsing(unsigned char *receiveData, unsigned int length);
 unsigned int usMBCRC16( unsigned char * pucFrame, unsigned int usLen );
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+void Init_EEPROM();
+unsigned char EEPROM_WriteByte(unsigned int Address_Offset, unsigned char Data);
+unsigned char EEPROM_WriteDoubleWord(unsigned int Address_Offset, unsigned long Data);
+unsigned char EEPROM_WriteWholeMemory(unsigned char *array, unsigned char length);
+unsigned char EEPROM_ReadWholeMemory(unsigned char *array, unsigned char length);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 void device_function_test1();

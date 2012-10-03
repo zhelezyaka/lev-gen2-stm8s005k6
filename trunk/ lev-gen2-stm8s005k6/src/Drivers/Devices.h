@@ -11,6 +11,9 @@
 
 #define Disable     0
 #define Enable      1
+
+#define Data_Fail           0
+#define Data_Complete       1
 /********************************************************************************
 * Enum Define																*
 ********************************************************************************/
@@ -167,4 +170,20 @@ void _Device_Remove_Interrupt_Uart_Receive_Frame_Calling_Function();
 void _Device_uart_tim4_init(void);
 void _Device_Set_Function_to_Timer_counter(unsigned int count, void (*counterFinishCallingFun)(void));
 void _Device_Set_Uart_Timer_Disable();
+
+/********************************************************************************
+* EEPROM Init																	*
+********************************************************************************/
+#define Eeprom_segment_Size			128  // bytes
+#define Eeprom_segment_Start_Add	0x4000// address
+#define Eeprom_segment_End_Add		0x407F// address
+
+void _Device_EEPROM_Init();
+unsigned char _Device_EEPROM_WriteByte(unsigned int Address_Offset, unsigned char Data);
+unsigned char _Device_EEPROM_WriteDoubleWord(unsigned int Address_Offset, unsigned long Data);
+unsigned char _Device_EEPROM_WriteWholeEEPROMMemory(unsigned char *array, unsigned char length);
+unsigned char _Device_EEPROM_ReadWholeEEPROMMemory(unsigned char *array, unsigned char length);
+
+
+
 

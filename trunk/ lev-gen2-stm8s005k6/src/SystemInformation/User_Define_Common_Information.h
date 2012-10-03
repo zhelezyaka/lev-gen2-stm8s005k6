@@ -7,38 +7,30 @@
 ******************************************************************/
 
 /////////////////////////////////////////////////////////////
-//// Define Flash Segment Address (one segment = 64 bytes)
+//// Define Flash Segment Address (one segment = 128 bytes)
 /////////////////////////////////////////////////////////////
-//#define Flash_segment_Size 64  // bytes
-//#define Flash_segment_A   0x10C0  // protected
-//#define Flash_segment_B   0x1080  // for user
-//#define Flash_segment_C   0x1040  // can not burning data
-//#define Flash_segment_D   0x1000  // has already data inside
-//
-//#define CONFIG_SEGMENT        Flash_segment_B
-//#define CALIBRATION_SEGMENT   Flash_segment_C
-
-#define MANUFACTURE_DATE_YEAR   2012
-#define MANUFACTURE_DATE_MONTH  7
-#define MANUFACTURE_DATE_DAY    3
-
+#define CONFIG_SEGMENT          0x4000   //EEPROM Address
 //=====================================================================================================================
 //=====================================================================================================================
+// put "_ee_" at head means the vars will be collected for burrning-in EEPROM by external appilication
+#define _ee_str_len_CELL_TYPE_LENGTH               8
+#define _ee_str_CELL_TYPE                   "sony 26F"
+#define _ee_str_len_MANUFACTURE_NAME_LENGTH        12
+#define _ee_str_MANUFACTURE_NAME            "Dynapack"
+#define _ee_str_len_PRODUCT_NAME_LENGTH     5
+#define _ee_str_PRODUCT_NAME                "LEV36"
 
-#define CELL_TYPE_STRING                "sony 26F"
-#define CELL_TYPE_NAME_LENGTH           8
-#define MANUFACTURE_NAME_STRING         "Dynapack"
-#define MANUFACTURE_NAME_LENGTH         12
-#define MANUFACTURE_DATE                (MANUFACTURE_DATE_YEAR - 1980) * 512 + MANUFACTURE_DATE_MONTH * 32 + MANUFACTURE_DATE_DAY  // 2 bytes
-#define PRODUCT_NAME                    "LEV36"
-#define PRODUCT_NAME_LENGTH              5
+//#define MANUFACTURE_DATE_YEAR   2012
+//#define MANUFACTURE_DATE_MONTH  7
+//#define MANUFACTURE_DATE_DAY    3
+#define _ee_uint_MANUFACTURE_DATE           16611   //(MANUFACTURE_DATE_YEAR - 1980) * 512 + MANUFACTURE_DATE_MONTH * 32 + MANUFACTURE_DATE_DAY  // 2 bytes
 
-#define VERSION		                        30      // 1 bytes
-#define MINOR_VERSION		                2       // 1 bytes
+#define _ee_uchar_VERSION		            1      // 1 bytes
+#define _ee_uchar_MINOR_VERSION		        2       // 1 bytes
 
-#define SERIAL_NUMBER                       10      // 1 bytes
-#define NUMBER_OF_PARALLEL_CELLS            4       // 1 bytes
-#define NUMBER_OF_SERIES_CELLS              10      // 1 bytes
+#define _ee_uchar_SERIAL_NUMBER                       10      // 1 bytes
+#define _ee_uchar_NUMBER_OF_PARALLEL_CELLS            4       // 1 bytes
+#define _ee_uchar_NUMBER_OF_SERIES_CELLS              10      // 1 bytes
 
 
 
@@ -65,11 +57,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 //(無條件進位==> 會比實際值還大一點)
 //(使用四捨五入)
-#define ADC_CURRENT_DETECT_FOR_DSG_STATUS       4       //80mA; unit: mA; 2bytes; if current > the define, in discharging status
-#define ADC_CURRENT_DETECT_FOR_CHG_STATUS       7       //100mA; unit: mA; 2bytes; if current > the define, in charging status
-#define ADC_DOC_PROTECTION                      2544    // 50A; unit: 10mA; discharging current protection is positive
-#define ADC_COC_PROTECTION                      298     // 4A; unit: 10mA; charging current protection
-#define ADC_DSG_HIGH_CURRENT_DETECT             407     // 8000mA; 2bytes; for switch High/Low OT Protection
+#define _ee_uint_ADC_CURRENT_DETECT_FOR_DSG_STATUS       4       //80mA; unit: mA; 2bytes; if current > the define, in discharging status
+#define _ee_uint_ADC_CURRENT_DETECT_FOR_CHG_STATUS       7       //100mA; unit: mA; 2bytes; if current > the define, in charging status
+#define _ee_uint_ADC_DOC_PROTECTION                      2544    // 50A; unit: 10mA; discharging current protection is positive
+#define _ee_uint_ADC_COC_PROTECTION                      298     // 4A; unit: 10mA; charging current protection
+#define _ee_uint_ADC_DSG_HIGH_CURRENT_DETECT             407     // 8000mA; 2bytes; for switch High/Low OT Protection
 //remove //#define OC_PROTECTION_RELEASE_TIME              5         // 5 sec; unit: sec.; 1byte; over current protection release time
 
 
@@ -89,10 +81,10 @@
 //VBAT_ADC_OFFSET          (signed char)(-5)   //實際值-理論值
 // 理論值 = 實際值 - Offset
 ////////////////////////////////////////////////////////////////
-#define ADC_BATTERY_OV_PROTECTION             708 // 55.12V(cell:4.24); unit: 10mV; 2bytes; 2nd level BATTERY OV PROTECTION
-#define ADC_BATTERY_OV_RELEASE                693 // 53.95V(cell:4.15); unit: 10mV; 2bytes; 2nd level BATTERY OV RELEASE
-#define ADC_BATTERY_UV_PROTECTION             468 // 36.4V(cell:2.8); unit: 10mV; 2bytes; 2nd level BATTERY UV PROTECTION
-#define ADC_BATTERY_UV_RELEASE                534 // 41.6V(cell:3.2); unit: 10mV; 2bytes; 2nd level BATTERY UV RELEASE 
+#define _ee_uint_ADC_BATTERY_OV_PROTECTION             708 // 55.12V(cell:4.24); unit: 10mV; 2bytes; 2nd level BATTERY OV PROTECTION
+#define _ee_uint_ADC_BATTERY_OV_RELEASE                693 // 53.95V(cell:4.15); unit: 10mV; 2bytes; 2nd level BATTERY OV RELEASE
+#define _ee_uint_ADC_BATTERY_UV_PROTECTION             468 // 36.4V(cell:2.8); unit: 10mV; 2bytes; 2nd level BATTERY UV PROTECTION
+#define _ee_uint_ADC_BATTERY_UV_RELEASE                534 // 41.6V(cell:3.2); unit: 10mV; 2bytes; 2nd level BATTERY UV RELEASE 
 
 
 //=====================================================================================================================
@@ -121,31 +113,32 @@
 //////////////////////////////////////////////////////////////////
 //Thermistor_mV_To_ADC_Factor     0.310303f   // = 1/ADC_Step
 //=====================================================================================================================
-#define ADC_DSG_OT_HIGH_PROTECTION              132    //unit: 425.56 mV; 85 Celcius; Over temperature protection for discharging(Low divided voltage)
-#define ADC_DSG_OT_HIGH_RELEASE                 148    //unit: 479 mV; 80 Celcius; Over temperature release for discharging(Low divided voltage)
-#define ADC_DSG_OT_LOW_PROTECTION               188    //unit: 607.42 mV; 70 Celcius; Over temperature protection for discharging(Low divided voltage)
-#define ADC_DSG_OT_LOW_RELEASE                  212    //unit: 683.94 mV; 65 Celcius; Over temperature release for discharging(Low divided voltage)
-#define ADC_CHG_OT_PROTECTION                   301    //unit: 971 mV; 50 Celcius; Over temperature protection for charging(Low divided voltage)
-#define ADC_CHG_OT_RELEASE                      337    //unit: 1087 mV; 45 Celcius; Over temperature release for charging(Low divided voltage)
-#define ADC_UT_PROTECTION                       750    //unit: 2417 mV; 0 Celcius;  Under temperature protection(Low divided voltage)
-#define ADC_UT_RELEASE                          705    //unit: 2272 mV; 5 Celcius;  Under temperature release(Low divided voltage)
+#define _ee_uint_ADC_DSG_OT_HIGH_PROTECTION              132    //unit: 425.56 mV; 85 Celcius; Over temperature protection for discharging(Low divided voltage)
+#define _ee_uint_ADC_DSG_OT_HIGH_RELEASE                 148    //unit: 479 mV; 80 Celcius; Over temperature release for discharging(Low divided voltage)
+#define _ee_uint_ADC_DSG_OT_LOW_PROTECTION               188    //unit: 607.42 mV; 70 Celcius; Over temperature protection for discharging(Low divided voltage)
+#define _ee_uint_ADC_DSG_OT_LOW_RELEASE                  212    //unit: 683.94 mV; 65 Celcius; Over temperature release for discharging(Low divided voltage)
+#define _ee_uint_ADC_CHG_OT_PROTECTION                   301    //unit: 971 mV; 50 Celcius; Over temperature protection for charging(Low divided voltage)
+#define _ee_uint_ADC_CHG_OT_RELEASE                      337    //unit: 1087 mV; 45 Celcius; Over temperature release for charging(Low divided voltage)
+#define _ee_uint_ADC_UT_PROTECTION                       750    //unit: 2417 mV; 0 Celcius;  Under temperature protection(Low divided voltage)
+#define _ee_uint_ADC_UT_RELEASE                          705    //unit: 2272 mV; 5 Celcius;  Under temperature release(Low divided voltage)
 //
 //#define BUTTON_PRESS_TIME                       5         // 5 sec; unit: sec.; 1byte; button press delay time
 
 //////////////////////////////////////////////////////////////////////////
-#define MIN_CELL_OV_VOLTAGE_FOR_SOC    4200 //mv
-#define MAX_CELL_UV_VOLTAGE_FOR_SOC    3200 //mv
+#define _ee_uint_MIN_CELL_OV_VOLTAGE_FOR_SOC    4200 //mv
+#define _ee_uint_MAX_CELL_UV_VOLTAGE_FOR_SOC    3200 //mv
 //=====================================================================================================================
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-#define CHG_mA_To_ADC_Factor          0.098304f        // 4 bytes;
-#define DSG_mA_To_ADC_Factor          0.0671744f       // 4 bytes;
-#define VBAT_mV_To_ADC_Factor         0.016962f        // 4 bytes;
-#define Thermistor_mV_To_ADC_Factor   0.4096f         // 4 bytes; = 1/ADC_Step
-//#define CHG_OP_ADC_OFFSET             0      //1byte ; 實際值-理論值 (signed char)
-//#define DSG_OP_ADC_OFFSET             0      //1byte ; 實際值-理論值 (signed char)
-//#define VBAT_ADC_OFFSET               0      //1byte ; 實際值-理論值 (signed char)
-//#define NTC_ADC_OFFSET                0      //1byte ; 實際值-理論值 Thermistor (signed char)
+#define _ee_float_CHG_mA_To_ADC_Factor          0.098304f        // 4 bytes;
+#define _ee_float_DSG_mA_To_ADC_Factor          0.0671744f       // 4 bytes;
+#define _ee_float_VBAT_mV_To_ADC_Factor         0.016962f        // 4 bytes;
+#define _ee_float_Thermistor_mV_To_ADC_Factor   0.4096f         // 4 bytes; = 1/ADC_Step
+#define _ee_uchar_CHG_OP_ADC_OFFSET             0      //1byte ; 實際值-理論值 (signed char)
+#define _ee_uchar_DSG_OP_ADC_OFFSET             0      //1byte ; 實際值-理論值 (signed char)
+#define _ee_uchar_VBAT_ADC_OFFSET               0      //1byte ; 實際值-理論值 (signed char)
+#define _ee_uchar_NTC1_ADC_OFFSET               0      //1byte ; 實際值-理論值 Thermistor (signed char)
+#define _ee_uchar_NTC2_ADC_OFFSET               0      //1byte ; 實際值-理論值 Thermistor (signed char)
 
 
