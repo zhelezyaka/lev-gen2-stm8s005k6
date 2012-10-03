@@ -14,6 +14,7 @@
 #define dTimer3Divided				TIM3_PRESCALER_32
 //#define dTimer3CountValues			6250
 //#define dTimer3IntervalTimeBase_ms	50
+
 #define dTimer3CountValues			8000
 #define dTimer3IntervalTimeBase_ms	64
 
@@ -70,13 +71,14 @@ INTERRUPT_HANDLER(TIM3_UPD_OVF_BRK_IRQHandler, 15)
 INTERRUPT void TIM3_UPD_OVF_BRK_IRQHandler(void)
 {
 #endif
+    //GPIO_WriteHigh(LED2_PORT, LED2_PIN);
+	TIM3_ClearITPendingBit(TIM3_IT_UPDATE);
     
     for(int i = 0; i < Max_INTERRUPT_Calling_Function; i++){
         (*Intupt_Timer1_ptr_fuc[i])();
     }
 
-    
-	TIM3_ClearITPendingBit(TIM3_IT_UPDATE);
+    //GPIO_WriteLow(LED2_PORT, LED2_PIN);
 	return;
 }
 

@@ -60,18 +60,18 @@ main()
 #endif
 
   
-    for(int j = 0; j < 10;j++){
-        SetLed_DirectIO_BITs(0xff);
-        //delay 1 sec
-        for(int i = 0; i < 100;i++){
-            delay_cycles(100); //about 960us at 4MHz
-        }
-        SetLed_DirectIO_BITs(0);
-        //delay 1 sec
-        for(int i = 0; i < 100;i++){
-            delay_cycles(100); //about 960us at 4MHz
-        }
-    }
+//    for(int j = 0; j < 10;j++){
+//        SetLed_DirectIO_BITs(0xff);
+//        //delay 1 sec
+//        for(int i = 0; i < 100;i++){
+//            delay_cycles(100); //about 960us at 4MHz
+//        }
+//        SetLed_DirectIO_BITs(0);
+//        //delay 1 sec
+//        for(int i = 0; i < 100;i++){
+//            delay_cycles(100); //about 960us at 4MHz
+//        }
+//    }
     
     
     

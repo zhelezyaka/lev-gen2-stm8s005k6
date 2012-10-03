@@ -300,6 +300,12 @@ void InitAWUTimerFunction(){
 void DisableAWUTimerFunction(){
     _Device_Disable_AWU_HALT_Timer();
 }
+void Set_AWU_Shorter_Timer_Interval_Time_Base(){
+    _Device_Set_AWU_Shorter_Timer_Interval_Time_Base();
+}
+void Set_AWU_Longer_Timer_Interval_Time_Base(){
+    _Device_Set_AWU_Longer_Timer_Interval_Time_Base();
+}
 void Set_Interrupt_AWU_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)()){
     _Device_Set_AWU_Interrupt_Timer_Calling_Function(fun_index, calling_fun);
 }
@@ -407,11 +413,45 @@ void ReceiveDataParsing(unsigned char *receiveData, unsigned int length){
     
 }
 
-
-
 // Uart2  : (section stop)	
 ////////////////////////////////////////////
 
+////////////////////////////////////////////
+// EEPROM  : (section start)	
+void Init_EEPROM(){
+    _Device_EEPROM_Init();
+}
+unsigned char EEPROM_WriteByte(unsigned int Address_Offset, unsigned char Data){
+    if( _Device_EEPROM_WriteByte(Address_Offset, Data) == Data_Complete){
+        return Data_Success;
+    }else{
+        return Data_Error;
+    }
+}
+unsigned char EEPROM_WriteDoubleWord(unsigned int Address_Offset, unsigned long Data){
+    if( _Device_EEPROM_WriteDoubleWord(Address_Offset, Data) == Data_Complete){
+        return Data_Success;
+    }else{
+        return Data_Error;
+    }
+}
+unsigned char EEPROM_WriteWholeMemory(unsigned char *array, unsigned char length){
+    if( _Device_EEPROM_WriteWholeEEPROMMemory(array, length) == Data_Complete){
+        return Data_Success;
+    }else{
+        return Data_Error;
+    }
+}
+unsigned char EEPROM_ReadWholeMemory(unsigned char *array, unsigned char length){
+    if( _Device_EEPROM_ReadWholeEEPROMMemory(array, length) == Data_Complete){
+        return Data_Success;
+    }else{
+        return Data_Error;
+    }
+}
+
+// EEPROM  : (section stop)	
+////////////////////////////////////////////
 
 ////////////////////////////////////////////
 ////////////////////////////////////////////

@@ -29,7 +29,7 @@
 #define CELL_TYPE_NAME_LENGTH           8
 #define MANUFACTURE_NAME_STRING         "Dynapack"
 #define MANUFACTURE_NAME_LENGTH         12
-#define MANUFACTURE_DATE                (MANUFACTURE_DATE_YEAR - 1980) * 512 + MANUFACTURE_DATE_MONTH * 32 + MANUFACTURE_DATE_DAY  // 2 bytes
+//#define MANUFACTURE_DATE                (MANUFACTURE_DATE_YEAR - 1980) * 512 + MANUFACTURE_DATE_MONTH * 32 + MANUFACTURE_DATE_DAY  // 2 bytes
 #define PRODUCT_NAME                    "LEV36"
 #define PRODUCT_NAME_LENGTH              5
 
