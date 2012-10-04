@@ -4,7 +4,7 @@
 #include "stm8s.h"
 #include "Global_config.h"
 #include "Module_Driver_Define.h"
-#include "Module_Flash_Information.h"
+#include "SystemInformation\User_Define_Parser.h"
 #include "Module_Variable_Define.h"
 #include "Module_Var_Bit_Define.h"
 #include "SystemInformation\SystemInfo.h"
@@ -94,11 +94,21 @@ unsigned int FirstInitial_Func(){
 	InitLEDDisplay();
     
     
+    //while(1);
    
     ////////////////////////////////
     
+    SysInfo_init();
+    G_DSG_Current_ADC = 1000;
+    G_CHG_Current_ADC = 2000;
+    G_VBAT_ADC = 3000;
+    G_TH1_ADC = 4000;
+    G_TH2_ADC = 5000;
+   
+    UpdatedSystemRecordingInfoForPolling();
+    WriteSystemRecordingInfoToEEPROM();    
     while(1){
-        SysInfo_init();
+        //SysInfo_init();
         for(int i=0; i<128;i++){
             delay_cycles(100); //about 960us at 4MHz
         }

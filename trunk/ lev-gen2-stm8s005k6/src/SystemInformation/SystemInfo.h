@@ -7,11 +7,9 @@
 * Define																		*
 ********************************************************************************/
 
-
-
-
-
 /********************************************************************************
 * System_Information_init	                            						*
 ********************************************************************************/
-unsigned char SysInfo_init();
+void SysInfo_init();
+void UpdatedSystemRecordingInfoForPolling();
+void WriteSystemRecordingInfoToEEPROM();

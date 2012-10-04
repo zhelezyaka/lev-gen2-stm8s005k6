@@ -1,6 +1,6 @@
 
 
-#define GVarArraySize	21
+#define GVarArraySize	22
 
 extern unsigned int G_Var_Array[GVarArraySize];
 
@@ -23,15 +23,16 @@ extern unsigned int G_Communication_Array[];
 //////////////////////////////
 //recording data
 #define RECORDING_DATA_Start_Array_Index    13         
-#define RECORDING_DATA_NUMBER               8    
-#define G_MAX_DSG_C_ADC_RECORD          (G_Var_Array[ 13])
-#define G_MAX_CHG_C_ADC_RECORD          (G_Var_Array[ 14])
-#define G_MAX_VBAT_ADC_RECORD           (G_Var_Array[ 15])
-#define G_MIN_VBAT_ADC_RECORD           (G_Var_Array[ 16])
-#define G_MAX_TH1_ADC_RECORD            (G_Var_Array[ 17])
-#define G_MIN_TH1_ADC_RECORD            (G_Var_Array[ 18])
-#define G_MAX_TH2_ADC_RECORD            (G_Var_Array[ 19])
-#define G_MIN_TH2_ADC_RECORD            (G_Var_Array[ 20])
+#define RECORDING_DATA_NUMBER               9    
+#define G_RECORD_DATA_COUNT             (G_Var_Array[ 13])
+#define G_MAX_DSG_C_ADC_RECORD          (G_Var_Array[ 14])
+#define G_MAX_CHG_C_ADC_RECORD          (G_Var_Array[ 15])
+#define G_MAX_VBAT_ADC_RECORD           (G_Var_Array[ 16])
+#define G_MIN_VBAT_ADC_RECORD           (G_Var_Array[ 17])
+#define G_MAX_TH1_ADC_RECORD            (G_Var_Array[ 18])
+#define G_MIN_TH1_ADC_RECORD            (G_Var_Array[ 19])
+#define G_MAX_TH2_ADC_RECORD            (G_Var_Array[ 20])
+#define G_MIN_TH2_ADC_RECORD            (G_Var_Array[ 21])
 
 
 //#define G_Device_Action_Status          (G_Var_Array[10])   //no use

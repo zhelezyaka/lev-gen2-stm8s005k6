@@ -1,6 +1,6 @@
 
 #include "SOC_OCV_Table.h"
-#include "..\Module_Flash_Information.h"
+#include "SystemInformation\User_Define_Parser.h"
 
 //#include "..\LEV_PrjDefine.h"
 //unsigned char OV_Capacity;
