@@ -218,6 +218,10 @@ unsigned char EEPROM_WriteByte(unsigned int Address_Offset, unsigned char Data);
 unsigned char EEPROM_WriteDoubleWord(unsigned int Address_Offset, unsigned long Data);
 unsigned char EEPROM_WriteWholeMemory(unsigned char *array, unsigned char length);
 unsigned char EEPROM_ReadWholeMemory(unsigned char *array, unsigned char length);
+unsigned char EEPROM_ReadWholeEEPROMToInternalMemory( );
+unsigned char EEPROM_Set_Data_ToInternalMemory(unsigned char offset, unsigned char *array, unsigned char length);
+unsigned char EEPROM_WriteWholeEEPROMFromInternalMemory( );
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 void device_function_test1();

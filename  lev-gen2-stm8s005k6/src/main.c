@@ -3,7 +3,7 @@
 ********************************************************************************/
 #include "Global_config.h"
 #include "Module_Driver_Define.h"
-#include "Module_Flash_Information.h"
+#include "SystemInformation\User_Define_Parser.h"
 #include "Module_Variable_Define.h"
 #include "Module_Var_Bit_Define.h"
 
@@ -38,7 +38,12 @@ unsigned int G_Communication_Array[GVarArraySize + 1 + CheckCodeIntSize];
 //unsigned long temp_l;
 //float temp_f;
 /*******************************************************************************/
-
+unsigned char _a_uchar;
+unsigned char * _p_uchar;
+unsigned int _a_uint;
+signed char _a_char;
+signed int _a_int;
+float _a_float;
 main()
 {
 #if _BURN_IN_EEPROM_SEG_BY_STVD_DEBUG_ > 0 
@@ -73,8 +78,48 @@ main()
 //        }
 //    }
     
-    
-    
+/*    
+_a_uchar = CELL_TYPE_LENGTH                          ;
+_p_uchar = &CELL_TYPE                                 ;
+_a_uchar = MANUFACTURE_NAME_LENGTH                   ;
+_p_uchar = &MANUFACTURE_NAME                          ;
+_a_uchar = PRODUCT_NAME_LENGTH                       ;
+_p_uchar = &PRODUCT_NAME                              ;
+_a_uint = MANUFACTURE_DATE                          ;
+_a_uint = VERSION                                   ;
+_a_uint = MINOR_VERSION                             ;
+_a_uint = SERIAL_NUMBER                             ;
+_a_uint = NUMBER_OF_PARALLEL_CELLS                  ;
+_a_uint = NUMBER_OF_SERIES_CELLS                    ;
+_a_uint = ADC_CURRENT_DETECT_FOR_DSG_STATUS         ;
+_a_uint = ADC_CURRENT_DETECT_FOR_CHG_STATUS         ;
+_a_uint = ADC_DOC_PROTECTION                        ;
+_a_uint = ADC_COC_PROTECTION                        ;
+_a_uint = ADC_DSG_HIGH_CURRENT_DETECT               ;
+_a_uint = ADC_BATTERY_OV_PROTECTION                 ;
+_a_uint = ADC_BATTERY_OV_RELEASE                    ;
+_a_uint = ADC_BATTERY_UV_PROTECTION                 ;
+_a_uint = ADC_BATTERY_UV_RELEASE                    ;
+_a_uint = ADC_DSG_OT_HIGH_PROTECTION                ;
+_a_uint = ADC_DSG_OT_HIGH_RELEASE                   ;
+_a_uint = ADC_DSG_OT_LOW_PROTECTION                 ;
+_a_uint = ADC_DSG_OT_LOW_RELEASE                    ;
+_a_uint = ADC_CHG_OT_PROTECTION                     ;
+_a_uint = ADC_CHG_OT_RELEASE                        ;
+_a_uint = ADC_UT_PROTECTION                         ;
+_a_uint = ADC_UT_RELEASE                            ;
+_a_uint = MIN_CELL_OV_VOLTAGE_FOR_SOC               ;
+_a_uint = MAX_CELL_UV_VOLTAGE_FOR_SOC               ;
+_a_float = CHG_mA_To_ADC_Factor                      ;
+_a_float = DSG_mA_To_ADC_Factor                      ;
+_a_float = VBAT_mV_To_ADC_Factor                     ;
+_a_float = Thermistor_mV_To_ADC_Factor               ;
+_a_char = CHG_OP_ADC_OFFSET                         ;
+_a_char = DSG_OP_ADC_OFFSET                         ;
+_a_char = VBAT_ADC_OFFSET                           ;
+_a_char = NTC1_ADC_OFFSET                           ;
+_a_char = NTC2_ADC_OFFSET                           ;
+*/                                                    ;    
 
 	while (1){
 		

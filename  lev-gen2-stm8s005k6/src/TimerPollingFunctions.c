@@ -5,7 +5,7 @@
 ********************************************************************************/
 #include "Global_config.h"
 #include "Module_Driver_Define.h"
-#include "Module_Flash_Information.h"
+#include "SystemInformation\User_Define_Parser.h"
 #include "Module_Variable_Define.h"
 #include "Module_Var_Bit_Define.h"
 

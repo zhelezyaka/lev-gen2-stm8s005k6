@@ -30,7 +30,7 @@
 /********************************************************************************
 * local Variable																*
 ********************************************************************************/
-//unsigned char eepromArray[Eeprom_segment_Size];
+unsigned char eepromArray[Eeprom_segment_Size];
 
 
 void _Device_EEPROM_Init(){
@@ -39,9 +39,9 @@ void _Device_EEPROM_Init(){
     FLASH_SetProgrammingTime(FLASH_PROGRAMTIME_STANDARD);
 
     
-//    for(int i=0; i < Eeprom_segment_Size; i++){
-//        eepromArray[i] = 0;
-//    }
+    for(int i=0; i < Eeprom_segment_Size; i++){
+        eepromArray[i] = 0;
+    }
         
 
 //    /* Unlock Data memory */
@@ -185,5 +185,52 @@ unsigned char _Device_EEPROM_ReadWholeEEPROMMemory(unsigned char *array, unsigne
 //        array[i] = eepromArray[i];
 //    }
     
+    return Data_Complete;   //pass
+}
+
+unsigned char _Device_EEPROM_ReadWholeEEPROMToInternalMemory(){
+
+    /*----------------------------- LOCAL VARIABLES -------------------------*/
+    /*---------------------------------- CODE -------------------------------*/
+
+    for(int i=0; i < Eeprom_segment_Size; i++){
+        eepromArray[i] = FLASH_ReadByte(Eeprom_segment_Start_Add + i);
+    }
+    
+    return Data_Complete;   //pass
+}
+unsigned char _Device_EEPROM_Set_Data_ToInternalMemory(unsigned char offset, unsigned char *array, unsigned char length){
+    
+    if((offset + length) > Eeprom_segment_Size){
+        return Data_Fail;   //fail
+    }
+    for(int i=0; i < length; i++){
+        eepromArray[offset + i] = array[i];
+    }
+    return Data_Complete;   //pass
+}
+
+unsigned char _Device_EEPROM_WriteWholeEEPROMFromInternalMemory(){
+
+    /*----------------------------- LOCAL VARIABLES -------------------------*/
+    unsigned int Write_Block;
+    /*---------------------------------- CODE -------------------------------*/
+
+    /* Define FLASH programming time */
+    FLASH_SetProgrammingTime(FLASH_PROGRAMTIME_STANDARD);
+
+    /* Unlock Data memory */
+    FLASH_Unlock(FLASH_MEMTYPE_DATA);
+    
+    Write_Block = 0;    // write block 0 is first block of Data Memory: address in 0x4000
+    FLASH_EraseBlock(Write_Block, FLASH_MEMTYPE_DATA);
+    FLASH_WaitForLastOperation(FLASH_MEMTYPE_DATA);
+
+    FLASH_ProgramBlock(Write_Block, FLASH_MEMTYPE_DATA, FLASH_PROGRAMMODE_STANDARD, eepromArray);
+    FLASH_WaitForLastOperation(FLASH_MEMTYPE_DATA);
+    
+    /* Lock Data memory */
+    FLASH_Lock(FLASH_MEMTYPE_DATA);
+
     return Data_Complete;   //pass
 }

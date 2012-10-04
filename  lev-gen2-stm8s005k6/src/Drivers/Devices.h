@@ -183,6 +183,9 @@ unsigned char _Device_EEPROM_WriteByte(unsigned int Address_Offset, unsigned cha
 unsigned char _Device_EEPROM_WriteDoubleWord(unsigned int Address_Offset, unsigned long Data);
 unsigned char _Device_EEPROM_WriteWholeEEPROMMemory(unsigned char *array, unsigned char length);
 unsigned char _Device_EEPROM_ReadWholeEEPROMMemory(unsigned char *array, unsigned char length);
+unsigned char _Device_EEPROM_ReadWholeEEPROMToInternalMemory();
+unsigned char _Device_EEPROM_Set_Data_ToInternalMemory(unsigned char offset, unsigned char *array, unsigned char length);
+unsigned char _Device_EEPROM_WriteWholeEEPROMFromInternalMemory();
 
 
 

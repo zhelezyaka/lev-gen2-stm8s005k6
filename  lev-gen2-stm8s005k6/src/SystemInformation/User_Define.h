@@ -9,16 +9,27 @@
 /////////////////////////////////////////////////////////////
 //// Define Flash Segment Address (one segment = 128 bytes)
 /////////////////////////////////////////////////////////////
-#define CONFIG_SEGMENT          0x4000   //EEPROM Address
+//#define CONFIG_SEGMENT          0x4000   //EEPROM Start Address
 //=====================================================================================================================
 //=====================================================================================================================
 // put "_ee_" at head means the vars will be collected for burrning-in EEPROM by external appilication
-#define _ee_str_len_CELL_TYPE_LENGTH               8
-#define _ee_str_CELL_TYPE                   "sony 26F"
-#define _ee_str_len_MANUFACTURE_NAME_LENGTH        12
-#define _ee_str_MANUFACTURE_NAME            "Dynapack"
-#define _ee_str_len_PRODUCT_NAME_LENGTH     5
-#define _ee_str_PRODUCT_NAME                "LEV36"
+// "str_len_",  Data type: unsigned char, 1 byte, show next string var length.
+// "str_",      Data type: (unsigned char *), str_len_XX bytes,  show char string.
+// "uchar_",    Data type: unsigned char, 1 byte.
+// "char_",     Data type: signed char, 1 byte.
+// "uint_",     Data type: unsigned int, 2 byte.
+// "int_",      Data type: signed int, 2 byte.
+// "float_",    Data type: float, 4 byte.
+// "double_",   Data type: double, 4 byte.
+//=====================================================================================================================
+#define _ee_address_CONFIG_SEGMENT          0x4000   //EEPROM Start Address
+
+#define _ee_str_len_CELL_TYPE_LENGTH            8
+#define _ee_str_CELL_TYPE                       "sony 26F"
+#define _ee_str_len_MANUFACTURE_NAME_LENGTH     12
+#define _ee_str_MANUFACTURE_NAME                "Dynapack"
+#define _ee_str_len_PRODUCT_NAME_LENGTH         5
+#define _ee_str_PRODUCT_NAME                    "LEV36"
 
 //#define MANUFACTURE_DATE_YEAR   2012
 //#define MANUFACTURE_DATE_MONTH  7
@@ -135,10 +146,22 @@
 #define _ee_float_DSG_mA_To_ADC_Factor          0.0671744f       // 4 bytes;
 #define _ee_float_VBAT_mV_To_ADC_Factor         0.016962f        // 4 bytes;
 #define _ee_float_Thermistor_mV_To_ADC_Factor   0.4096f         // 4 bytes; = 1/ADC_Step
-#define _ee_uchar_CHG_OP_ADC_OFFSET             0      //1byte ; 實際值-理論值 (signed char)
-#define _ee_uchar_DSG_OP_ADC_OFFSET             0      //1byte ; 實際值-理論值 (signed char)
-#define _ee_uchar_VBAT_ADC_OFFSET               0      //1byte ; 實際值-理論值 (signed char)
-#define _ee_uchar_NTC1_ADC_OFFSET               0      //1byte ; 實際值-理論值 Thermistor (signed char)
-#define _ee_uchar_NTC2_ADC_OFFSET               0      //1byte ; 實際值-理論值 Thermistor (signed char)
+#define _ee_char_CHG_OP_ADC_OFFSET             0      //1byte ; 實際值-理論值 (signed char)
+#define _ee_char_DSG_OP_ADC_OFFSET             0      //1byte ; 實際值-理論值 (signed char)
+#define _ee_char_VBAT_ADC_OFFSET               0      //1byte ; 實際值-理論值 (signed char)
+#define _ee_char_NTC1_ADC_OFFSET               0      //1byte ; 實際值-理論值 Thermistor (signed char)
+#define _ee_char_NTC2_ADC_OFFSET               0      //1byte ; 實際值-理論值 Thermistor (signed char)
 
 
+//////////////////////////////////////////////////////////////////////////
+//recording data to EEPROM
+//////////////////////////////////////////////////////////////////////////
+#define _ee_uint_RECORD_DATA_COUNT_EEPROM        0
+#define _ee_uint_MAX_DSG_C_ADC_RECORD_EEPROM     0
+#define _ee_uint_MAX_CHG_C_ADC_RECORD_EEPROM     0
+#define _ee_uint_MAX_VBAT_ADC_RECORD_EEPROM      0
+#define _ee_uint_MIN_VBAT_ADC_RECORD_EEPROM      65535
+#define _ee_uint_MAX_TH1_ADC_RECORD_EEPROM       0
+#define _ee_uint_MIN_TH1_ADC_RECORD_EEPROM       65535
+#define _ee_uint_MAX_TH2_ADC_RECORD_EEPROM       0
+#define _ee_uint_MIN_TH2_ADC_RECORD_EEPROM       65535

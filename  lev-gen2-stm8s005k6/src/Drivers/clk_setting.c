@@ -37,7 +37,7 @@ void _Device_System_clk_setup(void)
 //    CLK_CCOConfig(CLK_OUTPUT_CPU);
 //  CLK_CCOCmd(ENABLE); 
     /* Output Fcpu on CLK_CCO pin */
-    CLK_CCOConfig(CLK_OUTPUT_CPU);
+    //CLK_CCOConfig(CLK_OUTPUT_CPU);
     
 //    
 //    //Lsi

@@ -6,7 +6,7 @@
 #include "Devices.h"
 #include "Global_config.h"
 #include "Module_Driver_Define.h"
-//#include "Module_Flash_Information.h"
+//#include "SystemInformation\User_Define_Parser.h"
 //#include "Module_Variable_Define.h"
 //#include "Module_Var_Bit_Define.h"
 /********************************************************************************
@@ -407,9 +407,6 @@ void ReceiveDataParsing(unsigned char *receiveData, unsigned int length){
           UART_Send_Word_CRC(G_Communication_Array, 1, false);
         
     }
-
-
-
     
 }
 
@@ -444,6 +441,28 @@ unsigned char EEPROM_WriteWholeMemory(unsigned char *array, unsigned char length
 }
 unsigned char EEPROM_ReadWholeMemory(unsigned char *array, unsigned char length){
     if( _Device_EEPROM_ReadWholeEEPROMMemory(array, length) == Data_Complete){
+        return Data_Success;
+    }else{
+        return Data_Error;
+    }
+}
+
+unsigned char EEPROM_ReadWholeEEPROMToInternalMemory( ){
+    if( _Device_EEPROM_ReadWholeEEPROMToInternalMemory( ) == Data_Complete){
+        return Data_Success;
+    }else{
+        return Data_Error;
+    }
+}
+unsigned char EEPROM_Set_Data_ToInternalMemory(unsigned char offset, unsigned char *array, unsigned char length){
+    if( _Device_EEPROM_Set_Data_ToInternalMemory(offset, array, length) == Data_Complete){
+        return Data_Success;
+    }else{
+        return Data_Error;
+    }
+}
+unsigned char EEPROM_WriteWholeEEPROMFromInternalMemory( ){
+    if( _Device_EEPROM_WriteWholeEEPROMFromInternalMemory( ) == Data_Complete){
         return Data_Success;
     }else{
         return Data_Error;

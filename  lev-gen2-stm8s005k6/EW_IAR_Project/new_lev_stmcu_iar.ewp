@@ -196,7 +196,7 @@
         </option>
         <option>
           <name>CCListCFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMnemonics</name>
@@ -208,7 +208,7 @@
         </option>
         <option>
           <name>CCListAssFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssSource</name>
@@ -341,7 +341,7 @@
         </option>
         <option>
           <name>AsmListFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>AsmListNoDiagnostics</name>
@@ -496,7 +496,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>$PROJ_DIR$\..\Bin_Tools\Header_Parser_For_LEVD2 $PROJ_DIR$\..\src\SystemInformation\User1.h</prebuild>
+        <prebuild>$PROJ_DIR$\..\Bin_Tools\PreBuild.bat $PROJ_DIR$</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -1637,9 +1637,6 @@
       <name>$PROJ_DIR$\..\src\Module_Driver_Define.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\src\Module_Flash_Information.h</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\src\Module_Var_Bit_Define.h</name>
     </file>
     <file>
@@ -1760,7 +1757,7 @@
       <name>$PROJ_DIR$\..\src\SystemInformation\SystemInfo.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\src\SystemInformation\User_Define_Common_Information.h</name>
+      <name>$PROJ_DIR$\..\src\SystemInformation\User_Define.h</name>
     </file>
   </group>
 </project>
