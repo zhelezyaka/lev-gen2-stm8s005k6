@@ -2,7 +2,7 @@
  *	Copyright (c) 2007 STMicroelectronics
  */
 
-#include "lev_device_define.h"
+#include "Drivers\devices.h"
 
 #if defined(_COSMIC_)	
 
@@ -27,7 +27,7 @@ struct interrupt_vector const _vectab[] = {
 	{0x82, (interrupt_handler_t)_stext}, /* reset */
 	{0x82, NonHandledInterrupt}, /* trap  */
 	{0x82, NonHandledInterrupt}, /* irq0  TLI 外部最高級中斷 */
-	{0x82, NonHandledInterrupt}, /* irq1  AWU 自動喚醒HALT模式中斷*/
+	{0x82, (interrupt_handler_t)AWU_IRQHandler}, /* irq1  AWU 自動喚醒HALT模式中斷*/
 	{0x82, NonHandledInterrupt}, /* irq2  CLK 時鐘控制器*/
 	{0x82, NonHandledInterrupt}, /* irq3  EXTI0 端口A外部中斷*/
 	{0x82, NonHandledInterrupt}, /* irq4  EXTI1 端口B外部中斷*/

@@ -1607,7 +1607,7 @@
       </file>
     </group>
     <file>
-      <name>$PROJ_DIR$\..\src\communication.c</name>
+      <name>$PROJ_DIR$\..\src\DefinePollingFunctions.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\Driver_Common_interface.c</name>
@@ -1623,12 +1623,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\main.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\src\main_backup.c</name>
-      <excluded>
-        <configuration>Debug</configuration>
-      </excluded>
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\Modbus_CRC.c</name>
@@ -1758,6 +1752,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\SystemInformation\User_Define.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\src\SystemInformation\User_Define_Parser.h</name>
     </file>
   </group>
 </project>

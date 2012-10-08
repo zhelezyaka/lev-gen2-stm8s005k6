@@ -24,6 +24,8 @@
 //=====================================================================================================================
 #define _ee_address_CONFIG_SEGMENT          0x4000   //EEPROM Start Address
 
+//First set String Length
+//then second set String
 #define _ee_str_len_CELL_TYPE_LENGTH            8
 #define _ee_str_CELL_TYPE                       "sony 26F"
 #define _ee_str_len_MANUFACTURE_NAME_LENGTH     12
@@ -146,17 +148,21 @@
 #define _ee_float_DSG_mA_To_ADC_Factor          0.0671744f       // 4 bytes;
 #define _ee_float_VBAT_mV_To_ADC_Factor         0.016962f        // 4 bytes;
 #define _ee_float_Thermistor_mV_To_ADC_Factor   0.4096f         // 4 bytes; = 1/ADC_Step
-#define _ee_char_CHG_OP_ADC_OFFSET             0      //1byte ; 實際值-理論值 (signed char)
-#define _ee_char_DSG_OP_ADC_OFFSET             0      //1byte ; 實際值-理論值 (signed char)
-#define _ee_char_VBAT_ADC_OFFSET               0      //1byte ; 實際值-理論值 (signed char)
-#define _ee_char_NTC1_ADC_OFFSET               0      //1byte ; 實際值-理論值 Thermistor (signed char)
-#define _ee_char_NTC2_ADC_OFFSET               0      //1byte ; 實際值-理論值 Thermistor (signed char)
+#define _ee_char_CHG_OP_ADC_OFFSET             -10      //1byte ; 實際值-理論值 (signed char)
+#define _ee_char_DSG_OP_ADC_OFFSET             2      //1byte ; 實際值-理論值 (signed char)
+#define _ee_char_VBAT_ADC_OFFSET               3      //1byte ; 實際值-理論值 (signed char)
+#define _ee_char_NTC1_ADC_OFFSET               -20      //1byte ; 實際值-理論值 Thermistor (signed char)
+#define _ee_char_NTC2_ADC_OFFSET               -5      //1byte ; 實際值-理論值 Thermistor (signed char)
 
 
 //////////////////////////////////////////////////////////////////////////
 //recording data to EEPROM
 //////////////////////////////////////////////////////////////////////////
-#define _ee_uint_RECORD_DATA_COUNT_EEPROM        0
+// they have to set the start offset at 4的倍數 below vars.
+// and the order could not be changed below vars.
+/////////////////////////////////////////////////////////////////////////
+//#define _ee_uchar_RESERVED_FOR_OFFSET1
+//#define _ee_uint_RESERVED_FOR_OFFSET2
 #define _ee_uint_MAX_DSG_C_ADC_RECORD_EEPROM     0
 #define _ee_uint_MAX_CHG_C_ADC_RECORD_EEPROM     0
 #define _ee_uint_MAX_VBAT_ADC_RECORD_EEPROM      0
@@ -165,3 +171,5 @@
 #define _ee_uint_MIN_TH1_ADC_RECORD_EEPROM       65535
 #define _ee_uint_MAX_TH2_ADC_RECORD_EEPROM       0
 #define _ee_uint_MIN_TH2_ADC_RECORD_EEPROM       65535
+// record count
+#define _ee_uint_RECORD_DATA_COUNT_EEPROM        0

@@ -105,7 +105,7 @@ enum forButtonStatusCode
 #define BUTTON_LONG_PRESS       (0x0010)    //
 #define ADC_CONVERSION          (0x0020)    //
 #define BUTTON_MULTI_CLICK      (0x0040)    //
-//#define _No_Used_    (0x0080)    //
+#define ADC_SET_CONVERSION      (0x0080)    //
 //Hight byte
 #define PIC_UVP_STATUS          (0x0100)    // pic uvp input pin
 #define PIC_OVP_STATUS          (0x0200)    // pic ovp input pin
@@ -143,10 +143,10 @@ enum forButtonStatusCode
 /********************************************************************************
 * Define function   															*
 ********************************************************************************/
-void System_clk_setup();
+void System_clk_setup(void);
 
 extern unsigned char G_All_LED_Bits_Mask;
-void InitLEDDisplay();
+void InitLEDDisplay(void);
 void SetLed_DirectIO_BITs(unsigned char LEDNumBits);
 void SetLedLightOnFlag(unsigned char LEDNumBits, unsigned char enable);
 void SetLedBlinkFlag(unsigned char LEDNumBits, unsigned char enable);
@@ -155,49 +155,40 @@ void SetLedPWM20Steps(unsigned char PWM_Steps);
 void SetLedSerialTurnOnOff(unsigned char enable);
 void SetLed_DirectIO_Pin_OnOff(unsigned char LEDNumPin, unsigned char enable);
     
-void InitMosControl();
+void InitMosControl(void);
 void setMosFET(unsigned char MosFetCode, unsigned char enable);
 
 #define MULTI_CLICK_PRESS_TIMES     3   //press times
-void InitButtonEvent();
-unsigned char GetButtonStatus();
+void InitButtonEvent(void);
+unsigned char GetButtonStatus(void);
 
 
-void InitInputSignalPin();
-unsigned char get_PIC_UVP_Status();
-unsigned char get_PIC_OVP_Status();
+void InitInputSignalPin(void);
+unsigned char get_PIC_UVP_Status(void);
+unsigned char get_PIC_OVP_Status(void);
 
 
-void InitADCFunction();
-void startAdcConversion();
-void stopAdcConversion();
-void Set_Interrupt_ADC_Conversion_Finish_Function(void (*calling_fun)());
-void Reomve_Interrupt_ADC_Conversion_Finish_Function();
+void InitADCFunction(void);
+void startAdcConversion(void);
+void stopAdcConversion(void);
+void Set_Interrupt_ADC_Conversion_Finish_Function(void (*calling_fun)(void));
+void Reomve_Interrupt_ADC_Conversion_Finish_Function(void);
 void Get_ADC_Values(unsigned int *valueArray, unsigned char length);
 
 
 
-void InitTimerFunction();
-void DisableTimerFunction();
-void Set_Interrupt_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)());
-void Remove_Interrupt_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)());
+void InitTimerFunction(void);
+void DisableTimerFunction(void);
+void Set_Interrupt_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)(void));
+void Remove_Interrupt_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)(void));
 
-void InitAWUTimerFunction();
-void DisableAWUTimerFunction();
-void Set_AWU_Shorter_Timer_Interval_Time_Base();
-void Set_AWU_Longer_Timer_Interval_Time_Base();
-void Set_Interrupt_AWU_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)());
-void Remove_Interrupt_AWU_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)());
+void InitAWUTimerFunction(void);
+void DisableAWUTimerFunction(void);
+void Set_AWU_Shorter_Timer_Interval_Time_Base(void);
+void Set_AWU_Longer_Timer_Interval_Time_Base(void);
+void Set_Interrupt_AWU_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)(void));
+void Remove_Interrupt_AWU_Timer_Calling_Function(unsigned char fun_index, void (*calling_fun)(void));
 
-////////////////////////////////////
-// Polling function
-void InitSubPollingProtectionVariables();
-void ProtectionForPolling();
-void InitTimerPollingVariables();
-void Set_Aux1_Counter_Cycles(unsigned char cycles);
-void Reset_Aux1_Counter();
-void TimerCounterForPolling();
-void delay_cycles(unsigned long cycleCount);
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -207,25 +198,27 @@ void SetADPSOC(unsigned char enable);
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define PrecedingCheckCode  0x80f8
 #define EndCheckCode        0x70f7
-void InitUARTFunction();
+void InitUARTFunction(void);
 void Set_Uart_RX_Interrupt(unsigned char enable);
 void UART_Send_Word_CRC(unsigned int *sendData, unsigned int length, unsigned char enable_with_PrecedingCode);
+void UART_Send_EEPROM_DATA_CRC_with_PrecedingCheckCode();
 void ReceiveDataParsing(unsigned char *receiveData, unsigned int length);
 unsigned int usMBCRC16( unsigned char * pucFrame, unsigned int usLen );
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Init_EEPROM();
+void Init_EEPROM(void);
 unsigned char EEPROM_WriteByte(unsigned int Address_Offset, unsigned char Data);
 unsigned char EEPROM_WriteDoubleWord(unsigned int Address_Offset, unsigned long Data);
 unsigned char EEPROM_WriteWholeMemory(unsigned char *array, unsigned char length);
 unsigned char EEPROM_ReadWholeMemory(unsigned char *array, unsigned char length);
-unsigned char EEPROM_ReadWholeEEPROMToInternalMemory( );
+unsigned char EEPROM_ReadWholeEEPROMToInternalMemory(void);
 unsigned char EEPROM_Set_Data_ToInternalMemory(unsigned char offset, unsigned char *array, unsigned char length);
-unsigned char EEPROM_WriteWholeEEPROMFromInternalMemory( );
+unsigned char EEPROM_WriteWholeEEPROMFromInternalMemory(void);
 
+void delay_cycles(unsigned long cycleCount);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-void device_function_test1();
-void device_function_test2();
+void device_function_test1(void);
+void device_function_test2(void);
 
 
 
