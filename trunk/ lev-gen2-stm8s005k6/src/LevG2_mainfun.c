@@ -8,11 +8,13 @@
 #include "Module_Variable_Define.h"
 #include "Module_Var_Bit_Define.h"
 #include "SystemInformation\SystemInfo.h"
+#include "DefinePollingFunctions.h"
 
 /********************************************************************************
 * Define																		*
 ********************************************************************************/
-#define INTO_HALT_MODE_DELAY_CYCLE  156     //10 sec = INTO_HALT_MODE_DELAY_CYCLE * TimerIntervalTimeBase_MS
+#define STAY_IN_HALT_MODE_DELAY_CYCLE  156     //10 sec = STAY_IN_HALT_MODE_DELAY_CYCLE * TimerIntervalTimeBase_MS
+
 /********************************************************************************
 * Extern Function																*
 ********************************************************************************/
@@ -25,6 +27,11 @@
 /********************************************************************************
 * Global Variable																*
 ********************************************************************************/
+/********************************************************************************
+* Local Variable																*
+********************************************************************************/
+unsigned char Switch_HALT_Normal_MODE_Holging_counter;
+
 /* Public functions ----------------------------------------------------------*/
 /**
   * @brief Example firmware main entry point.
@@ -53,40 +60,13 @@ unsigned char check;
 //unsigned char __eeprom *p;
 //unsigned int __eeprom *p1;
 unsigned int FirstInitial_Func(){
+	int i;
 	
 	System_clk_setup();
     delay_cycles(100); //about 960us at 4MHz
 /////////////////////////////////
 
-//	/*Configure all the IO as Output Push pull at low level exept PA1 and PA2 (OSCIN and OSCOUT)*/
-//	/*GPIOA*/
-//	/*otherwise it's defined as Push pull at low level */
-//	GPIOA->ODR = 0x00;
-//	GPIOA->DDR = 0x7F;
-//	GPIOA->CR1 = 0x7F;
-//	/*GPIOB*/
-//	GPIOB->ODR = 0x00;
-//	GPIOB->DDR = 0xFF;
-//	GPIOB->CR1 = 0xFF;
-//	/*GPIOC*/
-//	GPIOC->ODR = 0x00;
-//	GPIOC->DDR = 0xFF;
-//	GPIOC->CR1 = 0xFF;
-//	/*GPIOD*/
-//	GPIOD->ODR = 0x00;
-//	GPIOD->DDR = 0xFF;
-//	GPIOD->CR1 = 0xFF;
-//	/*GPIOE*/
-//	GPIOE->ODR = 0x00;
-//	GPIOE->DDR = 0xFF;
-//	GPIOE->CR1 = 0xFF;
-//	/*GPIOF*/
-//	GPIOF->ODR = 0x00;
-//	GPIOF->DDR = 0xFF;
-//	GPIOF->CR1 = 0xFF;
-//
-//    
-//    system_halt();
+
 
     
 //////////////////////////////    
@@ -97,64 +77,9 @@ unsigned int FirstInitial_Func(){
     //while(1);
    
     ////////////////////////////////
-    
-    SysInfo_init();
-    G_DSG_Current_ADC = 1000;
-    G_CHG_Current_ADC = 2000;
-    G_VBAT_ADC = 3000;
-    G_TH1_ADC = 4000;
-    G_TH2_ADC = 5000;
-   
-    UpdatedSystemRecordingInfoForPolling();
-    WriteSystemRecordingInfoToEEPROM();    
-    while(1){
-        //SysInfo_init();
-        for(int i=0; i<128;i++){
-            delay_cycles(100); //about 960us at 4MHz
-        }
-    }
-    
-    //InitTimerFunction();
-	//enableInterrupts();  /* enable interrupts */
-    while(0){
-        //SetLed_DirectIO_BITs(0xff);
-        //check = EEPROM_WriteByte(0, 3300);
-        //check = EEPROM_WriteByte(0x22, 4400);
-        check = EEPROM_WriteDoubleWord(4, 1430546039);
-        check = EEPROM_WriteDoubleWord(0x10, 1430546039);
-        
-        //check = EEPROM_ReadWholeMemory(testArray, 128);
-        //SetLed_DirectIO_BITs(0);
-        delay_cycles(100); //about 960us at 4MHz
-        if(check){
-            //fail
-//            SetLed_DirectIO_BITs(0xff);
-//            SetLed_DirectIO_BITs(0);
-//            SetLed_DirectIO_BITs(0xff);
-//            SetLed_DirectIO_BITs(0);
-//            SetLed_DirectIO_BITs(0xff);
-//            SetLed_DirectIO_BITs(0);
-        }else{
-            //pass
-//            SetLed_DirectIO_BITs(0xff);
-//            SetLed_DirectIO_BITs(0);
-//            SetLed_DirectIO_BITs(0xff);
-//            SetLed_DirectIO_BITs(0);
-        }
-        
-        delay_cycles(100); //about 960us at 4MHz
-        delay_cycles(100); //about 960us at 4MHz
-        delay_cycles(100); //about 960us at 4MHz
-        delay_cycles(100); //about 960us at 4MHz
-        delay_cycles(100); //about 960us at 4MHz
-        delay_cycles(100); //about 960us at 4MHz
-        delay_cycles(100); //about 960us at 4MHz
-        delay_cycles(100); //about 960us at 4MHz
-        delay_cycles(100); //about 960us at 4MHz
-        delay_cycles(100); //about 960us at 4MHz
-    }
 
-    while(0);
+    
+
     
     
 //    SetLed_DirectIO_OnOff(LED1, TurnOn);
@@ -214,6 +139,8 @@ unsigned int Startup_Func()
     delay_cycles(5);
     InitAdapterOutputSignal();
     InitUARTFunction();
+    
+    SysInfo_init();
     
     /////////////////////////////////
     InitSubPollingProtectionVariables();
@@ -279,21 +206,24 @@ unsigned int Normal_Func(){
     
     //Set_Interrupt_Timer_Calling_Function(1, TimerCounterForPolling);   //64ms
     //Set_Interrupt_Timer_Calling_Function(2, startAdcConversion);       //64ms
+    //Set_Interrupt_Timer_Calling_Function(3, UpdatedSystemRecordingInfoForPolling);       //64ms
     //G_Auxiliary_Module_Status &= ~Halt_Mode;
     
     Set_Interrupt_AWU_Timer_Calling_Function(1, TimerCounterForPolling);   //64ms
     Set_Interrupt_AWU_Timer_Calling_Function(2, startAdcConversion);       //64ms
+    Set_Interrupt_AWU_Timer_Calling_Function(3, UpdatedSystemRecordingInfoForPolling);       //64ms
     G_Auxiliary_Module_Status |= Halt_Mode;
     
-    Set_Aux1_Counter_Cycles(INTO_HALT_MODE_DELAY_CYCLE);
-    
+    Set_IntoHaltModeDelay_Counter_Cycles(STAY_IN_HALT_MODE_DELAY_CYCLE);
+     //return ShutdownMode;
     inverse_led1_flag = 0;
     inverse_led2_flag = 0;
     while(1){
         
-        if(G_Device_Interface_Status1 & BUTTON_CLICK){
-            G_Device_Interface_Status1 &= ~BUTTON_CLICK;
-            
+        if((G_Device_Interface_Status1 & BUTTON_CLICK) || 
+           (G_Device_Interface_Status1 & BUTTON_LONG_PRESS) ||
+           (G_Device_Interface_Status1 & BUTTON_MULTI_CLICK)){
+               
             ////////////////////////////////////////////////////////////
             // into normal wfi mode
             if(G_Auxiliary_Module_Status & Halt_Mode){
@@ -301,14 +231,21 @@ unsigned int Normal_Func(){
                 InitTimerFunction();
                 Set_Interrupt_Timer_Calling_Function(1, TimerCounterForPolling);   //64ms
                 Set_Interrupt_Timer_Calling_Function(2, startAdcConversion);       //64ms
+                Set_Interrupt_Timer_Calling_Function(3, UpdatedSystemRecordingInfoForPolling);       //64ms
                 G_Auxiliary_Module_Status &= ~Halt_Mode;
                 G_Add_Device_Interface_Status |= ENABLE_AUX1_COUNTER;
             }else{
-                Reset_Aux1_Counter();
-            }
+                Recount_IntoHaltModeDelay_Counter();
+            }                   
+        }
+        
+        
+        if(G_Device_Interface_Status1 & BUTTON_CLICK){
+            G_Device_Interface_Status1 &= ~BUTTON_CLICK;
             
             if(inverse_led1_flag == 0){
-                SetLedPWMFunction(LED1+LED4+LED5, TurnOn);
+                //SetLedPWMFunction(LED1+LED4+LED5, TurnOn);
+                SetLedPWMFunction(LED4+LED5, TurnOn);
                 
                 //SetLedLightOnFlag(LED1, TurnOn);
             }else{
@@ -321,34 +258,32 @@ unsigned int Normal_Func(){
         if(G_Device_Interface_Status1 & BUTTON_LONG_PRESS){
             G_Device_Interface_Status1 &= ~BUTTON_LONG_PRESS;
 
-            ////////////////////////////////////////////////////////////
-            // into normal wfi mode
-            if(G_Auxiliary_Module_Status & Halt_Mode){
-                DisableAWUTimerFunction();
-                InitTimerFunction();
-                Set_Interrupt_Timer_Calling_Function(1, TimerCounterForPolling);   //64ms
-                Set_Interrupt_Timer_Calling_Function(2, startAdcConversion);       //64ms
-                G_Auxiliary_Module_Status &= ~Halt_Mode;
-                G_Add_Device_Interface_Status |= ENABLE_AUX1_COUNTER;
-            }else{
-                Reset_Aux1_Counter();
-            }
+            SetLedSerialTurnOnOff(TurnOff);
+            return ShutdownMode; 
 
-            
             if(inverse_led2_flag == 0){
                 //SetLedLightOnFlag(LED2, TurnOn);
                 SetLedSerialTurnOnOff(TurnOn);
             }else{
                 //SetLedLightOnFlag(LED2, TurnOff);
-                SetLedSerialTurnOnOff(TurnOff);
             }
             inverse_led2_flag ^= 0x01;
         }
         
-        
+         if(G_Device_Interface_Status1 & BUTTON_MULTI_CLICK){
+             G_Device_Interface_Status1 &= ~BUTTON_MULTI_CLICK;
+             if(G_Auxiliary_Module_Status & _3RD_Function_ON){
+                 G_Auxiliary_Module_Status &= ~_3RD_Function_ON;
+             }else{
+                 G_Auxiliary_Module_Status |= _3RD_Function_ON;
+             }
+         }
         if(G_Auxiliary_Module_Status & SYS_1_SEC_FLAG){
             G_Auxiliary_Module_Status &= ~SYS_1_SEC_FLAG;
-            UART_Send_Word_CRC(G_Var_Array, GVarArraySize, true);
+                UART_Send_Word_CRC(G_Var_Array, GVarArraySize, true);
+                UART_Send_EEPROM_DATA_CRC_with_PrecedingCheckCode();
+            if(G_Auxiliary_Module_Status & _3RD_Function_ON){
+            }
         }
         
         
@@ -360,12 +295,15 @@ unsigned int Normal_Func(){
             InitAWUTimerFunction();
             Set_Interrupt_AWU_Timer_Calling_Function(1, TimerCounterForPolling);   //64ms
             Set_Interrupt_AWU_Timer_Calling_Function(2, startAdcConversion);       //64ms
+            Set_Interrupt_AWU_Timer_Calling_Function(3, UpdatedSystemRecordingInfoForPolling);       //64ms
             G_Auxiliary_Module_Status |= Halt_Mode;
         }
         
-        //delay_cycles(100); //about 960us at 4MHz
+        delay_cycles(100); //about 960us at 4MHz
         if(G_Auxiliary_Module_Status & Halt_Mode){
-            halt();
+            if((G_Device_Interface_Status1 & ADC_SET_CONVERSION) == 0){
+                halt();
+            }
         }else{
             wfi();  /* Wait For Interrupt */
         }
@@ -403,6 +341,87 @@ unsigned int Normal_Func(){
 }
 
 unsigned int Shutdown_Func(){
+    
+    unsigned char flag;
+    
+    InitTimerPollingVariables();
+    Set_IntoHaltModeDelay_Counter_Cycles(STAY_IN_HALT_MODE_DELAY_CYCLE);
+    
+    DisableAWUTimerFunction();
+    setMosFET(CHG_MOSFET, TurnOff);
+    setMosFET(DSG_MOSFET, TurnOff);
+    UART_Send_Word_CRC(G_Var_Array, GVarArraySize, true);
+    UART_Send_EEPROM_DATA_CRC_with_PrecedingCheckCode();
+
+    
+    while(1){
+        DisableTimerFunction();
+        stopAdcConversion();
+//        /*Configure all the IO as Output Push pull at low level exept PA1 and PA2 (OSCIN and OSCOUT)*/
+//        /*GPIOA*/
+//        /*otherwise it's defined as Push pull at low level */
+//        GPIOA->ODR = 0x00;    //OUTPUT HIGH/LOW
+//        GPIOA->DDR = 0x7F;    //Set "1" as Output mode,
+//        GPIOA->CR1 = 0x7F;    /* Pull-Up or Push-Pull */
+//        /*GPIOB*/
+//        GPIOB->ODR = 0x00;
+//        GPIOB->DDR = 0xFF;
+//        GPIOB->CR1 = 0xFF;
+//        /*GPIOC*/
+//        GPIOC->ODR = 0x00;
+//        GPIOC->DDR = 0xFF;
+//        GPIOC->CR1 = 0xFF;
+//        /*GPIOD*/
+//        GPIOD->ODR = 0x00;
+//        GPIOD->DDR = 0xFF;
+//        GPIOD->CR1 = 0xFF;
+//        /*GPIOE*/
+//        GPIOE->ODR = 0x00;
+//        GPIOE->DDR = 0xFF;
+//        GPIOE->CR1 = 0xFF;
+//        /*GPIOF*/
+//        GPIOF->ODR = 0x00;
+//        GPIOF->DDR = 0xFF;
+//        GPIOF->CR1 = 0xFF;
+        
+        //InitButtonEvent();
+        halt(); 
+        
+        //InitUARTFunction();        
+        InitTimerFunction();
+        Set_Interrupt_Timer_Calling_Function(1, TimerCounterForPolling);   //64ms
+
+        G_Add_Device_Interface_Status |= ENABLE_AUX1_COUNTER;
+    
+        UART_Send_Word_CRC(G_Var_Array, GVarArraySize, true);
+        
+        //GPIO_WriteHigh(GPIOC, GPIO_PIN_1);
+        while(1){
+            if(G_Add_Device_Interface_Status & AUX1_COUNTING_FINISH){
+                UART_Send_Word_CRC(G_Var_Array, GVarArraySize, true);
+                G_Add_Device_Interface_Status &= ~AUX1_COUNTING_FINISH;
+                break;
+            }
+            if(G_Device_Interface_Status1 & BUTTON_LONG_PRESS){
+                G_Device_Interface_Status1 &= ~BUTTON_LONG_PRESS;
+                Recount_IntoHaltModeDelay_Counter();
+                SetLedSerialTurnOnOff(TurnOn);
+                return StartUp;
+            }
+            if(G_Device_Interface_Status1 & BUTTON_CLICK){
+                G_Device_Interface_Status1 &= ~BUTTON_CLICK;
+                Recount_IntoHaltModeDelay_Counter();
+            }
+            if(G_Device_Interface_Status1 & BUTTON_MULTI_CLICK){
+                G_Device_Interface_Status1 &= ~BUTTON_MULTI_CLICK;
+                Recount_IntoHaltModeDelay_Counter();
+            }
+        }
+        //GPIO_WriteLow(GPIOC, GPIO_PIN_1);
+        for(int i = 0; i < 100;i++){
+            delay_cycles(100); //about 960us at 4MHz
+        }        
+    }
     
     return StartUp;
 }

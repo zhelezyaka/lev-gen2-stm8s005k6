@@ -18,7 +18,7 @@
 //#define UratBaudRates		115200
 //#define UratBaudRates		57600
 //#define UratBaudRates		38400
-#define UratBaudRates		57600
+#define UratBaudRates		38400
 
 #define SendingTimeOutCycle	1000
 #define UratRXBufferSize	16
@@ -33,7 +33,9 @@ static unsigned int Uart_RX_Count;
 static unsigned int SendingWhileTimeOutCount;
 
 void (*Interrupt_Uart_Receive_frame_ptr_fuc)(unsigned char *receiveData, unsigned int length);
-void empty_uart_receive_frame_fun(unsigned char *receiveData, unsigned int length){};
+
+
+void empty_uart_receive_frame_fun(unsigned char *receiveData, unsigned int length){}
 
 ///////////////////////////////////
 

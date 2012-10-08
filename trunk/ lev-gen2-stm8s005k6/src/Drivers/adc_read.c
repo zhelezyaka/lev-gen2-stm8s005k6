@@ -20,22 +20,24 @@
 /********************************************************************************
 * Golbal Variable																*
 ********************************************************************************/
-#define NUM_OF_ADC_CHANNEL      5
+#define NUM_OF_ADC_CHANNEL      6
 #define NUM_OF_ADC_CONVERSION  1
 
-static unsigned char adc_second_scan_flag;
+//static unsigned char adc_second_scan_flag;
 //static unsigned int adc_array_Prt;
 static unsigned int ADC_Results[NUM_OF_ADC_CHANNEL];
 //static unsigned int ADC_Results[NUM_OF_ADC_CHANNEL][NUM_OF_ADC_CONVERSION];
 static unsigned char adc_scan_times_flag;
 
-void (*Intupt_ADC_Finish_ptr_fuc)();
-void empty_ADC_finish_fun(){};
+void (*Intupt_ADC_Finish_ptr_fuc)(void);
+
+
+void empty_ADC_finish_fun(){}
 
 /********************************************************************************
 * adc_init																		*
 ********************************************************************************/
-void adc_channel_init(){
+void adc_channel_init(void){
 	//io init
 	GPIO_Init(IDSG_PORT, IDSG_PIN, GPIO_MODE_IN_FL_NO_IT);
 	GPIO_Init(ICHG_PORT, ICHG_PIN, GPIO_MODE_IN_FL_NO_IT);
@@ -55,7 +57,7 @@ void adc_channel_init(){
     
 }
 
-void adc_4_channel_scan_init(){
+void adc_4_channel_scan_init(void){
 //	//io init
 //	GPIO_Init(IDSG_PORT, IDSG_PIN, GPIO_MODE_IN_FL_NO_IT);
 //	GPIO_Init(ICHG_PORT, ICHG_PIN, GPIO_MODE_IN_FL_NO_IT);
@@ -79,7 +81,7 @@ void adc_4_channel_scan_init(){
     
 }
 
-void adc_AIN12_channel_init(){
+void adc_AIN12_channel_init(void){
 //	//io init
 //	GPIO_Init(THS2_PORT, THS2_PIN, GPIO_MODE_IN_FL_NO_IT);
 //    
@@ -97,7 +99,7 @@ void adc_AIN12_channel_init(){
     ADC1->CR2 &= (uint8_t)(~ADC1_CR2_SCAN);
 }
 
-void adc_enable_Data_Buffer_and_EOC_interrupt(){
+void adc_enable_Data_Buffer_and_EOC_interrupt(void){
 	ADC1_DataBufferCmd(ENABLE);     //Enable the ADC1 data store into the Data Buffer registers
 	ADC1_ITConfig(ADC1_IT_EOCIE, ENABLE);   //Enable EOC interrupt
 }
@@ -109,17 +111,20 @@ void _Device_Init_ADC_Function(void)
     adc_scan_times_flag = 0;
     Intupt_ADC_Finish_ptr_fuc = empty_ADC_finish_fun;
         
-    adc_channel_init();
     //adc_4_channel_scan_init();
     
 //    adc_second_scan_flag = 1;
 //    adc_AIN12_channel_init();
     
+    
+    
+    adc_channel_init();
     adc_enable_Data_Buffer_and_EOC_interrupt();
     
 }
 
 void _Device_Start_ADC_Conversion(){
+    adc_channel_init();
     //adc_second_scan_flag = 0;
     adc_scan_times_flag = 0;
     //adc_4_channel_scan_init();
@@ -139,10 +144,11 @@ void _Device_Remove_Interrupt_ADC_Conversion_Finish_Function(){
 }
 
 void _Device_Get_ADC_Conversion_Values(unsigned int *valueArray, unsigned char length){
+	int i;
     if(length > NUM_OF_ADC_CHANNEL){
         length = NUM_OF_ADC_CHANNEL;
     }
-    for(int i = 0; i < length; i++){
+    for(  i = 0; i < length; i++){
         valueArray[i] = ADC_Results[i];
     }
 }
@@ -187,18 +193,25 @@ INTERRUPT void ADC1_IRQHandler(void)
                 ADC1_StartConversion();
                 break;
             case 3:
+                ADC_Results[3] = ADC1_GetBufferValue(3);
+                ADC1->CSR &= (uint8_t)(~ADC1_CSR_CH); /* Clear the ADC1 channels */
+                ADC1->CSR |= (uint8_t)(ADC1_CHANNEL_4);/* Select the ADC1 channel */
+                ADC1_StartConversion();
+                break;
+            case 4:
                 ADC_Results[1] = ADC1_GetBufferValue(1);
                 ADC_Results[2] = ADC1_GetBufferValue(2);
                 ADC_Results[3] = ADC1_GetBufferValue(3);
+                ADC_Results[4] = ADC1_GetBufferValue(4);
                 ADC1->CSR &= (uint8_t)(~ADC1_CSR_CH); /* Clear the ADC1 channels */
                 ADC1->CSR |= (uint8_t)(ADC1_CHANNEL_12);/* Select the ADC1 channel */
                     
                 ADC1->CR2 &= (uint8_t)(~ADC1_CR2_SCAN); //ADC1_ScanMode   DISABLE
                 
-                ADC1_StartConversion();
+                ADC1_StartConversion();                
                 break;
-            case 4:
-                ADC_Results[4] = ADC1_GetConversionValue();
+            case 5:
+                ADC_Results[5] = ADC1_GetConversionValue();
                 ADC1->CSR &= (uint8_t)(~ADC1_CSR_CH); /* Clear the ADC1 channels */
                 ADC1->CSR |= (uint8_t)(ADC1_CHANNEL_0);/* Select the ADC1 channel */
                 

@@ -1,15 +1,23 @@
 
 
-//#include "stm8s.h"
+#include "stm8s.h"
 #include "Global_config.h"
 #include "Module_Driver_Define.h"
 #include "User_Define_Parser.h"
 //#include "Module_Variable_Define.h"
 //#include "Module_Var_Bit_Define.h"
-//#include "SystemInformation\SystemInfo.h"
+#include "SystemInfo.h"
+#include "DefinePollingFunctions.h"
+
 /********************************************************************************
 * Define																		*
 ********************************************************************************/
+#define EEPROMWriteRetry    3
+
+#define Recording_1_Sec_CycleTimes            15  //unit:cycles , 1 sec = System_1_Sec_Flag_CycleTimes * TimerIntervalTimeBase_MS
+#define WriteRecordingData_Hours              24  //unit:hours
+#define RecordingPolling_Start_Delay_CycleTimes            15  //unit:cycles , 1 sec = RecordingPolling_Start_Delay_CycleTimes * TimerIntervalTimeBase_MS
+
 /********************************************************************************
 * Extern Function																*
 ********************************************************************************/
@@ -20,7 +28,16 @@
 /********************************************************************************
 * Golbal Variable																*
 ********************************************************************************/
-#define EEPROMWriteRetry    3
+
+
+/********************************************************************************
+* Local file Variable										                    *
+********************************************************************************/
+static unsigned int     _1_Sec_Counter;
+static unsigned int     Total_Sec_Counter;
+static unsigned int     Total_Hour_Counter;
+static unsigned int     RecordingPolling_Start_Delay_Counter;
+
 /********************************************************************************
 * System_Information_init	                            						*
 ********************************************************************************/
@@ -36,36 +53,65 @@ void SysInfo_init(){
     G_MIN_TH1_ADC_RECORD   =  MIN_TH1_ADC_RECORD_EEPROM;
     G_MAX_TH2_ADC_RECORD   =  MAX_TH2_ADC_RECORD_EEPROM;
     G_MIN_TH2_ADC_RECORD   =  MIN_TH2_ADC_RECORD_EEPROM;
+    
+    
+    _1_Sec_Counter = 0;
+    Total_Sec_Counter = 0;
+    Total_Hour_Counter = 0;
+    RecordingPolling_Start_Delay_Counter = 0;
 }
 
 void UpdatedSystemRecordingInfoForPolling(){
+
+    if(RecordingPolling_Start_Delay_Counter >= RecordingPolling_Start_Delay_CycleTimes){
+        
+        //Compare MAX/MIN data and updated
+        if(G_DSG_Current_ADC > G_MAX_DSG_C_ADC_RECORD){
+            G_MAX_DSG_C_ADC_RECORD = G_DSG_Current_ADC;
+        }
+        if(G_CHG_Current_ADC > G_MAX_CHG_C_ADC_RECORD){
+            G_MAX_CHG_C_ADC_RECORD = G_CHG_Current_ADC;
+        }
+        if(G_VBAT_ADC > G_MAX_VBAT_ADC_RECORD){
+            G_MAX_VBAT_ADC_RECORD = G_VBAT_ADC;
+        }
+        if(G_VBAT_ADC < G_MIN_VBAT_ADC_RECORD){
+            G_MIN_VBAT_ADC_RECORD = G_VBAT_ADC;
+        }
+        if(G_TH1_ADC > G_MAX_TH1_ADC_RECORD){
+            G_MAX_TH1_ADC_RECORD = G_TH1_ADC;
+        }
+        if(G_TH1_ADC < G_MIN_TH1_ADC_RECORD){
+            G_MIN_TH1_ADC_RECORD = G_TH1_ADC;
+        }
+        if(G_TH2_ADC > G_MAX_TH2_ADC_RECORD){
+            G_MAX_TH2_ADC_RECORD = G_TH2_ADC;
+        }
+        if(G_TH2_ADC < G_MIN_TH2_ADC_RECORD){
+            G_MIN_TH2_ADC_RECORD = G_TH2_ADC;
+        }
+    }else{
+        RecordingPolling_Start_Delay_Counter++;
+    }
     
-    if(G_DSG_Current_ADC > G_MAX_DSG_C_ADC_RECORD){
-        G_MAX_DSG_C_ADC_RECORD = G_DSG_Current_ADC;
+    
+    //Calculation Recording data time for writing to EEPROM
+    if(_1_Sec_Counter >= Recording_1_Sec_CycleTimes){
+        Total_Sec_Counter++;
+        _1_Sec_Counter = 0;
+    }else{
+        _1_Sec_Counter++;
     }
-    if(G_CHG_Current_ADC > G_MAX_CHG_C_ADC_RECORD){
-        G_MAX_CHG_C_ADC_RECORD = G_CHG_Current_ADC;
+    if(Total_Sec_Counter >= 3600){
+        Total_Hour_Counter++;
+        Total_Sec_Counter = 0;
     }
-    if(G_VBAT_ADC > G_MAX_VBAT_ADC_RECORD){
-        G_MAX_VBAT_ADC_RECORD = G_VBAT_ADC;
-    }
-    if(G_VBAT_ADC < G_MIN_VBAT_ADC_RECORD){
-        G_MIN_VBAT_ADC_RECORD = G_VBAT_ADC;
-    }
-    if(G_TH1_ADC > G_MAX_TH1_ADC_RECORD){
-        G_MAX_TH1_ADC_RECORD = G_TH1_ADC;
-    }
-    if(G_TH1_ADC < G_MIN_TH1_ADC_RECORD){
-        G_MIN_TH1_ADC_RECORD = G_TH1_ADC;
-    }
-    if(G_TH2_ADC > G_MAX_TH2_ADC_RECORD){
-        G_MAX_TH2_ADC_RECORD = G_TH2_ADC;
-    }
-    if(G_TH2_ADC < G_MIN_TH2_ADC_RECORD){
-        G_MIN_TH2_ADC_RECORD = G_TH2_ADC;
+    if(Total_Hour_Counter >= WriteRecordingData_Hours){
+        Total_Hour_Counter = 0;
+        WriteSystemRecordingInfoToEEPROM();
     }
 }
-
+#ifdef RAM_EXECUTION
 void WriteSystemRecordingInfoToEEPROM(){
     //
     //unsigned long data;
@@ -105,7 +151,91 @@ void WriteSystemRecordingInfoToEEPROM(){
     }while(flag == Data_Error);    
     
 }
+#else
+void WriteSystemRecordingInfoToEEPROM(){
 
+    unsigned char count;
+    unsigned char flag;
+    
+    unsigned long data;
+    unsigned int intData;
+    unsigned char chData1, chData2;
+    //write word data (max dsg and chg adc) to eeprom
+    data = G_MAX_DSG_C_ADC_RECORD;
+    data = data << 16;
+    data |= G_MAX_CHG_C_ADC_RECORD;
+    count = 0;
+    do{
+        flag = EEPROM_WriteDoubleWord(MAX_DSG_C_ADC_RECORD_EEPROM_Offset, data);
+        count++;
+        if(count > EEPROMWriteRetry){
+            break;
+        }
+    }while(flag == Data_Error);
+    //write word data (max/min vbat adc) to eeprom
+    data = G_MAX_VBAT_ADC_RECORD;
+    data = data << 16;
+    data |= G_MIN_VBAT_ADC_RECORD;
+    count = 0;
+    do{
+        flag = EEPROM_WriteDoubleWord(MAX_VBAT_ADC_RECORD_EEPROM_Offset, data);
+        count++;
+        if(count > EEPROMWriteRetry){
+            break;
+        }
+    }while(flag == Data_Error);
+    //write word data (max/min th1 adc) to eeprom
+    data = G_MAX_TH1_ADC_RECORD;
+    data = data << 16;
+    data |= G_MIN_TH1_ADC_RECORD;
+    count = 0;
+    do{
+        flag = EEPROM_WriteDoubleWord(MAX_TH1_ADC_RECORD_EEPROM_Offset, data);
+        count++;
+        if(count > EEPROMWriteRetry){
+            break;
+        }
+    }while(flag == Data_Error);
+    //write word data (max/min th2 adc) to eeprom
+    data = G_MAX_TH2_ADC_RECORD;
+    data = data << 16;
+    data |= G_MIN_TH2_ADC_RECORD;
+    count = 0;
+    do{
+        flag = EEPROM_WriteDoubleWord(MAX_TH2_ADC_RECORD_EEPROM_Offset, data);
+        count++;
+        if(count > EEPROMWriteRetry){
+            break;
+        }
+    }while(flag == Data_Error);
+    
+    //write bytes data ( G_RECORD_DATA_COUNT ) to eeprom
+    //write record data count
+    G_RECORD_DATA_COUNT++;
+    
+    intData = G_RECORD_DATA_COUNT;
+    chData2 = (unsigned char)intData;   //Low byte
+    chData1 = (unsigned char)(intData >> 8);   //High byte
+    count = 0;
+    do{
+        flag = EEPROM_WriteByte(RECORD_DATA_COUNT_EEPROM_Offset, chData1);
+        count++;
+        if(count > EEPROMWriteRetry){
+            break;
+        }
+    }while(flag == Data_Error);
+    count = 0;
+    do{
+        flag = EEPROM_WriteByte(RECORD_DATA_COUNT_EEPROM_Offset + 1, chData2);
+        count++;
+        if(count > EEPROMWriteRetry){
+            break;
+        }
+    }while(flag == Data_Error);
+
+    
+}
+#endif
 //unsigned char SysInfo_init(){
 //    unsigned char retry;
 //    unsigned char flag;

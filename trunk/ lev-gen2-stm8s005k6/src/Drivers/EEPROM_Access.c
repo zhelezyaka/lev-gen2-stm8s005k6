@@ -30,19 +30,22 @@
 /********************************************************************************
 * local Variable																*
 ********************************************************************************/
+#ifdef RAM_EXECUTION
 unsigned char eepromArray[Eeprom_segment_Size];
+#endif
 
 
 void _Device_EEPROM_Init(){
-    
+    int i;
     /* Define FLASH programming time */
     FLASH_SetProgrammingTime(FLASH_PROGRAMTIME_STANDARD);
 
     
-    for(int i=0; i < Eeprom_segment_Size; i++){
+#ifdef RAM_EXECUTION
+    for( i=0; i < Eeprom_segment_Size; i++){
         eepromArray[i] = 0;
     }
-        
+#endif        
 
 //    /* Unlock Data memory */
 //    FLASH_Unlock(FLASH_MEMTYPE_DATA);
@@ -97,6 +100,7 @@ unsigned char _Device_EEPROM_WriteByte(unsigned int Address_Offset, unsigned cha
 unsigned char _Device_EEPROM_WriteDoubleWord(unsigned int Address_Offset, unsigned long Data){
     
     unsigned char val, val1, check;
+	int i;
     
     
     if(Address_Offset >= Eeprom_segment_Size){
@@ -115,7 +119,7 @@ unsigned char _Device_EEPROM_WriteDoubleWord(unsigned int Address_Offset, unsign
     
     /* Check program action */
     check = 0;
-    for(int i=0; i<4; i++){
+    for( i=0; i<4; i++){
     //GPIO_WriteHigh(LED1_PORT, LED1_PIN);
         val = FLASH_ReadByte(Eeprom_segment_Start_Add + Address_Offset + i);
     //GPIO_WriteLow(LED1_PORT, LED1_PIN);
@@ -143,6 +147,8 @@ unsigned char _Device_EEPROM_WriteDoubleWord(unsigned int Address_Offset, unsign
     }
 }
 
+
+#ifdef RAM_EXECUTION
 unsigned char _Device_EEPROM_WriteWholeEEPROMMemory(unsigned char *array, unsigned char length){
 
     /*----------------------------- LOCAL VARIABLES -------------------------*/
@@ -172,12 +178,13 @@ unsigned char _Device_EEPROM_WriteWholeEEPROMMemory(unsigned char *array, unsign
 unsigned char _Device_EEPROM_ReadWholeEEPROMMemory(unsigned char *array, unsigned char length){
 
     /*----------------------------- LOCAL VARIABLES -------------------------*/
+	int i;
     /*---------------------------------- CODE -------------------------------*/
     if(length != Eeprom_segment_Size){
         return Data_Fail;   //fail
     }
 
-    for(int i=0; i < Eeprom_segment_Size; i++){
+    for( i=0; i < Eeprom_segment_Size; i++){
         array[i] = FLASH_ReadByte(Eeprom_segment_Start_Add + i);
     }
 
@@ -191,9 +198,10 @@ unsigned char _Device_EEPROM_ReadWholeEEPROMMemory(unsigned char *array, unsigne
 unsigned char _Device_EEPROM_ReadWholeEEPROMToInternalMemory(){
 
     /*----------------------------- LOCAL VARIABLES -------------------------*/
+	int i;
     /*---------------------------------- CODE -------------------------------*/
 
-    for(int i=0; i < Eeprom_segment_Size; i++){
+    for(i=0; i < Eeprom_segment_Size; i++){
         eepromArray[i] = FLASH_ReadByte(Eeprom_segment_Start_Add + i);
     }
     
@@ -201,10 +209,12 @@ unsigned char _Device_EEPROM_ReadWholeEEPROMToInternalMemory(){
 }
 unsigned char _Device_EEPROM_Set_Data_ToInternalMemory(unsigned char offset, unsigned char *array, unsigned char length){
     
+	int i;
+	
     if((offset + length) > Eeprom_segment_Size){
         return Data_Fail;   //fail
     }
-    for(int i=0; i < length; i++){
+    for(i=0; i < length; i++){
         eepromArray[offset + i] = array[i];
     }
     return Data_Complete;   //pass
@@ -234,3 +244,4 @@ unsigned char _Device_EEPROM_WriteWholeEEPROMFromInternalMemory(){
 
     return Data_Complete;   //pass
 }
+#endif

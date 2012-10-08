@@ -30,7 +30,7 @@ extern unsigned int Calibration_Func(void);
 ********************************************************************************/
 
 unsigned int G_Var_Array[GVarArraySize];
-unsigned int G_Communication_Array[GVarArraySize + 1 + CheckCodeIntSize];
+unsigned int G_Communication_Array[64 + 1 + CheckCodeIntSize];// 64= whole EEPROM size(128 / 2), 1= CRC, CheckCodeIntSize= check for receive
 
 //unsigned char c1,c1,c2,c4;
 //unsigned int test_a[200];
@@ -44,7 +44,7 @@ unsigned int _a_uint;
 signed char _a_char;
 signed int _a_int;
 float _a_float;
-main()
+void main(void)
 {
 #if _BURN_IN_EEPROM_SEG_BY_STVD_DEBUG_ > 0 
 	/////////////////////////////////////////////////
@@ -166,3 +166,15 @@ _a_char = NTC2_ADC_OFFSET                           ;
   
 }// main
 
+void delay_cycles(unsigned long cycleCount)
+{
+	unsigned long count;
+	for(count = 0l; count < cycleCount; count++){
+#if defined(_IAR_)	
+        asm("nop");
+#endif
+#if defined(_COSMIC_)	
+        _asm("nop");
+#endif
+	}
+}

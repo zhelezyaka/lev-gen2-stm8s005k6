@@ -55,8 +55,9 @@ void InitLEDDisplay(){
 
 void SetLed_DirectIO_BITs(unsigned char LEDNumBits){
     unsigned int temp = 0;
-    LEDNumBits = LEDNumBits & G_All_LED_Bits_Mask;
-    temp = LEDNumBits;
+    temp = LEDNumBits & G_All_LED_Bits_Mask;
+    //LEDNumBits = LEDNumBits & G_All_LED_Bits_Mask;
+    //temp |= LEDNumBits;
     
     G_LED_Interface_Status1 = G_LED_Interface_Status1 & 0xff00;
     G_LED_Interface_Status1 |= temp;
@@ -65,17 +66,19 @@ void SetLed_DirectIO_BITs(unsigned char LEDNumBits){
 }
 
 void SetLed_DirectIO_Pin_OnOff(unsigned char LEDNumPin, unsigned char enable){
-    unsigned int temp = 0;
-    LEDNumPin = LEDNumPin & G_All_LED_Bits_Mask;
-    temp = LEDNumPin;
+    unsigned int temp;
+    temp = LEDNumPin & G_All_LED_Bits_Mask;
+    //LEDNumPin = LEDNumPin & G_All_LED_Bits_Mask;
+    //temp = LEDNumPin;
 
-    _Device_Set_Led_Pin_OnOff(temp, enable);
+    _Device_Set_Led_Pin_OnOff((unsigned char)temp, enable);
 }
 
 void SetLedLightOnFlag(unsigned char LEDNumBits, unsigned char enable){
     unsigned int temp = 0;
-    LEDNumBits = LEDNumBits & G_All_LED_Bits_Mask;
-    temp = LEDNumBits;
+    temp = LEDNumBits & G_All_LED_Bits_Mask;
+    //LEDNumBits = LEDNumBits & G_All_LED_Bits_Mask;
+    //temp = LEDNumBits;
     if(enable == 0){
         G_LED_Interface_Status1 &= ~(temp << 8);
     }else{
@@ -84,18 +87,20 @@ void SetLedLightOnFlag(unsigned char LEDNumBits, unsigned char enable){
 }
 
 void SetLedBlinkFlag(unsigned char LEDNumBits, unsigned char enable){
-    LEDNumBits = LEDNumBits & G_All_LED_Bits_Mask;
+	unsigned int temp = 0;
+    temp = LEDNumBits & G_All_LED_Bits_Mask;
+    //LEDNumBits = LEDNumBits & G_All_LED_Bits_Mask;
     if(enable == 0){
-        G_LED_Interface_Status2 &= ~LEDNumBits;
+        G_LED_Interface_Status2 &= ~temp;
     }else{
-        G_LED_Interface_Status2 |= LEDNumBits;
+        G_LED_Interface_Status2 |= temp;
     }    
 }
 
 void SetLedPWMFunction(unsigned char LEDNumBits, unsigned char enable){
     unsigned int temp = 0;
-    LEDNumBits = LEDNumBits & G_All_LED_Bits_Mask;
-    temp = LEDNumBits;
+    temp = LEDNumBits & G_All_LED_Bits_Mask;
+    //temp = LEDNumBits;
     
     if(enable){
         //turn on
@@ -115,7 +120,8 @@ void SetLedPWM20Steps(unsigned char PWM_Steps){
 }
 
 void SetLedSerialTurnOnOff(unsigned char enable){
-    unsigned char i, bit;
+    unsigned char bit;
+    unsigned int i, j;
     SetLedPWMFunction(G_All_LED_Bits_Mask, TurnOff);
     SetLedBlinkFlag(G_All_LED_Bits_Mask, TurnOff);
     SetLedLightOnFlag(G_All_LED_Bits_Mask, TurnOff);
@@ -126,7 +132,7 @@ void SetLedSerialTurnOnOff(unsigned char enable){
         for(i=0; i < LEDNumbers; i++){
             bit = (bit << 1) + 1;
             SetLedLightOnFlag(bit, TurnOn);
-            for(int j = 0; j < 1000;j++){
+            for(j = 0; j < 1000;j++){
                 delay_cycles(100); //about 960us at 4MHz
             }
         }
@@ -137,7 +143,7 @@ void SetLedSerialTurnOnOff(unsigned char enable){
         for(i=0; i < LEDNumbers; i++){
             SetLedLightOnFlag(~bit, TurnOff);
             bit = (bit >> 1);
-            for(int j = 0; j < 1000;j++){
+            for(j = 0; j < 1000;j++){
                 delay_cycles(100); //about 960us at 4MHz
             }
         }
@@ -250,13 +256,23 @@ unsigned char get_PIC_OVP_Status(){
 
 ////////////////////////////////////////////
 // ADC Function Data Getting  : (section start)
+////////////////////////////////////////////
+void (*Intupt_For_ADC_Finish_ptr_fuc)(void);
+void empty_For_ADC_finish_fun(void){}
+void Exe_For_ADC_finish_fun(void){
+    (*Intupt_For_ADC_Finish_ptr_fuc)();
+    G_Device_Interface_Status1 &= ~ADC_SET_CONVERSION;
+}
+////////////////////////////////////////////
 void InitADCFunction(){
     G_Device_Interface_Status1 &= ~ADC_CONVERSION;
+    Intupt_For_ADC_Finish_ptr_fuc = empty_For_ADC_finish_fun;
     _Device_Init_ADC_Function();
 }
 
 void startAdcConversion(){
     G_Device_Interface_Status1 |= ADC_CONVERSION;
+    G_Device_Interface_Status1 |= ADC_SET_CONVERSION;
     _Device_Start_ADC_Conversion();
 }
 void stopAdcConversion(){
@@ -264,9 +280,11 @@ void stopAdcConversion(){
     _Device_Stop_ADC_Conversion();
 }
 void Set_Interrupt_ADC_Conversion_Finish_Function(void (*calling_fun)()){
-    _Device_Set_Interrupt_ADC_Conversion_Finish_Function(calling_fun);
+    Intupt_For_ADC_Finish_ptr_fuc = calling_fun;
+    _Device_Set_Interrupt_ADC_Conversion_Finish_Function(Exe_For_ADC_finish_fun);
 }
 void Reomve_Interrupt_ADC_Conversion_Finish_Function(){
+    Intupt_For_ADC_Finish_ptr_fuc = empty_For_ADC_finish_fun;
     _Device_Remove_Interrupt_ADC_Conversion_Finish_Function();
 }
 void Get_ADC_Values(unsigned int *valueArray, unsigned char length){
@@ -380,7 +398,33 @@ void UART_Send_Word_CRC(unsigned int *sendData, unsigned int length, unsigned ch
 //        ucRTUBuf[usSndBufferCount++] = ( UCHAR )( usCRC16 >> 8 );
     _Device_Uart_Send_Byte(( unsigned char * ) G_Communication_Array, sendingLength); // send high byte first, send low byte second
 }
+void UART_Send_EEPROM_DATA_CRC_with_PrecedingCheckCode(){
+	unsigned int sendingLength, usCRC16, val;
+    int i;
+    unsigned char enable_with_PrecedingCode = true;
+    unsigned int length = 64;
+    //(*(PointerAttr uint8_t *) (uint16_t)Address)
+    G_Communication_Array[0] = PrecedingCheckCode;
+    G_Communication_Array[1] = PrecedingCheckCode;
 
+    sendingLength = 0;
+	for(i = 0; i < length; i++){
+        val = (*((unsigned char *)(0x4000 + sendingLength)));
+        sendingLength++;
+        val = val << 8;
+        val |= (*((unsigned char *)(0x4000 + sendingLength)));
+        sendingLength++;
+        G_Communication_Array[i + 2] = val;
+    }
+    
+    /* Calculate CRC16 checksum for Modbus-Serial-Line-PDU. */
+    usCRC16 = usMBCRC16( (( unsigned char * ) &(G_Communication_Array[2])), length * 2 );
+    G_Communication_Array[length + 2] = usCRC16;
+    G_Communication_Array[length + 2 + 1] = EndCheckCode;
+    G_Communication_Array[length + 2 + 2] = EndCheckCode;
+    sendingLength = (length + 1 + 2 + 2) * 2;
+    _Device_Uart_Send_Byte(( unsigned char * ) G_Communication_Array, sendingLength); // send high byte first, send low byte second
+}
 
 void ReceiveDataParsing(unsigned char *receiveData, unsigned int length){
 	unsigned int i, usCRC16;
@@ -432,6 +476,7 @@ unsigned char EEPROM_WriteDoubleWord(unsigned int Address_Offset, unsigned long 
         return Data_Error;
     }
 }
+#ifdef RAM_EXECUTION
 unsigned char EEPROM_WriteWholeMemory(unsigned char *array, unsigned char length){
     if( _Device_EEPROM_WriteWholeEEPROMMemory(array, length) == Data_Complete){
         return Data_Success;
@@ -468,7 +513,7 @@ unsigned char EEPROM_WriteWholeEEPROMFromInternalMemory( ){
         return Data_Error;
     }
 }
-
+#endif
 // EEPROM  : (section stop)	
 ////////////////////////////////////////////
 

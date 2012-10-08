@@ -34,14 +34,17 @@
 
 #define Max_AWU_INTERRUPT_Calling_Function  5
 
-void (*Intupt_AWUTimer_ptr_fuc[Max_AWU_INTERRUPT_Calling_Function])();
-void empty_awu_timer_fun(){};
+void (*Intupt_AWUTimer_ptr_fuc[Max_AWU_INTERRUPT_Calling_Function])(void);
+
+void empty_awu_timer_fun(){}
 
 /********************************************************************************
 * awu_halt_init																		*
 ********************************************************************************/
 void _Device_AWU_HALT_Timer_Init(){
     
+	int i;
+	
     AWU_DeInit();
     // CLK setup
     //設定AWU，和進halt模式時MVR和Flash的電源關閉
@@ -56,18 +59,19 @@ void _Device_AWU_HALT_Timer_Init(){
     //AWU_Init(AWU_TIMEBASE_128MS);
     //AWU_Init(AWU_TIMEBASE_32MS);
     AWU_Cmd(ENABLE);
-
-    for(int i = 0; i < Max_AWU_INTERRUPT_Calling_Function; i++){
+    for(i = 0; i < Max_AWU_INTERRUPT_Calling_Function; i++){
         Intupt_AWUTimer_ptr_fuc[i] = empty_awu_timer_fun;
     }
 }
 
 
 void _Device_Disable_AWU_HALT_Timer(){
+	int i;
+
     AWU_Cmd(DISABLE);
     AWU_DeInit();
 
-    for(int i = 0; i < Max_AWU_INTERRUPT_Calling_Function; i++){
+    for( i = 0; i < Max_AWU_INTERRUPT_Calling_Function; i++){
         Intupt_AWUTimer_ptr_fuc[i] = empty_awu_timer_fun;
     }
 }
@@ -99,14 +103,15 @@ INTERRUPT_HANDLER(AWU_IRQHandler, 1)
 INTERRUPT void AWU_IRQHandler(void)
 {
 #endif
-    //GPIO_WriteHigh(LED1_PORT, LED1_PIN);
+    //GPIO_WriteHigh(LED2_PORT, LED2_PIN);
+	int i;
     
     AWU_GetFlagStatus();
     
-    for(int i = 0; i < Max_AWU_INTERRUPT_Calling_Function; i++){
+    for(i = 0; i < Max_AWU_INTERRUPT_Calling_Function; i++){
         (*Intupt_AWUTimer_ptr_fuc[i])();
     }
 
-    //GPIO_WriteLow(LED1_PORT, LED1_PIN);
+    //GPIO_WriteLow(LED2_PORT, LED2_PIN);
 }
 

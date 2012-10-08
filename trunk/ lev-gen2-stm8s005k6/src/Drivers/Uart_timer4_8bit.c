@@ -16,10 +16,10 @@
 
 //extern unsigned char Receive_Fram_TimeOut_Flag;
 //
-void (*Intupt_Timer_Finish_ptr_fuc)();
-void empty_Timer_finish_fun(){};
+void (*Intupt_Timer_Finish_ptr_fuc)(void);
 unsigned int Set_Timers_Cycle_Count;
 unsigned int Timers_Cycle_Count;
+void empty_Timer_finish_fun(){}
 /********************************************************************************
 * tim4_init	8 bit,  1 ms delay													*
 ********************************************************************************/
@@ -44,7 +44,7 @@ void _Device_Set_Function_to_Timer_counter(unsigned int count, void (*counterFin
     TIM4_Cmd(ENABLE);
 
 }
-void _Device_Set_Uart_Timer_Disable(){
+void _Device_Set_Uart_Timer_Disable(void){
     Intupt_Timer_Finish_ptr_fuc = empty_Timer_finish_fun;
     TIM4_Cmd(DISABLE);
     Timers_Cycle_Count = 0;

@@ -10,6 +10,6 @@
 /********************************************************************************
 * System_Information_init	                            						*
 ********************************************************************************/
-void SysInfo_init();
-void UpdatedSystemRecordingInfoForPolling();
-void WriteSystemRecordingInfoToEEPROM();
+void SysInfo_init(void);
+void UpdatedSystemRecordingInfoForPolling(void);
+void WriteSystemRecordingInfoToEEPROM(void);

@@ -29,8 +29,10 @@
 ********************************************************************************/
 
 
-void (*Intupt_Button_ptr_fuc)();
-void empty_ButtonEvent_Press_Trigger_fun(){};
+void (*Intupt_Button_ptr_fuc)(void);
+
+
+void empty_ButtonEvent_Press_Trigger_fun(){}
 
 /********************************************************************************
 * Interrupt sensitivity init_setup																		*
@@ -83,7 +85,6 @@ INTERRUPT_HANDLER(EXTI_PORTE_IRQHandler, 7)
 INTERRUPT void EXTI_PORTE_IRQHandler(void)
 {
 #endif
-    
     //GPIO_WriteHigh(LED1_PORT, LED1_PIN);
 	//debounce
     //aa = GPIO_ReadInputPin(BUTTON_PORT, BUTTON_PIN);

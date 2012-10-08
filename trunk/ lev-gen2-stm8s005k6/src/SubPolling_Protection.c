@@ -6,30 +6,12 @@
 #include "SystemInformation\User_Define_Parser.h"
 #include "Module_Variable_Define.h"
 #include "Module_Var_Bit_Define.h"
+#include "DefinePollingFunctions.h"
+
 /********************************************************************************
 * Define																        *
 ********************************************************************************/
-/////////////////////////////////////////////////
-// Current Sub Functions Vairable Define
-//1 time = 50ms, based on timer interval time
-#define DSG_OC_Protection_Delay_Cycle       15   //times,1000 ms = 1sec = DSG_OC_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
-#define CHG_OC_Protection_Delay_Cycle       15   //times,1000 ms = 1sec = CHG_OC_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
-/* 
-    COC_RELEASE_HOLDING_CycleTimes
-    must biger than CHG_OC_Protection_Delay_Cycle about 3 cycle timies
-    for COC_RELEASE_FOR_REPEATED_CHECK
-*/
-#define COC_RELEASE_HOLDING_CycleTimes      15  //unit:cycles , 1 sec = COC_RELEASE_HOLDING_CycleTimes * TimerIntervalTimeBase_MS
 
-#define Battery_OV_Protection_Delay_Cycle   46   //times, 3000 ms = 3sec = Battery_OV_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
-#define Battery_UV_Protection_Delay_Cycle   46   //times, 3000 ms = 3sec = Battery_UV_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
-#define DSG_Low_OT_Protection_Delay_Cycle   15   //times, 1000 ms = 1sec = DSG_Low_OT_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
-#define DSG_High_OT_Protection_Delay_Cycle  15   //times, 1000 ms = 1sec = DSG_High_OT_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
-#define CHG_OT_Protection_Delay_Cycle       15   //times, 1000 ms = 1sec = CHG_OT_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
-#define UT_Protection_Delay_Cycle           15   //times, 1000 ms = 1sec = UT_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
-//////////////////////////////////////////////////////////////////////////////////////////////
-// the unit is cycles
-#define COC_Repeat_For_LOCK_Times           3   //times, COC Repeat 3 times then LOCK
 
 /********************************************************************************
 * Extern Function																*
@@ -64,7 +46,7 @@ static unsigned char COC_Repeat_Counter;
 /********************************************************************************
 * 															                    *
 ********************************************************************************/
-void InitSubPollingProtectionVariables(){
+void InitSubPollingProtectionVariables(void){
     G_Module_Status = 0;
     G_Auxiliary_Module_Status = 0;
     
@@ -78,20 +60,22 @@ void InitSubPollingProtectionVariables(){
     CHG_OT_Counter = 0;
     UT_Counter = 0;
     COC_Repeat_Counter = 0;
+    
 }
 /********************************************************************************
 * 															                    *
 ********************************************************************************/
-void GetAllADCValuesAndSetDirection(){
-    unsigned int adcArr[5];
+void GetAllADCValuesAndSetDirection(void){
+    unsigned int adcArr[6];
     
-        Get_ADC_Values(adcArr, 5);
+        Get_ADC_Values(adcArr,6);
   
       G_DSG_Current_ADC = adcArr[0];
       G_CHG_Current_ADC = adcArr[1];
       G_VBAT_ADC = adcArr[2];
       G_TH1_ADC = adcArr[3];
-      G_TH2_ADC = adcArr[4];
+      G_SOC_ADC = adcArr[4];
+      G_TH2_ADC = adcArr[5];
 
       /////////////////////////////////////////////////////////////////////////////////////////////
       // checking Current Direction status
@@ -120,7 +104,7 @@ void GetAllADCValuesAndSetDirection(){
       }//if(G_CHG_Current_ADC > ADC_CURRENT_DETECT_FOR_CHG_STATUS){ -else- 
 }
 
-void ProtectionForPolling(){
+void ProtectionForPolling(void){
     
     GetAllADCValuesAndSetDirection();
   
@@ -434,10 +418,4 @@ void ProtectionForPolling(){
 //delay_cycles(30);	//600us at 4MHz
 //delay_cycles(40);	//800us at 4MHz
 //delay_cycles(50);	//1ms at 4MHz
-void delay_cycles(unsigned long cycleCount)
-{
-	unsigned long count;
-	for(count = 0l; count < cycleCount; count++){
-        asm("nop");
-	}
-}
+
