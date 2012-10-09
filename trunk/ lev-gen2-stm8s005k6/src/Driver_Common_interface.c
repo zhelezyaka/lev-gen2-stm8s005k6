@@ -350,10 +350,6 @@ void SetADPSOC(unsigned char enable){
 ////////////////////////////////////////////
 ////////////////////////////////////////////
 // Uart2  : (section start)	
-#define Uart_Send_Error_Code    0x0080
-#define Slave_Address           0x48
-#define Read_funcition_code     0x03
-#define Write_funcition_code    0x04
 
 void InitUARTFunction(){
     _Device_Init_Uart();
@@ -401,7 +397,7 @@ void UART_Send_Word_CRC(unsigned int *sendData, unsigned int length, unsigned ch
 void UART_Send_EEPROM_DATA_CRC_with_PrecedingCheckCode(){
 	unsigned int sendingLength, usCRC16, val;
     int i;
-    unsigned char enable_with_PrecedingCode = true;
+    //unsigned char enable_with_PrecedingCode = true;
     unsigned int length = 64;
     //(*(PointerAttr uint8_t *) (uint16_t)Address)
     G_Communication_Array[0] = PrecedingCheckCode;
@@ -439,16 +435,21 @@ void ReceiveDataParsing(unsigned char *receiveData, unsigned int length){
     /* Calculate CRC16 checksum for Modbus-Serial-Line-PDU. */
     usCRC16 = usMBCRC16( ( unsigned char * ) G_Communication_Array, length - 2 );
     
-    if(     (( unsigned char )( usCRC16 & 0xFF )) != ((unsigned char *)G_Communication_Array)[length - 2] ||
-            (( unsigned char )( usCRC16 >> 8 ))  != ((unsigned char *)G_Communication_Array)[length - 1]){
-          // CRC16 checksum fail
-          G_Communication_Array[0] = Uart_Send_Error_Code;
-          UART_Send_Word_CRC(G_Communication_Array, 1, false);
-          return;
+    if(     (( unsigned char )( usCRC16 & 0xFF )) != ((unsigned char *)G_Communication_Array)[length - 1] || //llow byte
+            (( unsigned char )( usCRC16 >> 8 ))  != ((unsigned char *)G_Communication_Array)[length - 2]){  // high byte
+        // CRC16 checksum fail
+        G_Communication_Array[0] = Uart_Send_Error_Code;
+        UART_Send_Word_CRC(G_Communication_Array, 1, false);
+        return;
     }else{
-          // CRC16 checksum fail
-          G_Communication_Array[0] = Read_funcition_code;
-          UART_Send_Word_CRC(G_Communication_Array, 1, false);
+        // CRC16 checksum Pass
+        i = ReceiveCmdParsing(G_Communication_Array, ((length - 2)>>1));
+        //G_Communication_Array[0] = Read_funcition_code;
+        if(i == 0){
+           G_Communication_Array[0] = Uart_Send_Error_Code;
+           i = 1;
+        }
+        UART_Send_Word_CRC(G_Communication_Array, i, false);
         
     }
     

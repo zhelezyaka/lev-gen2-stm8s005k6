@@ -1637,6 +1637,9 @@
       <name>$PROJ_DIR$\..\src\Module_Variable_Define.h</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\src\ReceiveCmdParsing.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\src\RecordingData.c</name>
     </file>
     <file>
