@@ -69,6 +69,7 @@
 
 void InitSubPollingProtectionVariables(void);
 void ProtectionForPolling(void);
+void GetAllADCValuesAndSetDirection(void);
 
 
 void InitTimerPollingVariables(void);

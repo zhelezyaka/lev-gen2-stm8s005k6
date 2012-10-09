@@ -151,7 +151,7 @@ _a_char = NTC2_ADC_OFFSET                           ;
 				//G_Activate_Action_Status_Other1 &= ~Blink_TWO_LED;
 				//#else
 				//setBlinkLED(ALL_LED_PORT, true);;
-				//G_SysModeStatusCode = Calibration_Func();
+				G_SysModeStatusCode = Calibration_Func();
 				//setBlinkLED(ALL_LED_PORT, false);;
 				//#endif      
 				//break;

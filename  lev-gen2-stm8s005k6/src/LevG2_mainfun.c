@@ -215,12 +215,12 @@ unsigned int Normal_Func(){
     G_Auxiliary_Module_Status |= Halt_Mode;
     
     Set_IntoHaltModeDelay_Counter_Cycles(STAY_IN_HALT_MODE_DELAY_CYCLE);
-     //return ShutdownMode;
+    //return ShutdownMode;
     inverse_led1_flag = 0;
     inverse_led2_flag = 0;
     while(1){
         
-        if((G_Device_Interface_Status1 & BUTTON_CLICK) || 
+        if(true || (G_Device_Interface_Status1 & BUTTON_CLICK) || 
            (G_Device_Interface_Status1 & BUTTON_LONG_PRESS) ||
            (G_Device_Interface_Status1 & BUTTON_MULTI_CLICK)){
                
@@ -280,13 +280,19 @@ unsigned int Normal_Func(){
          }
         if(G_Auxiliary_Module_Status & SYS_1_SEC_FLAG){
             G_Auxiliary_Module_Status &= ~SYS_1_SEC_FLAG;
+            if(G_Auxiliary_Module_Status & _3RD_Function_ON){
                 UART_Send_Word_CRC(G_Var_Array, GVarArraySize, true);
                 UART_Send_EEPROM_DATA_CRC_with_PrecedingCheckCode();
-            if(G_Auxiliary_Module_Status & _3RD_Function_ON){
             }
         }
         
-        
+        //////////////////////////////
+        // for test
+        if(G_Add_Device_Interface_Status & AUX1_COUNTING_FINISH){
+            G_Add_Device_Interface_Status &= ~AUX1_COUNTING_FINISH;
+        }
+           
+           
         ////////////////////////////////////////////////////////////
         // into Halt mode
         if(((G_Auxiliary_Module_Status & Halt_Mode)==0)&&(G_Add_Device_Interface_Status & AUX1_COUNTING_FINISH)){
@@ -305,7 +311,7 @@ unsigned int Normal_Func(){
                 halt();
             }
         }else{
-            wfi();  /* Wait For Interrupt */
+            //wfi();  /* Wait For Interrupt */
         }
         
         //SetLedPWMFunction(0x1f, TurnOn);
@@ -393,7 +399,7 @@ unsigned int Shutdown_Func(){
 
         G_Add_Device_Interface_Status |= ENABLE_AUX1_COUNTER;
     
-        UART_Send_Word_CRC(G_Var_Array, GVarArraySize, true);
+        //UART_Send_Word_CRC(G_Var_Array, GVarArraySize, true);
         
         //GPIO_WriteHigh(GPIOC, GPIO_PIN_1);
         while(1){
@@ -415,6 +421,7 @@ unsigned int Shutdown_Func(){
             if(G_Device_Interface_Status1 & BUTTON_MULTI_CLICK){
                 G_Device_Interface_Status1 &= ~BUTTON_MULTI_CLICK;
                 Recount_IntoHaltModeDelay_Counter();
+                return CalibrationMode;
             }
         }
         //GPIO_WriteLow(GPIOC, GPIO_PIN_1);
@@ -422,9 +429,31 @@ unsigned int Shutdown_Func(){
             delay_cycles(100); //about 960us at 4MHz
         }        
     }
-    
     return StartUp;
 }
+
+
+unsigned int Calibration_Func(){
+
+    setMosFET(CHG_MOSFET, TurnOff);
+    setMosFET(DSG_MOSFET, TurnOff);
+    InitADCFunction();
+    Set_Interrupt_ADC_Conversion_Finish_Function(GetAllADCValuesAndSetDirection); //wait for startAdcConversion()
+
+    //SetLed_DirectIO_BITs  
+    while(1){
+      
+        for(int i = 0; i < 100;i++){
+            delay_cycles(100); //about 960us at 4MHz
+        }//96 ms
+      
+        startAdcConversion();
+    };
+    setMosFET(CHG_MOSFET, TurnOff);
+    setMosFET(DSG_MOSFET, TurnOff);
+  return StartUp;
+}
+
 #if 0
 unsigned int Normal_Func(){
   //////////////////////////////////////////////////////////////////////////////
