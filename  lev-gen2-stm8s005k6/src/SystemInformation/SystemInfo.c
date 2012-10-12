@@ -5,7 +5,7 @@
 #include "Module_Driver_Define.h"
 #include "User_Define_Parser.h"
 //#include "Module_Variable_Define.h"
-//#include "Module_Var_Bit_Define.h"
+#include "Module_Var_Bit_Define.h"
 #include "SystemInfo.h"
 #include "DefinePollingFunctions.h"
 
@@ -24,6 +24,7 @@
 /********************************************************************************
 * Extern Variable																*
 ********************************************************************************/
+void CoulombCounterForOneSecond(void);
 
 /********************************************************************************
 * Golbal Variable																*
@@ -37,6 +38,8 @@ static unsigned int     _1_Sec_Counter;
 static unsigned int     Total_Sec_Counter;
 static unsigned int     Total_Hour_Counter;
 static unsigned int     RecordingPolling_Start_Delay_Counter;
+static unsigned long    sg_ADC_AccumulatingQ_RECORD;
+//================================
 
 /********************************************************************************
 * System_Information_init	                            						*
@@ -54,6 +57,8 @@ void SysInfo_init(){
     G_MAX_TH2_ADC_RECORD   =  MAX_TH2_ADC_RECORD_EEPROM;
     G_MIN_TH2_ADC_RECORD   =  MIN_TH2_ADC_RECORD_EEPROM;
     
+    G_Cycle_Count_RECORD = Cycle_Count_RECORD_EEPROM;
+    sg_ADC_AccumulatingQ_RECORD = ADC_AccumulatingQ_RECORD_EEPROM;
     
     _1_Sec_Counter = 0;
     Total_Sec_Counter = 0;
@@ -94,11 +99,16 @@ void UpdatedSystemRecordingInfoForPolling(){
         RecordingPolling_Start_Delay_Counter++;
     }
     
+    // updated AccumulatingQ_RECORD
+    G_ADC_AccumulatingQ_RECORD_Lo = (unsigned int)sg_ADC_AccumulatingQ_RECORD;
+    G_ADC_AccumulatingQ_RECORD_Hi = (unsigned int)(sg_ADC_AccumulatingQ_RECORD >> 16);
+    
     
     //Calculation Recording data time for writing to EEPROM
     if(_1_Sec_Counter >= Recording_1_Sec_CycleTimes){
         Total_Sec_Counter++;
         _1_Sec_Counter = 0;
+        CoulombCounterForOneSecond();
     }else{
         _1_Sec_Counter++;
     }
@@ -110,7 +120,30 @@ void UpdatedSystemRecordingInfoForPolling(){
         Total_Hour_Counter = 0;
         WriteSystemRecordingInfoToEEPROM();
     }
+    
+    ////////////////////////////////////////
+    //  _Device_Set_ADP_SOC
+    if((G_Cycle_Count_RECORD >= Cycle_Count_FOR_CHG_1st_TH) && (G_Cycle_Count_RECORD < Cycle_Count_FOR_CHG_2nd_TH)){
+        SetADPSOC(TurnOn);
+    }else{
+        SetADPSOC(TurnOff);
+    }
 }
+void CoulombCounterForOneSecond(void){
+    if( G_Module_Status & Current_Dir_CHG){
+        sg_ADC_AccumulatingQ_RECORD += G_CHG_Current_ADC;
+        if(sg_ADC_AccumulatingQ_RECORD >= ADC_AccQ_FOR_CHG_TH){
+            sg_ADC_AccumulatingQ_RECORD = 0;
+            G_Cycle_Count_RECORD++;
+        }
+    }
+    if(G_Cycle_Count_RECORD >= 0xfff0){
+        G_Cycle_Count_RECORD = 0xfff0;
+    }
+}
+
+
+
 #ifdef RAM_EXECUTION
 void WriteSystemRecordingInfoToEEPROM(){
     //
@@ -213,26 +246,51 @@ void WriteSystemRecordingInfoToEEPROM(){
     //write record data count
     G_RECORD_DATA_COUNT++;
     
-    intData = G_RECORD_DATA_COUNT;
-    chData2 = (unsigned char)intData;   //Low byte
-    chData1 = (unsigned char)(intData >> 8);   //High byte
-    count = 0;
-    do{
-        flag = EEPROM_WriteByte(RECORD_DATA_COUNT_EEPROM_Offset, chData1);
-        count++;
-        if(count > EEPROMWriteRetry){
-            break;
-        }
-    }while(flag == Data_Error);
-    count = 0;
-    do{
-        flag = EEPROM_WriteByte(RECORD_DATA_COUNT_EEPROM_Offset + 1, chData2);
-        count++;
-        if(count > EEPROMWriteRetry){
-            break;
-        }
-    }while(flag == Data_Error);
+//    intData = G_RECORD_DATA_COUNT;
+//    chData2 = (unsigned char)intData;   //Low byte
+//    chData1 = (unsigned char)(intData >> 8);   //High byte
+//    count = 0;
+//    do{
+//        flag = EEPROM_WriteByte(RECORD_DATA_COUNT_EEPROM_Offset, chData1);
+//        count++;
+//        if(count > EEPROMWriteRetry){
+//            break;
+//        }
+//    }while(flag == Data_Error);
+//    count = 0;
+//    do{
+//        flag = EEPROM_WriteByte(RECORD_DATA_COUNT_EEPROM_Offset + 1, chData2);
+//        count++;
+//        if(count > EEPROMWriteRetry){
+//            break;
+//        }
+//    }while(flag == Data_Error);
 
+    //write word data (G_RECORD_DATA_COUNT and Cycle_Count_RECORD ) to eeprom
+    data = G_RECORD_DATA_COUNT;
+    data = data << 16;
+    data |= G_Cycle_Count_RECORD;
+    count = 0;
+    do{
+        flag = EEPROM_WriteDoubleWord(RECORD_DATA_COUNT_EEPROM_Offset, data);
+        count++;
+        if(count > EEPROMWriteRetry){
+            break;
+        }
+    }while(flag == Data_Error);    
+    
+    //write word data (G_ADC_AccumulatingQ_RECORD_Hi and Lo ) to eeprom
+    data = G_ADC_AccumulatingQ_RECORD_Hi;
+    data = data << 16;
+    data |= G_ADC_AccumulatingQ_RECORD_Lo;
+    count = 0;
+    do{
+        flag = EEPROM_WriteDoubleWord(ADC_AccumulatingQ_RECORD_EEPROM_Offset, data);
+        count++;
+        if(count > EEPROMWriteRetry){
+            break;
+        }
+    }while(flag == Data_Error);    
     
 }
 #endif

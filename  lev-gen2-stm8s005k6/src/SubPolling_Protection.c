@@ -66,17 +66,22 @@ void InitSubPollingProtectionVariables(void){
 * 															                    *
 ********************************************************************************/
 void GetAllADCValuesAndSetDirection(void){
-    unsigned int adcArr[6];
+    unsigned int adcArr[7];
     
-        Get_ADC_Values(adcArr,6);
+        Get_ADC_Values(adcArr,7);
   
       G_DSG_Current_ADC = adcArr[0];
       G_CHG_Current_ADC = adcArr[1];
       G_VBAT_ADC = adcArr[2];
       G_TH1_ADC = adcArr[3];
-      G_SOC_ADC = adcArr[4];
-      G_TH2_ADC = adcArr[5];
+      G_SOC_ADC = adcArr[5];
+      G_TH2_ADC = adcArr[6];
 
+      if(G_SOC_ADC > ADC_CHARGER_DETECTOR_TH){
+        G_Module_Status |= Charger_Plug_In;
+      }else{
+        G_Module_Status &= ~Charger_Plug_In;
+      }
       /////////////////////////////////////////////////////////////////////////////////////////////
       // checking Current Direction status
       if(G_CHG_Current_ADC >= ADC_CURRENT_DETECT_FOR_CHG_STATUS){
@@ -386,7 +391,7 @@ void ProtectionForPolling(void){
     // MosFet control and Protection release    
     //////////////////////////////////////////////////////////////////////////////
     // CHG MosFet control and Protection release    
-    if((G_Module_Status & (Module_C_OC + Module_BAT_OV + Module_PIC_OV + Module_CHG_OT + Module_UT + Module_C_OC_LOCK))){
+    if((G_Module_Status & (Module_C_OC + Module_BAT_OV + Module_PIC_OV + Module_CHG_OT + Module_UT + Module_C_OC_LOCK + Charger_Plug_In))){
         setMosFET(CHG_MOSFET, TurnOff);
       
         //COC Lock Release while dsg or button click

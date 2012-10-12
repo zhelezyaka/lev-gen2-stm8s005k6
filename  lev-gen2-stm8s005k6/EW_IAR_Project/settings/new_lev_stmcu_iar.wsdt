@@ -12,7 +12,7 @@
           
           
           
-        <Column0>176</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
+        <Column0>272</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
       </Workspace>
       <Build>
         
@@ -24,7 +24,7 @@
     <Windows>
       
       
-    <Wnd0>
+    <Wnd2>
         <Tabs>
           <Tab>
             <Identity>TabID-26741-2319</Identity>
@@ -36,7 +36,7 @@
           </Tab>
         </Tabs>
         
-      <SelectedTab>0</SelectedTab></Wnd0><Wnd1>
+      <SelectedTab>0</SelectedTab></Wnd2><Wnd3>
         <Tabs>
           <Tab>
             <Identity>TabID-17122-4546</Identity>
@@ -46,20 +46,20 @@
           </Tab>
         <Tab><Identity>TabID-8445-12896</Identity><TabName>Find in Files</TabName><Factory>Find-in-Files</Factory><Session/></Tab><Tab><Identity>TabID-15282-3406</Identity><TabName>Debug Log</TabName><Factory>Debug-Log</Factory><Session/></Tab><Tab><Identity>TabID-15481-952</Identity><TabName>Breakpoints</TabName><Factory>Breakpoints</Factory></Tab></Tabs>
         
-      <SelectedTab>0</SelectedTab></Wnd1></Windows>
+      <SelectedTab>0</SelectedTab></Wnd3></Windows>
     <Editor>
       
       
       
       
-    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\Drivers\adc_read.c</Filename><XPos>0</XPos><YPos>121</YPos><SelStart>5570</SelStart><SelEnd>5570</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\Drivers\AWU_Timer_With_Halt_Mode.c</Filename><XPos>0</XPos><YPos>101</YPos><SelStart>3681</SelStart><SelEnd>3681</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\TimerPollingFunctions.c</Filename><XPos>0</XPos><YPos>71</YPos><SelStart>3463</SelStart><SelEnd>3463</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\Drivers\button_control.c</Filename><XPos>0</XPos><YPos>51</YPos><SelStart>3233</SelStart><SelEnd>3233</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\Drivers\timer3.c</Filename><XPos>0</XPos><YPos>36</YPos><SelStart>1284</SelStart><SelEnd>1284</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\SubPolling_Protection.c</Filename><XPos>0</XPos><YPos>56</YPos><SelStart>2791</SelStart><SelEnd>2834</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\Module_Var_Bit_Define.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>162</SelStart><SelEnd>177</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\DefinePollingFunctions.h</Filename><XPos>0</XPos><YPos>59</YPos><SelStart>4722</SelStart><SelEnd>4722</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\LevG2_mainfun.c</Filename><XPos>0</XPos><YPos>276</YPos><SelStart>9643</SelStart><SelEnd>9643</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\Drivers\uart2.c</Filename><XPos>0</XPos><YPos>120</YPos><SelStart>4180</SelStart><SelEnd>4180</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\Drivers\Uart_timer4_8bit.c</Filename><XPos>0</XPos><YPos>27</YPos><SelStart>1242</SelStart><SelEnd>1242</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\Driver_Common_interface.c</Filename><XPos>0</XPos><YPos>454</YPos><SelStart>16104</SelStart><SelEnd>16104</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\Drivers\Devices.h</Filename><XPos>0</XPos><YPos>169</YPos><SelStart>7574</SelStart><SelEnd>7574</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\main.c</Filename><XPos>0</XPos><YPos>43</YPos><SelStart>2222</SelStart><SelEnd>2222</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\ReceiveCmdParsing.c</Filename><XPos>0</XPos><YPos>91</YPos><SelStart>4122</SelStart><SelEnd>4122</SelEnd></Tab><ActiveTab>14</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\Module_Driver_Define.h</Filename><XPos>0</XPos><YPos>1</YPos><SelStart>419</SelStart><SelEnd>431</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\Drivers\gpio_control.c</Filename><XPos>0</XPos><YPos>26</YPos><SelStart>1594</SelStart><SelEnd>1594</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\RecordingData.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>35</SelStart><SelEnd>35</SelEnd></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\ReceiveCmdParsing.c</Filename><XPos>0</XPos><YPos>53</YPos><SelStart>2308</SelStart><SelEnd>2360</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\SystemInformation\User_Define.h</Filename><XPos>0</XPos><YPos>20</YPos><SelStart>1925</SelStart><SelEnd>1925</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\Drivers\led_pwm_control.c</Filename><XPos>0</XPos><YPos>241</YPos><SelStart>9907</SelStart><SelEnd>9943</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\Drivers\Devices.h</Filename><XPos>0</XPos><YPos>34</YPos><SelStart>1991</SelStart><SelEnd>2001</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\LevG2_mainfun.c</Filename><XPos>0</XPos><YPos>293</YPos><SelStart>10955</SelStart><SelEnd>10955</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\Drivers\timer3.c</Filename><XPos>0</XPos><YPos>12</YPos><SelStart>751</SelStart><SelEnd>751</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\Module_Driver_Define.h</Filename><XPos>0</XPos><YPos>146</YPos><SelStart>6585</SelStart><SelEnd>6604</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\TimerPollingFunctions.c</Filename><XPos>0</XPos><YPos>189</YPos><SelStart>9535</SelStart><SelEnd>9980</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\DefinePollingFunctions.h</Filename><XPos>0</XPos><YPos>66</YPos><SelStart>4661</SelStart><SelEnd>4661</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\SubPolling_Protection.c</Filename><XPos>0</XPos><YPos>95</YPos><SelStart>4258</SelStart><SelEnd>4295</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\SystemInformation\User_Define_Parser.h</Filename><XPos>0</XPos><YPos>54</YPos><SelStart>3959</SelStart><SelEnd>3959</SelEnd></Tab><ActiveTab>10</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\GolbalVariableArray.h</Filename><XPos>0</XPos><YPos>21</YPos><SelStart>1313</SelStart><SelEnd>1313</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\Drivers\Adapter_SOC_Signal.c</Filename><XPos>0</XPos><YPos>30</YPos><SelStart>1669</SelStart><SelEnd>1688</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\Driver_Common_interface.c</Filename><XPos>0</XPos><YPos>446</YPos><SelStart>14348</SelStart><SelEnd>14357</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\Module_Var_Bit_Define.h</Filename><XPos>0</XPos><YPos>39</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\SystemInformation\SystemInfo.c</Filename><XPos>0</XPos><YPos>181</YPos><SelStart>9225</SelStart><SelEnd>9225</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\CoulombCounter.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\src\main.c</Filename><XPos>0</XPos><YPos>43</YPos><SelStart>2248</SelStart><SelEnd>2248</SelEnd></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
     <Positions>
       
       
       
       
       
-    <Top><Row0><Sizes><Toolbar-00eb0878><key>iaridepm.enu1</key></Toolbar-00eb0878></Sizes></Row0><Row1><Sizes/></Row1></Top><Left><Row0><Sizes><Wnd0><Rect><Top>-2</Top><Left>-2</Left><Bottom>402</Bottom><Right>267</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>146413</sizeHorzCX><sizeHorzCY>291545</sizeHorzCY><sizeVertCX>196925</sizeVertCX><sizeVertCY>588921</sizeVertCY></Rect></Wnd0></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>239</Bottom><Right>1368</Right><x>-2</x><y>-2</y><xscreen>1370</xscreen><yscreen>241</yscreen><sizeHorzCX>1002928</sizeHorzCX><sizeHorzCY>351312</sizeHorzCY><sizeVertCX>146413</sizeVertCX><sizeVertCY>291545</sizeVertCY></Rect></Wnd1></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+    <Top><Row0><Sizes><Toolbar-01c20878><key>iaridepm.enu1</key></Toolbar-01c20878></Sizes></Row0><Row1><Sizes/></Row1></Top><Left><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>385</Bottom><Right>363</Right><x>-2</x><y>-2</y><xscreen>271</xscreen><yscreen>214</yscreen><sizeHorzCX>198389</sizeHorzCX><sizeHorzCY>311953</sizeHorzCY><sizeVertCX>267204</sizeVertCX><sizeVertCY>564140</sizeVertCY></Rect></Wnd2></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>256</Bottom><Right>1368</Right><x>-2</x><y>-2</y><xscreen>1370</xscreen><yscreen>258</yscreen><sizeHorzCX>1002928</sizeHorzCX><sizeHorzCY>376093</sizeHorzCY><sizeVertCX>198389</sizeVertCX><sizeVertCY>311953</sizeVertCY></Rect></Wnd3></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
   </Desktop>
 </Workspace>
 

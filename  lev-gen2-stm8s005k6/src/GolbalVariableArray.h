@@ -1,6 +1,6 @@
 
 
-#define GVarArraySize	23
+#define GVarArraySize	26
 
 extern unsigned int G_Var_Array[GVarArraySize];
 
@@ -35,6 +35,9 @@ extern unsigned int G_Communication_Array[];
 #define G_MAX_TH2_ADC_RECORD            (G_Var_Array[ 21])
 #define G_MIN_TH2_ADC_RECORD            (G_Var_Array[ 22])
 
+#define G_Cycle_Count_RECORD            (G_Var_Array[ 23])
+#define G_ADC_AccumulatingQ_RECORD_Hi   (G_Var_Array[ 24])
+#define G_ADC_AccumulatingQ_RECORD_Lo   (G_Var_Array[ 25])
 
 //#define G_Device_Action_Status          (G_Var_Array[10])   //no use
 //#define G_Module_Active_Status          (G_Var_Array[ 3])

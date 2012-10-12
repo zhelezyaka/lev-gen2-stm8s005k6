@@ -63,7 +63,7 @@ void _Device_Set_Led_PWM_20_Steps(unsigned char LEDNumBits, unsigned char steps)
 //void _Device_Set_Led_PWM_20_Steps(unsigned char steps);
 void _Device_Set_Led_OnOff_BITs(unsigned char LEDNumBits);
 //void _Device_Set_Led_LightOnOff(unsigned char LEDNumCode, unsigned char enable);
-void _Device_Set_Led_Pin_OnOff(unsigned char LEDNumPin, unsigned char enable);
+void _Device_Set_Led_Pin_OnOff(unsigned char LEDNumPin);
 
 /********************************************************************************
 * Mos Fet Control_init															*
