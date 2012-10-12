@@ -15,10 +15,10 @@
 //#define dTimer3CountValues			6250
 //#define dTimer3IntervalTimeBase_ms	50
 
-#define dTimer3CountValues			8000
-#define dTimer3IntervalTimeBase_ms	64
+#define dTimer3CountValues			8125
+#define dTimer3IntervalTimeBase_ms	65
 
-#define Max_INTERRUPT_Calling_Function  5
+#define Max_INTERRUPT_Calling_Function  6
 
 void (*Intupt_Timer1_ptr_fuc[Max_INTERRUPT_Calling_Function])(void);
 

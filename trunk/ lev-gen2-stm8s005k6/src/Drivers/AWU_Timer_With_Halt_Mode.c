@@ -32,7 +32,7 @@
 //for longer 
 #define dAWU_LongerTimerIntervalTimeBase_ms	    AWU_TIMEBASE_1S
 
-#define Max_AWU_INTERRUPT_Calling_Function  5
+#define Max_AWU_INTERRUPT_Calling_Function  6
 
 void (*Intupt_AWUTimer_ptr_fuc[Max_AWU_INTERRUPT_Calling_Function])(void);
 
@@ -103,7 +103,7 @@ INTERRUPT_HANDLER(AWU_IRQHandler, 1)
 INTERRUPT void AWU_IRQHandler(void)
 {
 #endif
-    //GPIO_WriteHigh(LED2_PORT, LED2_PIN);
+    GPIO_WriteHigh(LED1_PORT, LED1_PIN);
 	int i;
     
     AWU_GetFlagStatus();
@@ -112,6 +112,6 @@ INTERRUPT void AWU_IRQHandler(void)
         (*Intupt_AWUTimer_ptr_fuc[i])();
     }
 
-    //GPIO_WriteLow(LED2_PORT, LED2_PIN);
+    GPIO_WriteLow(LED1_PORT, LED1_PIN);
 }
 

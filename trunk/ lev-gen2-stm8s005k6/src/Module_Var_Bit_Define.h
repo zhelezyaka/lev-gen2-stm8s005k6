@@ -36,7 +36,7 @@ enum For_G_SysModeStatusCode  //unsigned char
 #define Current_Dir_DSG        		(0x0004)    //Discharging,
 #define NoUse2        				(0x0008)    //No Use,
 #define NoUse3        				(0x0010)    //No Use,
-#define NoUse4        				(0x0020)    //No Use,
+#define Charger_Plug_In				(0x0020)    //No Use,
 #define Module_UT                   (0x0040)    // Under Temperature Alarm
 #define Module_C_OC_LOCK            (0x0080)    // Repeat COC for setting times, CHG Mos will be lock, until dsg current
 //Hight byte

@@ -9,6 +9,7 @@
 #include "Module_Var_Bit_Define.h"
 #include "SystemInformation\SystemInfo.h"
 #include "DefinePollingFunctions.h"
+#include "SOC\SOC.h"
 
 /********************************************************************************
 * Define																		*
@@ -60,49 +61,30 @@ unsigned char check;
 //unsigned char __eeprom *p;
 //unsigned int __eeprom *p1;
 unsigned int FirstInitial_Func(){
-	int i;
 	
 	System_clk_setup();
     delay_cycles(100); //about 960us at 4MHz
 /////////////////////////////////
-
-
-
     
 //////////////////////////////    
     InitMosControl();
+	// Initialize LEDs
 	InitLEDDisplay();
-    
     
     //while(1);
    
-    ////////////////////////////////
 
-    
+    delay_cycles(5);  //about 90us at 4MHz
+    delay_cycles(10); //about 132us at 4MHz
+    delay_cycles(20); //about 224us at 4MHz
+    delay_cycles(30); //about 318us at 4MHz
+    delay_cycles(40); //about 410us at 4MHz
+    delay_cycles(50); //about 502us at 4MHz
+    delay_cycles(100); //about 960us at 4MHz
+    delay_cycles(100); //about 960us at 4MHz
+    delay_cycles(100); //about 960us at 4MHz
+	
 
-    
-    
-//    SetLed_DirectIO_OnOff(LED1, TurnOn);
-//    SetLed_DirectIO_OnOff(LED2, TurnOn);
-//    SetLed_DirectIO_OnOff(LED3, TurnOn);
-//    SetLed_DirectIO_OnOff(LED4, TurnOn);
-//    SetLed_DirectIO_OnOff(LED5, TurnOn);
-
-	// Initialize LEDs
-	
-	//Setup_USI_Slave();
-	
-      delay_cycles(5);  //about 90us at 4MHz
-      delay_cycles(10); //about 132us at 4MHz
-      delay_cycles(20); //about 224us at 4MHz
-      delay_cycles(30); //about 318us at 4MHz
-      delay_cycles(40); //about 410us at 4MHz
-      delay_cycles(50); //about 502us at 4MHz
-      delay_cycles(100); //about 960us at 4MHz
-      delay_cycles(100); //about 960us at 4MHz
-      delay_cycles(100); //about 960us at 4MHz
-	
-	
   return StartUp;
 }
 
@@ -112,6 +94,7 @@ unsigned int Startup_Func()
   
 	//Initialization
 	disableInterrupts();  /* disable interrupts */
+    SetLedFlashing();
 
 	
 	G_Module_Status = 0;
@@ -127,6 +110,7 @@ unsigned int Startup_Func()
     G_CHG_Current_ADC = 0;
     G_VBAT_ADC = 0;
     G_TH1_ADC = 0;
+    G_SOC_ADC = 0;
     G_TH2_ADC = 0;
 
 	
@@ -156,54 +140,21 @@ unsigned int Startup_Func()
     
 	enableInterrupts();  /* enable interrupts */
     
-//    while(1){
-//        SetLed_DirectIO_Pin_OnOff(LED2,1);
-//        delay_cycles(100); //about 960us at 4MHz
-//        SetLed_DirectIO_Pin_OnOff(LED2,0);
-//        halt();
-//        
-//    }
-//    while(1){
-//    SetLedPWMFunction(0x1f, TurnOn);
-//    
-//    unsigned int i,j;
-//    unsigned int loop_d = 150;
-//    unsigned int ddelay = 100;
-//    for(i = 0; i< loop_d; i++){
-//        delay_cycles(ddelay);
-//    }
-//    
-//    for(j=0; j< 20; j++){
-//        SetLedPWM20Steps(j);
-//        for(i = 0; i< loop_d; i++){
-//            delay_cycles(ddelay);
-//        }
-//    }
-//    
-//    SetLedPWMFunction(0x00, TurnOff);
-//    
-//        for(i = 0; i< loop_d; i++){
-//            delay_cycles(ddelay);
-//        }
-//    }
-
-    
-//unsigned char temp = 0;
-//    if(temp == 0){
-//        SetLed_DirectIO_OnOff(LED1, TurnOn);
-//    }else{
-//        SetLed_DirectIO_OnOff(LED1, TurnOff);
-//    }
-//    temp ^= 0x01;
+    if(!(System_Control_Bit_EEPROM & Calibration_Done)){
+        return ShutdownMode;   
+    }
     
     return NormalMode;
 }
 
 unsigned char inverse_led1_flag = 0;
 unsigned char inverse_led2_flag = 0;
+unsigned char oneSec_flag = 0;
 
 unsigned int Normal_Func(){
     
+    unsigned char capacity;
+   
     //Set_Interrupt_Timer_Calling_Function(1, TimerCounterForPolling);   //64ms
     //Set_Interrupt_Timer_Calling_Function(2, startAdcConversion);       //64ms
     //Set_Interrupt_Timer_Calling_Function(3, UpdatedSystemRecordingInfoForPolling);       //64ms
@@ -212,15 +163,25 @@ unsigned int Normal_Func(){
     Set_Interrupt_AWU_Timer_Calling_Function(1, TimerCounterForPolling);   //64ms
     Set_Interrupt_AWU_Timer_Calling_Function(2, startAdcConversion);       //64ms
     Set_Interrupt_AWU_Timer_Calling_Function(3, UpdatedSystemRecordingInfoForPolling);       //64ms
+    Set_Interrupt_AWU_Timer_Calling_Function(4, LastPollingFunction);       //64ms
     G_Auxiliary_Module_Status |= Halt_Mode;
     
     Set_IntoHaltModeDelay_Counter_Cycles(STAY_IN_HALT_MODE_DELAY_CYCLE);
-    //return ShutdownMode;
+//    while(1){
+//        if(G_Device_Interface_Status1 & BUTTON_PRESS){
+//            return ShutdownMode;
+//        }
+//    }
     inverse_led1_flag = 0;
     inverse_led2_flag = 0;
+    oneSec_flag = 0;
+    if(G_Auxiliary_Module_Status & Halt_Mode){
+        halt();
+    }
     while(1){
         
-        if(true || (G_Device_Interface_Status1 & BUTTON_CLICK) || 
+        //if(true || 
+        if((G_Device_Interface_Status1 & BUTTON_CLICK) || 
            (G_Device_Interface_Status1 & BUTTON_LONG_PRESS) ||
            (G_Device_Interface_Status1 & BUTTON_MULTI_CLICK)){
                
@@ -232,6 +193,7 @@ unsigned int Normal_Func(){
                 Set_Interrupt_Timer_Calling_Function(1, TimerCounterForPolling);   //64ms
                 Set_Interrupt_Timer_Calling_Function(2, startAdcConversion);       //64ms
                 Set_Interrupt_Timer_Calling_Function(3, UpdatedSystemRecordingInfoForPolling);       //64ms
+                Set_Interrupt_Timer_Calling_Function(4, LastPollingFunction);       //64ms
                 G_Auxiliary_Module_Status &= ~Halt_Mode;
                 G_Add_Device_Interface_Status |= ENABLE_AUX1_COUNTER;
             }else{
@@ -242,15 +204,22 @@ unsigned int Normal_Func(){
         
         if(G_Device_Interface_Status1 & BUTTON_CLICK){
             G_Device_Interface_Status1 &= ~BUTTON_CLICK;
-            
+            if(G_Module_Status  & Current_Dir_DSG){
+                capacity = getCapacityByCellVoltage( G_VBAT_ADC, G_DSG_Current_ADC,  true);
+            }else{
+                capacity = getCapacityByCellVoltage( G_VBAT_ADC, G_CHG_Current_ADC,  false);
+            }
+            //DisplayCapacity(capacity, true);
+
             if(inverse_led1_flag == 0){
                 //SetLedPWMFunction(LED1+LED4+LED5, TurnOn);
-                SetLedPWMFunction(LED4+LED5, TurnOn);
-                
+                //SetLedPWMFunction(LED4+LED5, TurnOn);
+                //SetLedSerialTurnOnOff_ByTimer(TurnOn);
                 //SetLedLightOnFlag(LED1, TurnOn);
             }else{
-                SetLedPWMFunction(LED1+LED4+LED5, TurnOff);
+                //SetLedPWMFunction(LED1+LED4+LED5, TurnOff);
                 //SetLedLightOnFlag(LED1, TurnOff);
+                //SetLedSerialTurnOnOff_ByTimer(TurnOff);
             }
             inverse_led1_flag ^= 0x01;
         }
@@ -258,12 +227,12 @@ unsigned int Normal_Func(){
         if(G_Device_Interface_Status1 & BUTTON_LONG_PRESS){
             G_Device_Interface_Status1 &= ~BUTTON_LONG_PRESS;
 
-            SetLedSerialTurnOnOff(TurnOff);
+            //SetLedSerialTurnOnOff_ByIO(TurnOff);
+            SetLedSerialTurnOnOff_ByTimer(TurnOff);
             return ShutdownMode; 
 
             if(inverse_led2_flag == 0){
                 //SetLedLightOnFlag(LED2, TurnOn);
-                SetLedSerialTurnOnOff(TurnOn);
             }else{
                 //SetLedLightOnFlag(LED2, TurnOff);
             }
@@ -278,19 +247,32 @@ unsigned int Normal_Func(){
                  G_Auxiliary_Module_Status |= _3RD_Function_ON;
              }
          }
+        
+        
         if(G_Auxiliary_Module_Status & SYS_1_SEC_FLAG){
             G_Auxiliary_Module_Status &= ~SYS_1_SEC_FLAG;
             if(G_Auxiliary_Module_Status & _3RD_Function_ON){
+            }
+            if (System_Control_Bit_EEPROM & EnableSendSystemData){
                 UART_Send_Word_CRC(G_Var_Array, GVarArraySize, true);
+            }
+            if (System_Control_Bit_EEPROM & EnableSendEEPROMData){
                 UART_Send_EEPROM_DATA_CRC_with_PrecedingCheckCode();
             }
         }
-        
+////////////////////////////////////////////////////////////////////////////////////////////////////////        
         //////////////////////////////
         // for test
-        if(G_Add_Device_Interface_Status & AUX1_COUNTING_FINISH){
-            G_Add_Device_Interface_Status &= ~AUX1_COUNTING_FINISH;
-        }
+//        if(G_Add_Device_Interface_Status & AUX1_COUNTING_FINISH){
+//            G_Add_Device_Interface_Status &= ~AUX1_COUNTING_FINISH;
+//        }
+//        if(oneSec_flag > 15){
+//            oneSec_flag = 0;
+//            GPIO_WriteReverse(GPIOC, GPIO_PIN_3);
+//        }else{
+//            oneSec_flag++;
+//        }
+////////////////////////////////////////////////////////////////////////////////////////////////////////        
            
            
         ////////////////////////////////////////////////////////////
@@ -302,33 +284,28 @@ unsigned int Normal_Func(){
             Set_Interrupt_AWU_Timer_Calling_Function(1, TimerCounterForPolling);   //64ms
             Set_Interrupt_AWU_Timer_Calling_Function(2, startAdcConversion);       //64ms
             Set_Interrupt_AWU_Timer_Calling_Function(3, UpdatedSystemRecordingInfoForPolling);       //64ms
+            Set_Interrupt_AWU_Timer_Calling_Function(4, LastPollingFunction);       //64ms
             G_Auxiliary_Module_Status |= Halt_Mode;
         }
         
         delay_cycles(100); //about 960us at 4MHz
+//        if(G_Add_Device_Interface_Status & LAST_POLLING_FLAG){
+//            G_Add_Device_Interface_Status &= ~LAST_POLLING_FLAG;
+//            if(G_Auxiliary_Module_Status & Halt_Mode){
+//                halt();
+//            }else{
+//                wfi(); 
+//            }
+//        }
         if(G_Auxiliary_Module_Status & Halt_Mode){
             if((G_Device_Interface_Status1 & ADC_SET_CONVERSION) == 0){
                 halt();
             }
         }else{
-            //wfi();  /* Wait For Interrupt */
+            if((G_Device_Interface_Status1 & ADC_SET_CONVERSION) == 0){
+                wfi();  /* Wait For Interrupt */
+            }
         }
-        
-        //SetLedPWMFunction(0x1f, TurnOn);
-        //SetLed_DirectIO_OnOff(LED2, TurnOn);
-        
-//        SetLed_DirectIO_BITs(0xff);
-//        //delay 1 sec
-//        for(int i = 0; i < 200;i++){
-//            delay_cycles(100); //about 960us at 4MHz
-//        }
-//        SetLed_DirectIO_BITs(0);
-//        //delay 1 sec
-//        for(int i = 0; i < 200;i++){
-//            delay_cycles(100); //about 960us at 4MHz
-//        }
-        
-        //wfi();
         
 //        delay_cycles(5);  //about 90us at 4MHz
 //        delay_cycles(10); //about 132us at 4MHz
@@ -348,16 +325,25 @@ unsigned int Normal_Func(){
 
 unsigned int Shutdown_Func(){
     
-    unsigned char flag;
+    //unsigned char flag;
     
+    for(int i = 0; i < 100;i++){
+        delay_cycles(100); //about 960us at 4MHz
+    }        
+    setMosFET(CHG_MOSFET, TurnOff);
+    setMosFET(DSG_MOSFET, TurnOff);
     InitTimerPollingVariables();
     Set_IntoHaltModeDelay_Counter_Cycles(STAY_IN_HALT_MODE_DELAY_CYCLE);
     
     DisableAWUTimerFunction();
-    setMosFET(CHG_MOSFET, TurnOff);
-    setMosFET(DSG_MOSFET, TurnOff);
-    UART_Send_Word_CRC(G_Var_Array, GVarArraySize, true);
-    UART_Send_EEPROM_DATA_CRC_with_PrecedingCheckCode();
+    if(G_Auxiliary_Module_Status & _3RD_Function_ON){
+    }
+    if (System_Control_Bit_EEPROM & EnableSendSystemData){
+        UART_Send_Word_CRC(G_Var_Array, GVarArraySize, true);
+    }
+    if (System_Control_Bit_EEPROM & EnableSendEEPROMData){
+        UART_Send_EEPROM_DATA_CRC_with_PrecedingCheckCode();
+    }
 
     
     while(1){
@@ -411,7 +397,7 @@ unsigned int Shutdown_Func(){
             if(G_Device_Interface_Status1 & BUTTON_LONG_PRESS){
                 G_Device_Interface_Status1 &= ~BUTTON_LONG_PRESS;
                 Recount_IntoHaltModeDelay_Counter();
-                SetLedSerialTurnOnOff(TurnOn);
+                //SetLedSerialTurnOnOff_ByIO(TurnOn);
                 return StartUp;
             }
             if(G_Device_Interface_Status1 & BUTTON_CLICK){
@@ -421,33 +407,73 @@ unsigned int Shutdown_Func(){
             if(G_Device_Interface_Status1 & BUTTON_MULTI_CLICK){
                 G_Device_Interface_Status1 &= ~BUTTON_MULTI_CLICK;
                 Recount_IntoHaltModeDelay_Counter();
-                return CalibrationMode;
+                //return CalibrationMode;
             }
-        }
+            if(G_Auxiliary_Module_Status & SYS_1_SEC_FLAG){
+                G_Auxiliary_Module_Status &= ~SYS_1_SEC_FLAG;
+                if(G_Auxiliary_Module_Status & _3RD_Function_ON){
+                }
+                if (System_Control_Bit_EEPROM & EnableSendSystemData){
+                    UART_Send_Word_CRC(G_Var_Array, GVarArraySize, true);
+                }
+                if (System_Control_Bit_EEPROM & EnableSendEEPROMData){
+                    UART_Send_EEPROM_DATA_CRC_with_PrecedingCheckCode();
+                }
+            }
+            if(G_Add_Device_Interface_Status & SYSTEM_CHANGE_MODE){
+                G_Add_Device_Interface_Status &= ~SYSTEM_CHANGE_MODE;
+                return StartUp;
+            }
+            
+        }//while(1){
+        
         //GPIO_WriteLow(GPIOC, GPIO_PIN_1);
         for(int i = 0; i < 100;i++){
             delay_cycles(100); //about 960us at 4MHz
         }        
-    }
+    }//while(1){
     return StartUp;
 }
 
 
 unsigned int Calibration_Func(){
-
-    setMosFET(CHG_MOSFET, TurnOff);
-    setMosFET(DSG_MOSFET, TurnOff);
+    
+    unsigned int one_sec_count;
+    
+    setMosFET(CHG_MOSFET, TurnOn);
+    setMosFET(DSG_MOSFET, TurnOn);
     InitADCFunction();
     Set_Interrupt_ADC_Conversion_Finish_Function(GetAllADCValuesAndSetDirection); //wait for startAdcConversion()
 
+    one_sec_count = 0;
     //SetLed_DirectIO_BITs  
     while(1){
       
         for(int i = 0; i < 100;i++){
             delay_cycles(100); //about 960us at 4MHz
         }//96 ms
+        
+        if(G_Add_Device_Interface_Status & SYSTEM_CHANGE_MODE){
+            G_Add_Device_Interface_Status &= ~SYSTEM_CHANGE_MODE;
+            break;
+        }
       
         startAdcConversion();
+        
+        
+        
+        if(one_sec_count >= 10){
+            one_sec_count = 0;
+            if (System_Control_Bit_EEPROM & EnableSendSystemData){
+                UART_Send_Word_CRC(G_Var_Array, GVarArraySize, true);
+            }
+            if (System_Control_Bit_EEPROM & EnableSendEEPROMData){
+                UART_Send_EEPROM_DATA_CRC_with_PrecedingCheckCode();
+            }
+        }else{
+            one_sec_count++;
+        }
+        
     };
     setMosFET(CHG_MOSFET, TurnOff);
     setMosFET(DSG_MOSFET, TurnOff);

@@ -33,7 +33,13 @@ void System_clk_setup(){
 }
 // System Clock Setup  : (section stop)
 //////////////////////////////////////////////////
-
+//////////////////////////////////////////////////
+// Last Polling Function  : (section start)
+void LastPollingFunction(void){
+    G_Add_Device_Interface_Status |= LAST_POLLING_FLAG;
+}
+// Last Polling Function  : (section stop)
+//////////////////////////////////////////////////
 //////////////////////////////////////////////////
 // LED function  : (section start)
 void InitLEDDisplay(){
@@ -65,13 +71,13 @@ void SetLed_DirectIO_BITs(unsigned char LEDNumBits){
     _Device_Set_Led_OnOff_BITs((unsigned char)G_LED_Interface_Status1);
 }
 
-void SetLed_DirectIO_Pin_OnOff(unsigned char LEDNumPin, unsigned char enable){
+void SetLed_DirectIO_Pin_OnOff(unsigned char LEDNumPin){
     unsigned int temp;
     temp = LEDNumPin & G_All_LED_Bits_Mask;
     //LEDNumPin = LEDNumPin & G_All_LED_Bits_Mask;
     //temp = LEDNumPin;
 
-    _Device_Set_Led_Pin_OnOff((unsigned char)temp, enable);
+    _Device_Set_Led_Pin_OnOff((unsigned char)temp);
 }
 
 void SetLedLightOnFlag(unsigned char LEDNumBits, unsigned char enable){
@@ -119,13 +125,47 @@ void SetLedPWM20Steps(unsigned char PWM_Steps){
     _Device_Set_Led_PWM_20_Steps((unsigned char)(G_LED_Interface_Status2 >> 8), PWM_Steps);
 }
 
-void SetLedSerialTurnOnOff(unsigned char enable){
+
+void SetLedSerialTurnOnOff_ByIO(unsigned char enable){
     unsigned char bit;
     unsigned int i, j;
     SetLedPWMFunction(G_All_LED_Bits_Mask, TurnOff);
     SetLedBlinkFlag(G_All_LED_Bits_Mask, TurnOff);
     SetLedLightOnFlag(G_All_LED_Bits_Mask, TurnOff);
-        
+       
+    if(enable){
+        //turn on
+        bit=0;
+        for(i=0; i < LEDNumbers; i++){
+            bit = (bit << 1) + 1;
+            SetLed_DirectIO_Pin_OnOff(bit);
+            for(j = 0; j < 1000;j++){
+                delay_cycles(100); //about 960us at 4MHz
+            }
+        }
+        SetLed_DirectIO_Pin_OnOff(0x00);
+    }else{
+        bit=G_All_LED_Bits_Mask;
+        SetLed_DirectIO_Pin_OnOff(bit);
+        for(i=0; i < LEDNumbers; i++){
+            //SetLed_DirectIO_Pin_OnOff(~bit);
+            for(j = 0; j < 1000;j++){
+                delay_cycles(100); //about 960us at 4MHz
+            }
+            bit = (bit >> 1);
+            SetLed_DirectIO_Pin_OnOff(bit);
+        }
+        SetLed_DirectIO_Pin_OnOff(0x00);
+    }
+}
+
+void SetLedSerialTurnOnOff_ByTimer(unsigned char enable){
+    unsigned char bit;
+    unsigned int i, j;
+    SetLedPWMFunction(G_All_LED_Bits_Mask, TurnOff);
+    SetLedBlinkFlag(G_All_LED_Bits_Mask, TurnOff);
+    SetLedLightOnFlag(G_All_LED_Bits_Mask, TurnOff);
+       
     if(enable){
         //turn on
         bit=0;
@@ -150,6 +190,76 @@ void SetLedSerialTurnOnOff(unsigned char enable){
         SetLedLightOnFlag(G_All_LED_Bits_Mask, TurnOff);
     }
 }
+
+
+void SetLedFlashing(){
+    unsigned char bit;
+    unsigned int i, j;
+    SetLedPWMFunction(G_All_LED_Bits_Mask, TurnOff);
+    SetLedBlinkFlag(G_All_LED_Bits_Mask, TurnOff);
+    SetLedLightOnFlag(G_All_LED_Bits_Mask, TurnOff);
+    
+    bit = 0;
+    for(i=0; i < 15; i++){
+        bit ^= 0x01;
+        if(bit){
+            SetLed_DirectIO_Pin_OnOff(0xff);
+        }else{
+            SetLed_DirectIO_Pin_OnOff(0x00);
+        }
+        for(j = 0; j < 100;j++){
+            delay_cycles(100); //about 960us at 4MHz
+        }
+    }
+    SetLed_DirectIO_Pin_OnOff(0x00);
+
+}
+
+#if _USE_5_LED_DISPLAY_    ==  0
+// 4LEDs
+void DisplayCapacity(unsigned char capacity, char isOn)
+{
+    if(isOn)
+    {
+        if(capacity <= CAPACITY_1){
+            SetLedPWMFunction(LED1, TurnOn);
+        }else if(capacity <= CAPACITY_2){
+            SetLedPWMFunction(LED1 + LED2, TurnOn);
+        }else if(capacity <= CAPACITY_3){
+            SetLedPWMFunction(LED1 + LED2 + LED3, TurnOn);
+        }else {
+            SetLedPWMFunction(LED1 + LED2 + LED3 + LED4, TurnOn);
+        }
+    }
+    else
+    {
+        SetLedPWMFunction(LED1 + LED2 + LED3 + LED4, TurnOff);
+    }
+}
+#else
+// 5LEDs
+void DisplayCapacity(unsigned char capacity, char isOn)
+{
+    if(isOn)
+    {
+        if(capacity <= CAPACITY_1){
+            SetLedPWMFunction(LED1, TurnOn);
+        }else if(capacity <= CAPACITY_2){
+            SetLedPWMFunction(LED1 + LED2, TurnOn);
+        }else if(capacity <= CAPACITY_3){
+            SetLedPWMFunction(LED1 + LED2 + LED3, TurnOn);
+        }else if (capacity <= CAPACITY_4){
+            SetLedPWMFunction(LED1 + LED2 + LED3 + LED4, TurnOn);
+        }else{
+            SetLedPWMFunction(LED1 + LED2 + LED3 + LED4 + LED5, TurnOn);
+        }
+    }
+    else
+    {
+        SetLedPWMFunction(LED1 + LED2 + LED3 + LED4 + LED5, TurnOff);
+    }
+}
+#endif
 // LED function  : (section stop)
 //////////////////////////////////////////////////
 

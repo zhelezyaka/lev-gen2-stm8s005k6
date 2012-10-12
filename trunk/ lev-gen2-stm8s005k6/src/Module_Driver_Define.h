@@ -1,3 +1,5 @@
+
+#include "Global_config.h"
 /********************************************************************************
 * Enum Variable define  														*
 ********************************************************************************/
@@ -29,15 +31,42 @@ enum forLEDNumberBits
 //    LED4,
 //    LED5
 //};
+
+#if _USE_5_LED_DISPLAY_    ==  0
+// 4 LEDs
+#define LEDNumbers          4
+
+#define CAPACITY_1          19
+#define CAPACITY_2          46
+#define CAPACITY_3          73
+
+#else
+// 5 LEDs
 #define LEDNumbers              5
 //#define All_LED_Bits_Mask       (2^LEDNumbers) // 2^LEDNumbers - 1
 //#define All_LED_Bits_Mask       0x0f  // 2^LEDNumbers - 1
 
-
+#define CAPACITY_1          16
+#define CAPACITY_2          37
+#define CAPACITY_3          58
+#define CAPACITY_4          79
+#endif
 /********************************************************************************
 * Define																		*
 ********************************************************************************/
+//////////////////////////////////////////////////
+/* System_Control_Bit_EEPROM: Control Bits */
+/* define in User_Define.h ; unsigned char */
+#define EnableSendSystemData    (0x01)  //send by one second.
+#define EnableSendEEPROMData    (0x02)  //send by one second.
+#define Calibration_Done        (0x04)    //
+//#define LED4_Control    (0x08)    //
+//#define Calibration_Done    (0x10)    //
+//#define _No_Used_      (0x0020)    //
+//#define _No_Used_      (0x0040)    //
+//#define _No_Used_      (0x0080)    //
 
+//////////////////////////////////////////////////
 //////////////////////////////////////////////////
 /* G_LED_Interface_Status1: Control Bits */
 /* For G_LED_Interface_Status1 ; unsigned int */
@@ -122,13 +151,13 @@ enum forButtonStatusCode
 /* G_Add_Device_Interface_Status Control Bits */
 /* For G_Add_Device_Interface_Status ; unsigned int */
 //Low byte
-#define ADP_SOC_Status          (0x0001)    //adapter_soc signal output pin status
-#define ENABLE_AUX1_COUNTER     (0x0002)    //
-#define AUX1_COUNTING_FINISH    (0x0004)    // 
-#define ENABLE_MULTI_CLICK_COUNTER     (0x0008)    //
-#define MULTI_CLICK_COUNTING_FINISH    (0x0010)    //
-//#define _No_Used_      (0x0020)    //
-//#define LED_Serial_Light_On      (0x0040)    //
+#define ADP_SOC_Status                  (0x0001)    //adapter_soc signal output pin status
+#define ENABLE_AUX1_COUNTER             (0x0002)    //
+#define AUX1_COUNTING_FINISH            (0x0004)    // 
+#define ENABLE_MULTI_CLICK_COUNTER      (0x0008)    //
+#define MULTI_CLICK_COUNTING_FINISH     (0x0010)    //
+#define SYSTEM_CHANGE_MODE              (0x0020)    //
+#define LAST_POLLING_FLAG               (0x0040)    //
 //#define LED_Serial_Light_Off      (0x0080)    //
 //Hight byte
 //#define _No_Used_     (0x0100)    //
@@ -145,6 +174,8 @@ enum forButtonStatusCode
 ********************************************************************************/
 void System_clk_setup(void);
 
+void LastPollingFunction(void);
+
 extern unsigned char G_All_LED_Bits_Mask;
 void InitLEDDisplay(void);
 void SetLed_DirectIO_BITs(unsigned char LEDNumBits);
@@ -152,9 +183,14 @@ void SetLedLightOnFlag(unsigned char LEDNumBits, unsigned char enable);
 void SetLedBlinkFlag(unsigned char LEDNumBits, unsigned char enable);
 void SetLedPWMFunction(unsigned char LEDNumBits, unsigned char enable);
 void SetLedPWM20Steps(unsigned char PWM_Steps);
-void SetLedSerialTurnOnOff(unsigned char enable);
-void SetLed_DirectIO_Pin_OnOff(unsigned char LEDNumPin, unsigned char enable);
-    
+void SetLedSerialTurnOnOff_ByIO(unsigned char enable);
+void SetLedSerialTurnOnOff_ByTimer(unsigned char enable);
+void SetLed_DirectIO_Pin_OnOff(unsigned char LEDNumPin);
+void SetLed_DirectIO_Pin_OnOff_old(unsigned char LEDNumPin, unsigned char enable);
+void DisplayCapacity(unsigned char capacity, char isOn); 
+void SetLedFlashing();
+
+
 void InitMosControl(void);
 void setMosFET(unsigned char MosFetCode, unsigned char enable);
 
@@ -223,6 +259,7 @@ unsigned char EEPROM_WriteWholeEEPROMFromInternalMemory(void);
 
 void delay_cycles(unsigned long cycleCount);
 
+unsigned int ReceiveCmdParsing(unsigned int *receivedData, unsigned int length);
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 void device_function_test1(void);
 void device_function_test2(void);

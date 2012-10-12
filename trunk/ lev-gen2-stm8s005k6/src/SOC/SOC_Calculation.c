@@ -7,26 +7,6 @@
 //unsigned char UV_Capacity;
 
 
-//=====================================================================================================================
-// OCV TABLE Line Current Range, 3 ocv lines, (DSG)
-// Battery for a cell capacity ==> 2600 mAH * 4p
-// 0.5C DSG = 1300 mA, 1C DSG = 2600 mA, 1.5C DSG = 3900 mA
-// 4p cell==> 0.5C DSG = 5200 mA, 1C DSG = 10400 mA, 1.5C DSG = 15600 mA
-//  _DSG_mA_to_ADC_factor_      0.0671744f (參考上面之設定)
-// ADC 10 bit==> max adc = 1024
-#define ADC_LOOKUP_1st_LEVEL_OCV_DSG_CURRENT_VALUES     175    // 2600mA; 2bytes;  CURRENT_OF_DSG_STATUS ~ 2600mA for 4p cell==>OCV
-#define ADC_LOOKUP_2nd_LEVEL_OCV_DSG_CURRENT_VALUES     524    // 7800mA; 2bytes; 2600mA ~ 7800mA for 4p cell==>0.5C
-#define ADC_LOOKUP_3rd_LEVEL_OCV_DSG_CURRENT_VALUES     873    // 13000mA; 2bytes; 7800mA 以上 for 4p cell==1C
-
-//=====================================================================================================================
-// OCV TABLE Line Current Range, 2 ocv lines, (CHG) 
-// Battery for a cell capacity ==> 2600 mAH * 4p
-// 0.2C CHG = 520 mA, 0.5C CHG = 1300 mA
-// 4p cell==> 0.2C CHG = 2080 mA, 0.5C CHG = 5200 mA
-//  _CHG_mA_to_ADC_factor_      0.098304f (參考上面之設定)
-// ADC 10 bit==> max adc = 1024
-#define ADC_LOOKUP_1st_LEVEL_OCV_CHG_CURRENT_VALUES     89    // 910mA; 2bytes;  CURRENT_OF_DSG_STATUS ~ 2600mA for 4p cell==>OCV
-#define ADC_LOOKUP_2nd_LEVEL_OCV_CHG_CURRENT_VALUES     358    // 3640mA; 2bytes; 2600mA ~ 7800mA for 4p cell==>0.5C
 
 
 

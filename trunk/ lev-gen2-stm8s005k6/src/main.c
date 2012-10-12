@@ -30,7 +30,7 @@ extern unsigned int Calibration_Func(void);
 ********************************************************************************/
 
 unsigned int G_Var_Array[GVarArraySize];
-unsigned int G_Communication_Array[64 + 1 + CheckCodeIntSize];// 64= whole EEPROM size(128 / 2), 1= CRC, CheckCodeIntSize= check for receive
+unsigned int G_Communication_Array[64 + 1 + CheckCodeIntSize + 2];// 64= whole EEPROM size(128 / 2), 1= CRC, CheckCodeIntSize= check for receive, 2=backup
 
 //unsigned char c1,c1,c2,c4;
 //unsigned int test_a[200];
@@ -38,12 +38,12 @@ unsigned int G_Communication_Array[64 + 1 + CheckCodeIntSize];// 64= whole EEPRO
 //unsigned long temp_l;
 //float temp_f;
 /*******************************************************************************/
-unsigned char _a_uchar;
-unsigned char * _p_uchar;
-unsigned int _a_uint;
-signed char _a_char;
-signed int _a_int;
-float _a_float;
+//unsigned char _a_uchar;
+//unsigned char * _p_uchar;
+//unsigned int _a_uint;
+//signed char _a_char;
+//signed int _a_int;
+//float _a_float;
 void main(void)
 {
 #if _BURN_IN_EEPROM_SEG_BY_STVD_DEBUG_ > 0 
@@ -131,6 +131,10 @@ _a_char = NTC2_ADC_OFFSET                           ;
 			
 			case NormalMode:
 				G_SysModeStatusCode = Normal_Func();
+                WriteSystemRecordingInfoToEEPROM();
+                DisableTimerFunction();
+                stopAdcConversion();
+                DisableAWUTimerFunction();
 				//Coulomb Counter Stop
 				//G_Activate_Action_Status &= ~ACCUMULATING_Q_ENABLE;
 				//WriteCoulombCounterDataToFlash();
@@ -142,6 +146,10 @@ _a_char = NTC2_ADC_OFFSET                           ;
 			
 			case ShutdownMode:
 				G_SysModeStatusCode = Shutdown_Func();
+                DisableTimerFunction();
+                stopAdcConversion();
+                DisableAWUTimerFunction();
+
 				break;
 			
 			case CalibrationMode:

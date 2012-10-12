@@ -1607,6 +1607,12 @@
       </file>
     </group>
     <file>
+      <name>$PROJ_DIR$\..\src\CoulombCounter.c</name>
+      <excluded>
+        <configuration>Debug</configuration>
+      </excluded>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\src\DefinePollingFunctions.h</name>
     </file>
     <file>
@@ -1641,6 +1647,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\RecordingData.c</name>
+      <excluded>
+        <configuration>Debug</configuration>
+      </excluded>
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\stm8_interrupt_vector.c</name>
