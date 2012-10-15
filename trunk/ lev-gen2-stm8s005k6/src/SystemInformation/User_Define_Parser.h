@@ -9,17 +9,17 @@
 // 
 // Data Offset
 #define System_Control_Bit_EEPROM_Offset                  0
-#define CELL_TYPE_LENGTH_Offset                           1
-#define CELL_TYPE_Offset                                  2
-#define MANUFACTURE_NAME_LENGTH_Offset                    10
-#define MANUFACTURE_NAME_Offset                           11
-#define RESERVED_FOR_OFFSET1_Offset                       19
-#define MANUFACTURE_DATE_Offset                           20
-#define SERIAL_NUMBER_Offset                              22
-#define VERSION_Offset                                    24
-#define MINOR_VERSION_Offset                              25
-#define NUMBER_OF_PARALLEL_CELLS_Offset                   26
-#define NUMBER_OF_SERIES_CELLS_Offset                     27
+#define MANUFACTURE_DATE_Offset                           1
+#define SERIAL_NUMBER_Offset                              3
+#define VERSION_Offset                                    5
+#define MINOR_VERSION_Offset                              6
+#define NUMBER_OF_PARALLEL_CELLS_Offset                   7
+#define NUMBER_OF_SERIES_CELLS_Offset                     8
+#define CELL_TYPE_LENGTH_Offset                           9
+#define CELL_TYPE_Offset                                  10
+#define MANUFACTURE_NAME_LENGTH_Offset                    18
+#define MANUFACTURE_NAME_Offset                           19
+#define RESERVED_FOR_OFFSET1_Offset                       27
 #define ADC_CURRENT_DETECT_FOR_DSG_STATUS_Offset          28
 #define ADC_CURRENT_DETECT_FOR_CHG_STATUS_Offset          30
 #define ADC_DOC_PROTECTION_Offset                         32
@@ -59,28 +59,29 @@
 #define Cycle_Count_RECORD_EEPROM_Offset                  102
 #define ADC_AccumulatingQ_RECORD_EEPROM_Offset            104
 #define VBAT_mV_To_ADC_Factor_Offset                      108
-#define CHG_OP_ADC_OFFSET_Offset                          112
-#define DSG_OP_ADC_OFFSET_Offset                          113
+#define DSG_OP_ADC_OFFSET_Offset                          112
+#define CHG_OP_ADC_OFFSET_Offset                          113
 #define VBAT_ADC_OFFSET_Offset                            114
 #define NTC1_ADC_OFFSET_Offset                            115
 #define NTC2_ADC_OFFSET_Offset                            116
-#define ADC_CHARGER_DETECTOR_TH_Offset                    117
+#define SOC_ADC_OFFSET_Offset                             117
+#define ADC_CHARGER_DETECTOR_TH_Offset                    118
 // 
 /////////////////////////////////////////////////////////////////////////// 
 // 
 // Data Var Point
 #define System_Control_Bit_EEPROM                         *((unsigned char *)(CONFIG_SEGMENT + System_Control_Bit_EEPROM_Offset ))
-#define CELL_TYPE_LENGTH                                  *((unsigned char *)(CONFIG_SEGMENT + CELL_TYPE_LENGTH_Offset ))
-#define CELL_TYPE                                         *((unsigned char *)(CONFIG_SEGMENT + CELL_TYPE_Offset ))
-#define MANUFACTURE_NAME_LENGTH                           *((unsigned char *)(CONFIG_SEGMENT + MANUFACTURE_NAME_LENGTH_Offset ))
-#define MANUFACTURE_NAME                                  *((unsigned char *)(CONFIG_SEGMENT + MANUFACTURE_NAME_Offset ))
-#define RESERVED_FOR_OFFSET1                              *((unsigned char *)(CONFIG_SEGMENT + RESERVED_FOR_OFFSET1_Offset ))
 #define MANUFACTURE_DATE                                  *((unsigned int *)(CONFIG_SEGMENT + MANUFACTURE_DATE_Offset ))
 #define SERIAL_NUMBER                                     *((unsigned int *)(CONFIG_SEGMENT + SERIAL_NUMBER_Offset ))
 #define VERSION                                           *((unsigned char *)(CONFIG_SEGMENT + VERSION_Offset ))
 #define MINOR_VERSION                                     *((unsigned char *)(CONFIG_SEGMENT + MINOR_VERSION_Offset ))
 #define NUMBER_OF_PARALLEL_CELLS                          *((unsigned char *)(CONFIG_SEGMENT + NUMBER_OF_PARALLEL_CELLS_Offset ))
 #define NUMBER_OF_SERIES_CELLS                            *((unsigned char *)(CONFIG_SEGMENT + NUMBER_OF_SERIES_CELLS_Offset ))
+#define CELL_TYPE_LENGTH                                  *((unsigned char *)(CONFIG_SEGMENT + CELL_TYPE_LENGTH_Offset ))
+#define CELL_TYPE                                         *((unsigned char *)(CONFIG_SEGMENT + CELL_TYPE_Offset ))
+#define MANUFACTURE_NAME_LENGTH                           *((unsigned char *)(CONFIG_SEGMENT + MANUFACTURE_NAME_LENGTH_Offset ))
+#define MANUFACTURE_NAME                                  *((unsigned char *)(CONFIG_SEGMENT + MANUFACTURE_NAME_Offset ))
+#define RESERVED_FOR_OFFSET1                              *((unsigned char *)(CONFIG_SEGMENT + RESERVED_FOR_OFFSET1_Offset ))
 #define ADC_CURRENT_DETECT_FOR_DSG_STATUS                 *((unsigned int *)(CONFIG_SEGMENT + ADC_CURRENT_DETECT_FOR_DSG_STATUS_Offset ))
 #define ADC_CURRENT_DETECT_FOR_CHG_STATUS                 *((unsigned int *)(CONFIG_SEGMENT + ADC_CURRENT_DETECT_FOR_CHG_STATUS_Offset ))
 #define ADC_DOC_PROTECTION                                *((unsigned int *)(CONFIG_SEGMENT + ADC_DOC_PROTECTION_Offset ))
@@ -120,11 +121,12 @@
 #define Cycle_Count_RECORD_EEPROM                         *((unsigned int *)(CONFIG_SEGMENT + Cycle_Count_RECORD_EEPROM_Offset ))
 #define ADC_AccumulatingQ_RECORD_EEPROM                   *((unsigned long *)(CONFIG_SEGMENT + ADC_AccumulatingQ_RECORD_EEPROM_Offset ))
 #define VBAT_mV_To_ADC_Factor                             *((float *)(CONFIG_SEGMENT + VBAT_mV_To_ADC_Factor_Offset ))
-#define CHG_OP_ADC_OFFSET                                 *((signed char *)(CONFIG_SEGMENT + CHG_OP_ADC_OFFSET_Offset ))
 #define DSG_OP_ADC_OFFSET                                 *((signed char *)(CONFIG_SEGMENT + DSG_OP_ADC_OFFSET_Offset ))
+#define CHG_OP_ADC_OFFSET                                 *((signed char *)(CONFIG_SEGMENT + CHG_OP_ADC_OFFSET_Offset ))
 #define VBAT_ADC_OFFSET                                   *((signed char *)(CONFIG_SEGMENT + VBAT_ADC_OFFSET_Offset ))
 #define NTC1_ADC_OFFSET                                   *((signed char *)(CONFIG_SEGMENT + NTC1_ADC_OFFSET_Offset ))
 #define NTC2_ADC_OFFSET                                   *((signed char *)(CONFIG_SEGMENT + NTC2_ADC_OFFSET_Offset ))
+#define SOC_ADC_OFFSET                                    *((signed char *)(CONFIG_SEGMENT + SOC_ADC_OFFSET_Offset ))
 #define ADC_CHARGER_DETECTOR_TH                           *((unsigned int *)(CONFIG_SEGMENT + ADC_CHARGER_DETECTOR_TH_Offset ))
 // 
 /////////////////////////////////////////////////////////////////////////// 
@@ -134,17 +136,17 @@
 // ========================================
 //  #define  _ee_address_CONFIG_SEGMENT                                                                           0x4000 //EEPROM Start Address, must use Hexadecimal
 //  #define  _ee_uchar_System_Control_Bit_EEPROM                                                                  7 // 1 bytes
-//  #define  _ee_str_len_CELL_TYPE_LENGTH                                                                         8
-//  #define  _ee_str_CELL_TYPE                                                                                    "sony 26F"
-//  #define  _ee_str_len_MANUFACTURE_NAME_LENGTH                                                                  8
-//  #define  _ee_str_MANUFACTURE_NAME                                                                             "Dynapack"
-//  #define  _ee_uchar_RESERVED_FOR_OFFSET1                                                                       0
 //  #define  _ee_uint_MANUFACTURE_DATE                                                                            16611 //(MANUFACTURE_DATE_YEAR - 1980) * 512 + MANUFACTURE_DATE_MONTH * 32 + MANUFACTURE_DATE_DAY // 2 bytes
 //  #define  _ee_uint_SERIAL_NUMBER                                                                               10 // 2 bytes
 //  #define  _ee_uchar_VERSION                                                                                    1 // 1 bytes
 //  #define  _ee_uchar_MINOR_VERSION                                                                              2 // 1 bytes
 //  #define  _ee_uchar_NUMBER_OF_PARALLEL_CELLS                                                                   4 // 1 bytes
 //  #define  _ee_uchar_NUMBER_OF_SERIES_CELLS                                                                     13 // 1 bytes
+//  #define  _ee_str_len_CELL_TYPE_LENGTH                                                                         8
+//  #define  _ee_str_CELL_TYPE                                                                                    "sony 26F"
+//  #define  _ee_str_len_MANUFACTURE_NAME_LENGTH                                                                  8
+//  #define  _ee_str_MANUFACTURE_NAME                                                                             "Dynapack"
+//  #define  _ee_uchar_RESERVED_FOR_OFFSET1                                                                       0
 //  #define  _ee_uint_ADC_CURRENT_DETECT_FOR_DSG_STATUS                                                           4 //80mA; unit: mA; 2bytes; if current > the define, in discharging status
 //  #define  _ee_uint_ADC_CURRENT_DETECT_FOR_CHG_STATUS                                                           7 //100mA; unit: mA; 2bytes; if current > the define, in charging status
 //  #define  _ee_uint_ADC_DOC_PROTECTION                                                                          2544 // 50A; unit: 10mA; discharging current protection is positive
@@ -184,9 +186,10 @@
 //  #define  _ee_uint_Cycle_Count_RECORD_EEPROM                                                                   0
 //  #define  _ee_ulong_ADC_AccumulatingQ_RECORD_EEPROM                                                            0
 //  #define  _ee_float_VBAT_mV_To_ADC_Factor                                                                      0.016962f // 4 bytes;
-//  #define  _ee_char_CHG_OP_ADC_OFFSET                                                                           -10 //1byte ; 實際值-理論值 (signed char)
-//  #define  _ee_char_DSG_OP_ADC_OFFSET                                                                           2 //1byte ; 實際值-理論值 (signed char)
-//  #define  _ee_char_VBAT_ADC_OFFSET                                                                             3 //1byte ; 實際值-理論值 (signed char)
-//  #define  _ee_char_NTC1_ADC_OFFSET                                                                             -20 //1byte ; 實際值-理論值 Thermistor (signed char)
-//  #define  _ee_char_NTC2_ADC_OFFSET                                                                             -5 //1byte ; 實際值-理論值 Thermistor (signed char)
+//  #define  _ee_char_DSG_OP_ADC_OFFSET                                                                           0 //1byte ; 實際值-理論值 (signed char)
+//  #define  _ee_char_CHG_OP_ADC_OFFSET                                                                           0 //1byte ; 實際值-理論值 (signed char)
+//  #define  _ee_char_VBAT_ADC_OFFSET                                                                             0 //1byte ; 實際值-理論值 (signed char)
+//  #define  _ee_char_NTC1_ADC_OFFSET                                                                             0 //1byte ; 實際值-理論值 Thermistor (signed char)
+//  #define  _ee_char_NTC2_ADC_OFFSET                                                                             0 //1byte ; 實際值-理論值 Thermistor (signed char)
+//  #define  _ee_char_SOC_ADC_OFFSET                                                                              0 //1byte ; 實際值-理論值 (signed char)
 //  #define  _ee_uint_ADC_CHARGER_DETECTOR_TH                                                                     155 //unit:500 mV;

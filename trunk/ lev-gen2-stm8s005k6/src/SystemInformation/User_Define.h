@@ -26,18 +26,6 @@
 #define _ee_address_CONFIG_SEGMENT          0x4000   //EEPROM Start Address, must use Hexadecimal
 
 #define _ee_uchar_System_Control_Bit_EEPROM        7      // 1 bytes
-//First set String Length
-//then second set String
-#define _ee_str_len_CELL_TYPE_LENGTH            8
-#define _ee_str_CELL_TYPE                       "sony 26F"
-#define _ee_str_len_MANUFACTURE_NAME_LENGTH     8
-#define _ee_str_MANUFACTURE_NAME                "Dynapack"
-//#define _ee_str_len_PRODUCT_NAME_LENGTH         8
-//#define _ee_str_PRODUCT_NAME                    "LEV36"
-
-#define _ee_uchar_RESERVED_FOR_OFFSET1            0
-
-
 //#define MANUFACTURE_DATE_YEAR   2012
 //#define MANUFACTURE_DATE_MONTH  7
 //#define MANUFACTURE_DATE_DAY    3
@@ -50,6 +38,18 @@
 #define _ee_uchar_NUMBER_OF_PARALLEL_CELLS      4       // 1 bytes
 #define _ee_uchar_NUMBER_OF_SERIES_CELLS        13      // 1 bytes
 
+
+//=====================================================================================================================
+//First set String Length
+//then second set String
+#define _ee_str_len_CELL_TYPE_LENGTH            8
+#define _ee_str_CELL_TYPE                       "sony 26F"
+#define _ee_str_len_MANUFACTURE_NAME_LENGTH     8
+#define _ee_str_MANUFACTURE_NAME                "Dynapack"
+//#define _ee_str_len_PRODUCT_NAME_LENGTH         8
+//#define _ee_str_PRODUCT_NAME                    "LEV36"
+
+#define _ee_uchar_RESERVED_FOR_OFFSET1            0
 
 
 //=====================================================================================================================
@@ -204,11 +204,12 @@
 //#define _ee_float_DSG_mA_To_ADC_Factor          0.0671744f       // 4 bytes;
 #define _ee_float_VBAT_mV_To_ADC_Factor         0.016962f        // 4 bytes;
 //#define _ee_float_Thermistor_mV_To_ADC_Factor   0.4096f         // 4 bytes; = 1/ADC_Step
-#define _ee_char_CHG_OP_ADC_OFFSET             -10      //1byte ; 實際值-理論值 (signed char)
-#define _ee_char_DSG_OP_ADC_OFFSET             2      //1byte ; 實際值-理論值 (signed char)
-#define _ee_char_VBAT_ADC_OFFSET               3      //1byte ; 實際值-理論值 (signed char)
-#define _ee_char_NTC1_ADC_OFFSET               -20      //1byte ; 實際值-理論值 Thermistor (signed char)
-#define _ee_char_NTC2_ADC_OFFSET               -5      //1byte ; 實際值-理論值 Thermistor (signed char)
+#define _ee_char_DSG_OP_ADC_OFFSET             0      //1byte ; 實際值-理論值 (signed char)
+#define _ee_char_CHG_OP_ADC_OFFSET             0      //1byte ; 實際值-理論值 (signed char)
+#define _ee_char_VBAT_ADC_OFFSET               0      //1byte ; 實際值-理論值 (signed char)
+#define _ee_char_NTC1_ADC_OFFSET               0      //1byte ; 實際值-理論值 Thermistor (signed char)
+#define _ee_char_NTC2_ADC_OFFSET               0      //1byte ; 實際值-理論值 Thermistor (signed char)
+#define _ee_char_SOC_ADC_OFFSET                0      //1byte ; 實際值-理論值 (signed char)
 
 //=====================================================================================================================
 // charger detector by voltage over 0.5V

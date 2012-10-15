@@ -5,7 +5,7 @@
 * Define	(could not be modified, because it's base on function define)       *
 ********************************************************************************/
 // Timer 
-#define TimerIntervalTimeBase_MS                64  // unit: ms
+#define TimerIntervalTimeBase_MS                66  // unit: ms
 // PWM Function has 10 setp different frequency and light on and ligh off, so total PWM turn on is LED_PWM_One_Step_CycleTimes * LED_PWM_Whole_Steps
 #define LED_PWM_Whole_Steps                     20  //could not be modified, because it's base on function define
 /********************************************************************************
@@ -14,11 +14,11 @@
 #define LED_PWM_One_Step_CycleTimes             3   //unit:cycles , 150ms = LED_PWM_One_Step_CycleTimes * TimerIntervalTimeBase_MS
 #define LED_Blink_OnOffInterval_CycleTimes      8  //unit:cycles , 500 ms = LED_Blink_OnOffInterval_CycleTimes * TimerIntervalTimeBase_MS
 #define Button_Click_CycleTimes                 9  //unit:cycles ,  600 ms = Button_Click_CycleTimes * TimerIntervalTimeBase_MS
-#define Button_Long_Press_CycleTimes            78 //unit:cycles , 5 sec = Button_Long_Press_CycleTimes * TimerIntervalTimeBase_MS
+#define Button_Long_Press_CycleTimes            75 //unit:cycles , 5 sec = Button_Long_Press_CycleTimes * TimerIntervalTimeBase_MS
 
-#define Button_MultiClick_DetectionCycleTimes   46  //unit:cycles ,  3 sec = Button_DoubleClick_IntervalCycleTimes * TimerIntervalTimeBase_MS
+#define Button_MultiClick_DetectionCycleTimes   45  //unit:cycles ,  3 sec = Button_DoubleClick_IntervalCycleTimes * TimerIntervalTimeBase_MS
 
-#define OC_PROTECTION_CycleTimes                100 //unit:cycles , 5 sec = OC_PROTECTION_CycleTimes * TimerIntervalTimeBase_MS
+#define OC_PROTECTION_CycleTimes                76 //unit:cycles , 5 sec = OC_PROTECTION_CycleTimes * TimerIntervalTimeBase_MS
 
 /* 
     COC_RELEASE_HOLDING_CycleTimes
@@ -51,8 +51,8 @@
 
 
 
-#define Battery_OV_Protection_Delay_Cycle   46   //times, 3000 ms = 3sec = Battery_OV_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
-#define Battery_UV_Protection_Delay_Cycle   46   //times, 3000 ms = 3sec = Battery_UV_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
+#define Battery_OV_Protection_Delay_Cycle   45   //times, 3000 ms = 3sec = Battery_OV_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
+#define Battery_UV_Protection_Delay_Cycle   45   //times, 3000 ms = 3sec = Battery_UV_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
 #define DSG_Low_OT_Protection_Delay_Cycle   15   //times, 1000 ms = 1sec = DSG_Low_OT_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
 #define DSG_High_OT_Protection_Delay_Cycle  15   //times, 1000 ms = 1sec = DSG_High_OT_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
 #define CHG_OT_Protection_Delay_Cycle       15   //times, 1000 ms = 1sec = CHG_OT_Protection_Delay_Cycle * TimerIntervalTimeBase_MS
