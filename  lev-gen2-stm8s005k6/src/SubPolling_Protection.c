@@ -67,15 +67,44 @@ void InitSubPollingProtectionVariables(void){
 ********************************************************************************/
 void GetAllADCValuesAndSetDirection(void){
     unsigned int adcArr[7];
+    signed int temp;
     
         Get_ADC_Values(adcArr,7);
-  
-      G_DSG_Current_ADC = adcArr[0];
-      G_CHG_Current_ADC = adcArr[1];
-      G_VBAT_ADC = adcArr[2];
-      G_TH1_ADC = adcArr[3];
-      G_SOC_ADC = adcArr[5];
-      G_TH2_ADC = adcArr[6];
+      temp = adcArr[0] - DSG_OP_ADC_OFFSET;
+      if(temp < 0){
+          temp = 0;
+      }
+      G_DSG_Current_ADC = temp;
+      
+      temp = adcArr[1] - CHG_OP_ADC_OFFSET;
+      if(temp < 0){
+          temp = 0;
+      }
+      G_CHG_Current_ADC = temp;
+      
+      temp = adcArr[2] - VBAT_ADC_OFFSET;
+      if(temp < 0){
+          temp = 0;
+      }
+      G_VBAT_ADC = temp;
+      
+      temp = adcArr[3] - NTC1_ADC_OFFSET;
+      if(temp < 0){
+          temp = 0;
+      }
+      G_TH1_ADC = temp;
+      
+      temp = adcArr[5] - SOC_ADC_OFFSET;
+      if(temp < 0){
+          temp = 0;
+      }
+      G_SOC_ADC = temp;
+      
+      temp = adcArr[6] - NTC2_ADC_OFFSET;
+      if(temp < 0){
+          temp = 0;
+      }
+      G_TH2_ADC = temp;
 
       if(G_SOC_ADC > ADC_CHARGER_DETECTOR_TH){
         G_Module_Status |= Charger_Plug_In;

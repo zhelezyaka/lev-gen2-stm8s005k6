@@ -15,7 +15,8 @@
 //#define dTimer3CountValues			6250
 //#define dTimer3IntervalTimeBase_ms	50
 
-#define dTimer3CountValues			8125
+//#define dTimer3CountValues			8125
+#define dTimer3CountValues			8225
 #define dTimer3IntervalTimeBase_ms	65
 
 #define Max_INTERRUPT_Calling_Function  6
