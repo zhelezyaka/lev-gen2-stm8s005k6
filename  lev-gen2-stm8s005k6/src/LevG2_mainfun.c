@@ -209,7 +209,7 @@ unsigned int Normal_Func(){
             }else{
                 capacity = getCapacityByCellVoltage( G_VBAT_ADC, G_CHG_Current_ADC,  false);
             }
-            //DisplayCapacity(capacity, true);
+            DisplayCapacity(capacity, true);
 
             if(inverse_led1_flag == 0){
                 //SetLedPWMFunction(LED1+LED4+LED5, TurnOn);

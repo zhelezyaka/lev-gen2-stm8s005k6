@@ -420,7 +420,8 @@ void ProtectionForPolling(void){
     // MosFet control and Protection release    
     //////////////////////////////////////////////////////////////////////////////
     // CHG MosFet control and Protection release    
-    if((G_Module_Status & (Module_C_OC + Module_BAT_OV + Module_PIC_OV + Module_CHG_OT + Module_UT + Module_C_OC_LOCK + Charger_Plug_In))){
+    if((G_Module_Status & (Module_C_OC + Module_BAT_OV + Module_PIC_OV + Module_CHG_OT + Module_UT + Module_C_OC_LOCK)) || 
+       ((G_Module_Status & Charger_Plug_In) == 0)){
         setMosFET(CHG_MOSFET, TurnOff);
       
         //COC Lock Release while dsg or button click
@@ -434,7 +435,9 @@ void ProtectionForPolling(void){
         }
     }// if CHG protection
     else{
-      setMosFET(CHG_MOSFET, TurnOn);
+        if(G_Module_Status & Charger_Plug_In){
+            setMosFET(CHG_MOSFET, TurnOn);
+        }
     }    
     //////////////////////////////////////////////////////////////////////////////
     // DSG MosFet control and Protection release    

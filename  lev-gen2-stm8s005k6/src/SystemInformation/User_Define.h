@@ -101,9 +101,9 @@
 //                       voltage output 
 //                       to MCU ADC in
 ////////////////////////////////////////////////////////////////
+//ADC_Step        3.22265625f  ==>(float)ADC_Ref /  ADC_resolution ==> (mV)
 //VBAT_mV_To_ADC_Factor    (float)1/(ADC_Step/(VBAT_Resistor2/(VBAT_Resistor1+VBAT_Resistor2))==>小數點6位
-//ADC_Step        2.44140625f //  mv/step
-// _VBAT_mV_To_ADC_Factor_      0.016962f ==> _VBAT_10mV_To_ADC_Factor_    0.16962f  ==> VBAT_mV_To_ADC_Factor * 10
+// _VBAT_mV_To_ADC_Factor_      0.01285f
 //VBAT_ADC_OFFSET          (signed char)(-5)   //實際值-理論值
 // 理論值 = 實際值 - Offset
 ////////////////////////////////////////////////////////////////
@@ -159,21 +159,21 @@
 // Battery for a cell capacity ==> 2600 mAH * 4p
 // 0.5C DSG = 1300 mA, 1C DSG = 2600 mA, 1.5C DSG = 3900 mA
 // 4p cell==> 0.5C DSG = 5200 mA, 1C DSG = 10400 mA, 1.5C DSG = 15600 mA
-//  _DSG_mA_to_ADC_factor_      0.0671744f (參考上面之設定)
+//  _DSG_mA_to_ADC_factor_      0.05089f (參考上面之設定)
 // ADC 10 bit==> max adc = 1024
-#define _ee_uint_ADC_LOOKUP_1st_LEVEL_OCV_DSG_CURRENT_VALUES     175    // 2600mA; 2bytes;  CURRENT_OF_DSG_STATUS ~ 2600mA for 4p cell==>OCV
-#define _ee_uint_ADC_LOOKUP_2nd_LEVEL_OCV_DSG_CURRENT_VALUES     524    // 7800mA; 2bytes; 2600mA ~ 7800mA for 4p cell==>0.5C
-#define _ee_uint_ADC_LOOKUP_3rd_LEVEL_OCV_DSG_CURRENT_VALUES     873    // 13000mA; 2bytes; 7800mA 以上 for 4p cell==1C
+#define _ee_uint_ADC_LOOKUP_1st_LEVEL_OCV_DSG_CURRENT_VALUES     132    // 2600mA; 2bytes;  CURRENT_OF_DSG_STATUS ~ 2600mA for 4p cell==>OCV
+#define _ee_uint_ADC_LOOKUP_2nd_LEVEL_OCV_DSG_CURRENT_VALUES     397    // 7800mA; 2bytes; 2600mA ~ 7800mA for 4p cell==>0.5C
+#define _ee_uint_ADC_LOOKUP_3rd_LEVEL_OCV_DSG_CURRENT_VALUES     662    // 13000mA; 2bytes; 7800mA 以上 for 4p cell==1C
 
 //=====================================================================================================================
 // OCV TABLE Line Current Range, 2 ocv lines, (CHG) 
 // Battery for a cell capacity ==> 2600 mAH * 4p
 // 0.2C CHG = 520 mA, 0.5C CHG = 1300 mA
 // 4p cell==> 0.2C CHG = 2080 mA, 0.5C CHG = 5200 mA
-//  _CHG_mA_to_ADC_factor_      0.098304f (參考上面之設定)
+//  _CHG_mA_to_ADC_factor_      0.074473f (參考上面之設定)
 // ADC 10 bit==> max adc = 1024
-#define _ee_uint_ADC_LOOKUP_1st_LEVEL_OCV_CHG_CURRENT_VALUES     89    // 910mA; 2bytes;  CURRENT_OF_DSG_STATUS ~ 2600mA for 4p cell==>OCV
-#define _ee_uint_ADC_LOOKUP_2nd_LEVEL_OCV_CHG_CURRENT_VALUES     358    // 3640mA; 2bytes; 2600mA ~ 7800mA for 4p cell==>0.5C
+#define _ee_uint_ADC_LOOKUP_1st_LEVEL_OCV_CHG_CURRENT_VALUES     68    // 910mA; 2bytes;  CURRENT_OF_DSG_STATUS ~ 2600mA for 4p cell==>OCV
+#define _ee_uint_ADC_LOOKUP_2nd_LEVEL_OCV_CHG_CURRENT_VALUES     271    // 3640mA; 2bytes; 2600mA ~ 7800mA for 4p cell==>0.5C
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -200,10 +200,10 @@
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-//#define _ee_float_CHG_mA_To_ADC_Factor          0.098304f        // 4 bytes;
-//#define _ee_float_DSG_mA_To_ADC_Factor          0.0671744f       // 4 bytes;
-#define _ee_float_VBAT_mV_To_ADC_Factor         0.016962f        // 4 bytes;
-//#define _ee_float_Thermistor_mV_To_ADC_Factor   0.4096f         // 4 bytes; = 1/ADC_Step
+//#define _ee_float_CHG_mA_To_ADC_Factor          0.074473f        // 4 bytes;
+//#define _ee_float_DSG_mA_To_ADC_Factor          0.05089f       // 4 bytes;
+#define _ee_float_VBAT_mV_To_ADC_Factor         0.01285f        // 4 bytes;
+//#define _ee_float_Thermistor_mV_To_ADC_Factor   0.310303f         // 4 bytes; = 1/ADC_Step
 #define _ee_char_DSG_OP_ADC_OFFSET             0      //1byte ; 實際值-理論值 (signed char)
 #define _ee_char_CHG_OP_ADC_OFFSET             0      //1byte ; 實際值-理論值 (signed char)
 #define _ee_char_VBAT_ADC_OFFSET               0      //1byte ; 實際值-理論值 (signed char)
@@ -220,5 +220,5 @@
 //                                  to ADC SOC voltage output
 /////////////////////////////////////////////////////////////////////////////////////////////////
 //CHARGER_DETECTOR_mV_To_ADC_Factor     0.310303f   // = 1/ADC_Step
-#define _ee_uint_ADC_CHARGER_DETECTOR_TH       155    //unit:500 mV; 
+#define _ee_uint_ADC_CHARGER_DETECTOR_TH       465    //unit:1500 mV; 
 
