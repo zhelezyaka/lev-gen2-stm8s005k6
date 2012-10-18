@@ -76,14 +76,14 @@ INTERRUPT void TIM3_UPD_OVF_BRK_IRQHandler(void)
 {
 #endif
 	int i;
-    GPIO_WriteHigh(LED2_PORT, LED2_PIN);
+    //GPIO_WriteHigh(LED2_PORT, LED2_PIN);
 	TIM3_ClearITPendingBit(TIM3_IT_UPDATE);
     
     for(  i = 0; i < Max_INTERRUPT_Calling_Function; i++){
         (*Intupt_Timer1_ptr_fuc[i])();
     }
 
-    GPIO_WriteLow(LED2_PORT, LED2_PIN);
+    //GPIO_WriteLow(LED2_PORT, LED2_PIN);
 	return;
 }
 

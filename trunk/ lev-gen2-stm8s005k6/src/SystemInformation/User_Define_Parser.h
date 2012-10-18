@@ -169,11 +169,11 @@
 //  #define  _ee_uint_ADC_UT_RELEASE                                                                              705 //unit: 2272 mV; 5 Celcius; Under temperature release(Low divided voltage)
 //  #define  _ee_uint_MIN_CELL_OV_VOLTAGE_FOR_SOC                                                                 4200 //mv
 //  #define  _ee_uint_MAX_CELL_UV_VOLTAGE_FOR_SOC                                                                 3200 //mv
-//  #define  _ee_uint_ADC_LOOKUP_1st_LEVEL_OCV_DSG_CURRENT_VALUES                                                 175 // 2600mA; 2bytes; CURRENT_OF_DSG_STATUS ~ 2600mA for 4p cell==>OCV
-//  #define  _ee_uint_ADC_LOOKUP_2nd_LEVEL_OCV_DSG_CURRENT_VALUES                                                 524 // 7800mA; 2bytes; 2600mA ~ 7800mA for 4p cell==>0.5C
-//  #define  _ee_uint_ADC_LOOKUP_3rd_LEVEL_OCV_DSG_CURRENT_VALUES                                                 873 // 13000mA; 2bytes; 7800mA 以上 for 4p cell==1C
-//  #define  _ee_uint_ADC_LOOKUP_1st_LEVEL_OCV_CHG_CURRENT_VALUES                                                 89 // 910mA; 2bytes; CURRENT_OF_DSG_STATUS ~ 2600mA for 4p cell==>OCV
-//  #define  _ee_uint_ADC_LOOKUP_2nd_LEVEL_OCV_CHG_CURRENT_VALUES                                                 358 // 3640mA; 2bytes; 2600mA ~ 7800mA for 4p cell==>0.5C
+//  #define  _ee_uint_ADC_LOOKUP_1st_LEVEL_OCV_DSG_CURRENT_VALUES                                                 132 // 2600mA; 2bytes; CURRENT_OF_DSG_STATUS ~ 2600mA for 4p cell==>OCV
+//  #define  _ee_uint_ADC_LOOKUP_2nd_LEVEL_OCV_DSG_CURRENT_VALUES                                                 397 // 7800mA; 2bytes; 2600mA ~ 7800mA for 4p cell==>0.5C
+//  #define  _ee_uint_ADC_LOOKUP_3rd_LEVEL_OCV_DSG_CURRENT_VALUES                                                 662 // 13000mA; 2bytes; 7800mA 以上 for 4p cell==1C
+//  #define  _ee_uint_ADC_LOOKUP_1st_LEVEL_OCV_CHG_CURRENT_VALUES                                                 68 // 910mA; 2bytes; CURRENT_OF_DSG_STATUS ~ 2600mA for 4p cell==>OCV
+//  #define  _ee_uint_ADC_LOOKUP_2nd_LEVEL_OCV_CHG_CURRENT_VALUES                                                 271 // 3640mA; 2bytes; 2600mA ~ 7800mA for 4p cell==>0.5C
 //  #define  _ee_uint_MAX_DSG_C_ADC_RECORD_EEPROM                                                                 0
 //  #define  _ee_uint_MAX_CHG_C_ADC_RECORD_EEPROM                                                                 0
 //  #define  _ee_uint_MAX_VBAT_ADC_RECORD_EEPROM                                                                  0
@@ -185,11 +185,11 @@
 //  #define  _ee_uint_RECORD_DATA_COUNT_EEPROM                                                                    0
 //  #define  _ee_uint_Cycle_Count_RECORD_EEPROM                                                                   0
 //  #define  _ee_ulong_ADC_AccumulatingQ_RECORD_EEPROM                                                            0
-//  #define  _ee_float_VBAT_mV_To_ADC_Factor                                                                      0.016962f // 4 bytes;
+//  #define  _ee_float_VBAT_mV_To_ADC_Factor                                                                      0.01285f // 4 bytes;
 //  #define  _ee_char_DSG_OP_ADC_OFFSET                                                                           0 //1byte ; 實際值-理論值 (signed char)
 //  #define  _ee_char_CHG_OP_ADC_OFFSET                                                                           0 //1byte ; 實際值-理論值 (signed char)
 //  #define  _ee_char_VBAT_ADC_OFFSET                                                                             0 //1byte ; 實際值-理論值 (signed char)
 //  #define  _ee_char_NTC1_ADC_OFFSET                                                                             0 //1byte ; 實際值-理論值 Thermistor (signed char)
 //  #define  _ee_char_NTC2_ADC_OFFSET                                                                             0 //1byte ; 實際值-理論值 Thermistor (signed char)
 //  #define  _ee_char_SOC_ADC_OFFSET                                                                              0 //1byte ; 實際值-理論值 (signed char)
-//  #define  _ee_uint_ADC_CHARGER_DETECTOR_TH                                                                     155 //unit:500 mV;
+//  #define  _ee_uint_ADC_CHARGER_DETECTOR_TH                                                                     465 //unit:1500 mV;

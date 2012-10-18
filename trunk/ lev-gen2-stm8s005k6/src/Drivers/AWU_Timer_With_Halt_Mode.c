@@ -103,7 +103,7 @@ INTERRUPT_HANDLER(AWU_IRQHandler, 1)
 INTERRUPT void AWU_IRQHandler(void)
 {
 #endif
-    GPIO_WriteHigh(LED1_PORT, LED1_PIN);
+    //GPIO_WriteHigh(LED1_PORT, LED1_PIN);
 	int i;
     
     AWU_GetFlagStatus();
@@ -112,6 +112,6 @@ INTERRUPT void AWU_IRQHandler(void)
         (*Intupt_AWUTimer_ptr_fuc[i])();
     }
 
-    GPIO_WriteLow(LED1_PORT, LED1_PIN);
+    //GPIO_WriteLow(LED1_PORT, LED1_PIN);
 }
 

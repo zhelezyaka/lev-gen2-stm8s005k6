@@ -39,6 +39,9 @@ static unsigned int     Total_Sec_Counter;
 static unsigned int     Total_Hour_Counter;
 static unsigned int     RecordingPolling_Start_Delay_Counter;
 static unsigned long    sg_ADC_AccumulatingQ_RECORD;
+
+static unsigned long    sg_Current_DSG_Test_ADC_AccumulatingQ;
+static unsigned long    sg_Current_CHG_Test_ADC_AccumulatingQ;
 //================================
 
 /********************************************************************************
@@ -59,6 +62,8 @@ void SysInfo_init(){
     
     G_Cycle_Count_RECORD = Cycle_Count_RECORD_EEPROM;
     sg_ADC_AccumulatingQ_RECORD = ADC_AccumulatingQ_RECORD_EEPROM;
+    sg_Current_DSG_Test_ADC_AccumulatingQ = 0;
+    sg_Current_CHG_Test_ADC_AccumulatingQ = 0;
     
     _1_Sec_Counter = 0;
     Total_Sec_Counter = 0;
@@ -102,6 +107,18 @@ void UpdatedSystemRecordingInfoForPolling(){
     // updated AccumulatingQ_RECORD
     G_ADC_AccumulatingQ_RECORD_Lo = (unsigned int)sg_ADC_AccumulatingQ_RECORD;
     G_ADC_AccumulatingQ_RECORD_Hi = (unsigned int)(sg_ADC_AccumulatingQ_RECORD >> 16);
+    // updated DSG AccumulatingQ
+    G_Current_DSG_ADC_AccumulatingQ_Lo = (unsigned int)sg_Current_DSG_Test_ADC_AccumulatingQ;
+    G_Current_DSG_ADC_AccumulatingQ_Hi = (unsigned int)(sg_Current_DSG_Test_ADC_AccumulatingQ >> 16);
+    if(G_Current_DSG_ADC_AccumulatingQ_Hi >= 0xfff0){
+        sg_Current_DSG_Test_ADC_AccumulatingQ = 0;
+    }
+    // updated CHG AccumulatingQ
+    G_Current_CHG_ADC_AccumulatingQ_Lo = (unsigned int)sg_Current_CHG_Test_ADC_AccumulatingQ;
+    G_Current_CHG_ADC_AccumulatingQ_Hi = (unsigned int)(sg_Current_CHG_Test_ADC_AccumulatingQ >> 16);
+    if(G_Current_CHG_ADC_AccumulatingQ_Hi >= 0xfff0){
+        sg_Current_CHG_Test_ADC_AccumulatingQ = 0;
+    }
     
     
     //Calculation Recording data time for writing to EEPROM
@@ -135,6 +152,14 @@ void CoulombCounterForOneSecond(void){
         if(sg_ADC_AccumulatingQ_RECORD >= ADC_AccQ_FOR_CHG_TH){
             sg_ADC_AccumulatingQ_RECORD = 0;
             G_Cycle_Count_RECORD++;
+        }
+        sg_Current_CHG_Test_ADC_AccumulatingQ += G_CHG_Current_ADC;
+        if((sg_Current_CHG_Test_ADC_AccumulatingQ >> 16) >= 0xfff0){
+            sg_Current_CHG_Test_ADC_AccumulatingQ = 0;
+        }
+    }else{
+        if( G_Module_Status & Current_Dir_DSG){
+            sg_Current_DSG_Test_ADC_AccumulatingQ += G_DSG_Current_ADC;
         }
     }
     if(G_Cycle_Count_RECORD >= 0xfff0){
